@@ -16,6 +16,12 @@ h2 {
     margin: 20px;
 }
 
+@media only screen and (max-width: 319px) {
+    .input-container {
+        width: 100%;
+    }
+}
+
 #songName {
     border-radius: 20px;
     background-color: #fff;
@@ -71,6 +77,17 @@ button:hover {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 290px;
+}
+
+@media only screen and (max-width: 600px) {
+    .song-artists {
+        font-size: smaller;
+        margin: 5px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 90px;
+    }
 }
 
 .quality-select {
