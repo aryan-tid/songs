@@ -10,12 +10,6 @@ h2 {
     color: #333;
 }
 
-@media only screen and (max-width: 319px) {
-    .input-container {
-        width: 100%;
-    }
-}
-
 .input-container {
     display: flex;
     justify-content: center;
@@ -58,7 +52,6 @@ button:hover {
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    min-width: 100px;
 }
 
 .song-details {
@@ -79,18 +72,6 @@ button:hover {
     text-overflow: ellipsis;
     width: 290px;
 }
-
-@media only screen and (max-width: 600px) {
-    .song-artists {
-        font-size: smaller;
-        margin: 5px 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 90px;
-    }
-}
-
 
 .quality-select {
     margin-top: -5px;
@@ -133,13 +114,38 @@ button:hover {
 
 .song-img {
     width: 60px;
-    /* Fixed width for the image */
     height: 60px;
-    /* Fixed height for the image */
     border-radius: 8px;
-    /* Slight rounding of corners */
     object-fit: cover;
-    /* Ensure the image covers the area */
     margin-right: 20px;
-    /* Space between the image and details */
+}
+
+/* Add margin-bottom to prevent last song hiding under player */
+#result {
+    margin-bottom: 120px;
+}
+
+.loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, 0.112);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000; /* Make sure it covers other content */
+  }
+  
+  .loading-content {
+	text-align: center;
+  }
+
+.hidden {
+	display: none;
+}
+
+.loader {
+	color: #ffffff;
 }

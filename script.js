@@ -1,12 +1,22 @@
+let page = 0;
+document.getElementById('nextPage').addEventListener('click', () => {
+    nextPage.disabled = true;
+    page++;
+    document.getElementById('searchBtn').click();
+});
+
 document.getElementById('searchBtn').addEventListener('click', () => {
     const songName = document.getElementById('songName').value;
+    nextPage.classList.remove('hidden');
+    searchBtn.disabled = true;
+    document.getElementById('loadingOverlay').style.display = 'flex';
 
     if (!songName) {
         alert('Please enter a song name');
         return;
     }
 
-    const url = `https://saavn.dev/api/search/songs?query=${encodeURIComponent(songName)}`;
+    const url = `https://saavn.dev/api/search/songs?query=${encodeURIComponent(songName)}&page=${page}&limit=20`;
 
     fetch(url)
         .then(response => {
@@ -52,15 +62,18 @@ document.getElementById('searchBtn').addEventListener('click', () => {
             console.error('There was a problem with the fetch operation:', error);
             document.getElementById('result').textContent = 'Error fetching data';
         });
+    document.getElementById('loadingOverlay').style.display = 'none';
+    searchBtn.disabled = false;
+    nextPage.disabled = false;
 });
 
 function playInPlayer(songName, url) {
     const audioPlayer = document.getElementById('persistentAudio');
     const songNameDisplay = document.getElementById('currentSongName');
-    
+
     audioPlayer.src = url;
     audioPlayer.play();
-    
+
     songNameDisplay.textContent = songName;
 }
 
@@ -75,11 +88,11 @@ window.addEventListener('beforeunload', () => {
 
 window.addEventListener('DOMContentLoaded', () => {
     const savedState = localStorage.getItem('playerState');
-    
+
     if (savedState) {
         const { songName, songUrl, currentTime } = JSON.parse(savedState);
         const audioPlayer = document.getElementById('persistentAudio');
-        
+
         audioPlayer.src = songUrl;
         audioPlayer.currentTime = currentTime;
         document.getElementById('currentSongName').textContent = songName;
