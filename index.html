@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Search for a Song</h1>
+    <div class="input-container">
+        <div id="song-Name">
+            <input type="text" id="songName" placeholder="What do you want to play?">
+        </div>
+        <button id="searchBtn">Go</button>
+    </div>
+
+    <!-- Universal Quality Selection Dropdown -->
+    <div class="input-container">
+        <label for="globalQualitySelect"><strong>Select Quality:</strong></label>
+        <select id="globalQualitySelect" class="quality-select">
+            <option value="12kbps">12kbps</option>
+            <option value="48kbps">48kbps</option>
+            <option value="96kbps">96kbps</option>
+            <option value="160kbps">160kbps</option>
+            <option value="320kbps" selected>320kbps</option>
+        </select>
+    </div>
+
+    <h2>Search Results:</h2>
+    <div id="result"></div>
+
+    <!-- Hidden song template (styled as hidden by default) -->
+    <div id="songTemplate" class="song" style="display: none;">
+        <div class="song-card">
+            <img src="" alt="Song Image" class="song-img" />
+            <div class="song-details">
+                <p class="song-name"><span></span></p>
+                <p class="song-artists"><span></span></p>
+            </div>
+            <button class="play-btn">Play</button>
+        </div>
+    </div>
+
+    <!-- Persistent audio player -->
+    <div id="audioPlayer" class="persistent-player">
+        <p>Now Playing: <span id="currentSongName">None</span></p>
+        <div class="persistent-audio">
+            <audio id="persistentAudio" controls autoplay></audio>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
