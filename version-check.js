@@ -18,7 +18,7 @@
         // Function to fetch the latest version from a text file
         async function fetchLatestVersion() {
             try {
-                const response = await fetch('./latestVersion.txt'); // Replace with the actual path to latestVersion.txt
+                const response = await fetch('https://aryan-tid.github.io/songs/latestVersion.txt'); // Replace with the actual path to latestVersion.txt
                 if (response.ok) {
                     const text = await response.text();
                     return text.trim(); // Return the version as a trimmed string
