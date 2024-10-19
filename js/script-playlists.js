@@ -81,7 +81,7 @@ async function browseShow() {
                     imageUniversalUrl = song.image[2].url
                     if (downloadUrl) {
                         playInPlayer(song.name, downloadUrl.url);
-                        
+
                     } else {
                         console.error(`No download URL found for quality: ${globalQuality}`);
                     }
@@ -92,7 +92,7 @@ async function browseShow() {
                                 { src: imageUniversalUrl, sizes: '512x512', type: 'image/png' },
                             ]
                         });
-    
+
                         navigator.mediaSession.setActionHandler('play', function () { });
                         navigator.mediaSession.setActionHandler('pause', function () { });
                         navigator.mediaSession.setActionHandler('seekbackward', function () { });
@@ -173,9 +173,23 @@ async function playlistShow(playlistId) {
                             { src: imageUniversalUrl, sizes: '512x512', type: 'image/png' },
                         ]
                     });
-
-                    navigator.mediaSession.setActionHandler('play', function () { });
-                    navigator.mediaSession.setActionHandler('pause', function () { });
+                    // Play/Pause action handler (combined)
+                    const togglePlayPause = async function (playtoogle) {
+                        if (fn === playtoogle) {
+                            if (audio.paused) {
+                                await audio.play();
+                                playBtn.classList.remove("play");
+                                playBtn.classList.add("pause");
+                            } else {
+                                audio.pause();
+                                playBtn.classList.remove("pause");
+                                playBtn.classList.add("play");
+                            }
+                        }
+                    };
+                    // Set play/pause action handlers
+                    navigator.mediaSession.setActionHandler('play', togglePlayPause);
+                    navigator.mediaSession.setActionHandler('pause', togglePlayPause);
                     navigator.mediaSession.setActionHandler('seekbackward', function () { });
                     navigator.mediaSession.setActionHandler('seekforward', function () { });
                     navigator.mediaSession.setActionHandler('previoustrack', function () { });
@@ -213,7 +227,7 @@ function playInPlayer(songName, url) {
             playBtn.classList.remove("play");
             playBtn.classList.add("pause");
             console.log(imageUniversalUrl);
-            imageUniversalUrl= null;
+            imageUniversalUrl = null;
 
         })
         .catch(error => {
@@ -269,6 +283,20 @@ playBtn.addEventListener("click", () => {
         playBtn.classList.add("play");
     }
 }, false);
+
+async function controls(fn) {
+    if (fn == playtoogle) {
+        if (audio.paused) {
+            audio.play();
+            playBtn.classList.remove("play");
+            playBtn.classList.add("pause");
+        } else {
+            audio.pause();
+            playBtn.classList.remove("pause");
+            playBtn.classList.add("play");
+        }
+    }
+}
 
 audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
     const volumeEl = audioPlayer.querySelector(".volume-container .volume");
