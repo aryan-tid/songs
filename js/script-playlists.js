@@ -173,27 +173,17 @@ async function playlistShow(playlistId) {
                             { src: imageUniversalUrl, sizes: '512x512', type: 'image/png' },
                         ]
                     });
-                    // Play/Pause action handler (combined)
-                    const togglePlayPause = async function (playtoogle) {
-                        if (fn === playtoogle) {
-                            if (audio.paused) {
-                                await audio.play();
-                                playBtn.classList.remove("play");
-                                playBtn.classList.add("pause");
-                            } else {
-                                audio.pause();
-                                playBtn.classList.remove("pause");
-                                playBtn.classList.add("play");
-                            }
-                        }
-                    };
-                    // Set play/pause action handlers
-                    navigator.mediaSession.setActionHandler('play', togglePlayPause);
-                    navigator.mediaSession.setActionHandler('pause', togglePlayPause);
-                    navigator.mediaSession.setActionHandler('seekbackward', function () { });
-                    navigator.mediaSession.setActionHandler('seekforward', function () { });
-                    navigator.mediaSession.setActionHandler('previoustrack', function () { });
-                    navigator.mediaSession.setActionHandler('nexttrack', function () { });
+                    // // Play/Pause action handler (combined)
+                    // const togglePlayPause = async function () {
+                    //     playBtn.addEventListener('click');
+                    // };
+                    // // Set play/pause action handlers
+                    // navigator.mediaSession.setActionHandler('play', togglePlayPause);
+                    // navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+                    // navigator.mediaSession.setActionHandler('seekbackward', function () { });
+                    // navigator.mediaSession.setActionHandler('seekforward', function () { });
+                    // navigator.mediaSession.setActionHandler('previoustrack', function () { });
+                    // navigator.mediaSession.setActionHandler('nexttrack', function () { });
                 }
             };
 
@@ -283,20 +273,6 @@ playBtn.addEventListener("click", () => {
         playBtn.classList.add("play");
     }
 }, false);
-
-async function controls(fn) {
-    if (fn == playtoogle) {
-        if (audio.paused) {
-            audio.play();
-            playBtn.classList.remove("play");
-            playBtn.classList.add("pause");
-        } else {
-            audio.pause();
-            playBtn.classList.remove("pause");
-            playBtn.classList.add("play");
-        }
-    }
-}
 
 audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
     const volumeEl = audioPlayer.querySelector(".volume-container .volume");
