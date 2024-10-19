@@ -11,20 +11,23 @@
 <body>
     <!-- Navbar -->
     <nav>
-        <div class="hamburger" id="hamburger">&#9776;</div> <!-- Hamburger icon -->
+        <div class="nav-container">
+            <div class="logo" id="logo">Melodify</div> <!-- Added Website Name -->
+            <div class="hamburger" id="hamburger">&#9776;</div> <!-- Hamburger icon -->
+        </div>
         <ul id="navbarList">
             <li><a href="#">Home</a></li>
             <li><a id="browse-link" href="#">Browse</a></li>
             <li><a href="#">Downloads</a></li>
-            <li>
-                <label for="globalQualitySelect"><strong>Select Quality:</strong></label>
+            <li><div id="qualitySelectorFix">
+                <label for="globalQualitySelect"><strong id="hideQuality">Quality:&nbsp;</strong></label>
                 <select id="globalQualitySelect" class="quality-select">
                     <option value="12kbps">12kbps</option>
                     <option value="48kbps">48kbps</option>
                     <option value="96kbps">96kbps</option>
                     <option value="160kbps">160kbps</option>
                     <option value="320kbps" selected>320kbps</option>
-                </select>
+                </select></div>
             </li>
         </ul>
     </nav>

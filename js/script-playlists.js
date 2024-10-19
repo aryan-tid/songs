@@ -161,6 +161,7 @@ function playInPlayer(songName, url) {
     audio.play()
         .then(() => {
             songNameDisplay.textContent = songName.replace(/&quot;/g, ' ');
+            document.title = `${(songName).replace(/&quot;/g, ' ')} - Melodify`; // Change the title dynamically
             const playBtn = audioPlayer.querySelector(".controls .toggle-play");
             playBtn.classList.remove("play");
             playBtn.classList.add("pause");
