@@ -1,4 +1,5 @@
 let page = 1;
+let imageUniversalUrl;
 
 document.getElementById('nextPage').addEventListener('click', () => {
     nextPage.disabled = true;
@@ -71,15 +72,33 @@ async function browseShow() {
                 // Update the content with song data
                 songClone.querySelector('.song-img').src = song.image[1].url;
                 songClone.querySelector('.song-name span').textContent = song.name;
+
                 songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
                 const playSong = () => {
                     const globalQuality = document.getElementById('globalQualitySelect').value;
-                    const downloadUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === globalQuality) : null; // Ensure downloadUrl exists
+                    const downloadUrl = song.downloadUrl.find(url => url.quality === globalQuality);
+                    imageUniversalUrl = song.image[2].url
                     if (downloadUrl) {
-                        playInPlayer(song, downloadUrl.url);  // Pass the song object to playInPlayer
+                        playInPlayer(song.name, downloadUrl.url);
+                        
                     } else {
-                        console.error('No download URL found for the selected quality.');
+                        console.error(`No download URL found for quality: ${globalQuality}`);
+                    }
+                    if ('mediaSession' in navigator) {
+
+                        navigator.mediaSession.metadata = new MediaMetadata({
+                            artwork: [
+                                { src: imageUniversalUrl, sizes: '512x512', type: 'image/png' },
+                            ]
+                        });
+    
+                        navigator.mediaSession.setActionHandler('play', function () { });
+                        navigator.mediaSession.setActionHandler('pause', function () { });
+                        navigator.mediaSession.setActionHandler('seekbackward', function () { });
+                        navigator.mediaSession.setActionHandler('seekforward', function () { });
+                        navigator.mediaSession.setActionHandler('previoustrack', function () { });
+                        navigator.mediaSession.setActionHandler('nexttrack', function () { });
                     }
                 };
 
@@ -141,10 +160,26 @@ async function playlistShow(playlistId) {
             const playSong = () => {
                 const globalQuality = document.getElementById('globalQualitySelect').value;
                 const downloadUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === globalQuality) : null; // Ensure downloadUrl exists
+                imageUniversalUrl = song.image[2].url // Use the medium-quality image at index 1
                 if (downloadUrl) {
                     playInPlayer(song.name, downloadUrl.url);
                 } else {
                     console.error('No download URL found for the selected quality.');
+                }
+                if ('mediaSession' in navigator) {
+
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        artwork: [
+                            { src: imageUniversalUrl, sizes: '512x512', type: 'image/png' },
+                        ]
+                    });
+
+                    navigator.mediaSession.setActionHandler('play', function () { });
+                    navigator.mediaSession.setActionHandler('pause', function () { });
+                    navigator.mediaSession.setActionHandler('seekbackward', function () { });
+                    navigator.mediaSession.setActionHandler('seekforward', function () { });
+                    navigator.mediaSession.setActionHandler('previoustrack', function () { });
+                    navigator.mediaSession.setActionHandler('nexttrack', function () { });
                 }
             };
 
@@ -172,44 +207,20 @@ function playInPlayer(songName, url) {
     audio.src = url; // Set the source to the dynamic URL fetched from API
     audio.play()
         .then(() => {
-            // Update the displayed song name
             songNameDisplay.textContent = songName.replace(/&quot;/g, ' ');
-
-            // Dynamically change the document title
-            document.title = `${songName.replace(/&quot;/g, ' ')} - Melodify`;
-
-            // Change the play button icon
+            document.title = `${(songName).replace(/&quot;/g, ' ')} - Melodify`; // Change the title dynamically
             const playBtn = audioPlayer.querySelector(".controls .toggle-play");
             playBtn.classList.remove("play");
             playBtn.classList.add("pause");
+            console.log(imageUniversalUrl);
+            imageUniversalUrl= null;
 
-            // Update media session metadata for Android notifications
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: songName.replace(/&quot;/g, ' '),
-                    artwork: [
-                        { src: song.image[2].url, sizes: '500x500', type: 'image/jpeg' }  // Using the 500x500 quality image
-                    ]
-                });
-
-                // Handle media session actions (like play/pause, seek, etc.)
-                navigator.mediaSession.setActionHandler('play', () => audio.play());
-                navigator.mediaSession.setActionHandler('pause', () => audio.pause());
-                navigator.mediaSession.setActionHandler('seekto', (details) => {
-                    if (details.fastSeek && 'fastSeek' in audio) {
-                        audio.fastSeek(details.seekTime);
-                    } else {
-                        audio.currentTime = details.seekTime;
-                    }
-                });
-
-                // Optional: handle media session "next" and "previous" actions if needed
-            }
         })
         .catch(error => {
             console.error('Error playing audio:', error);
         });
 }
+
 // Removed local storage logic
 window.addEventListener('DOMContentLoaded', () => {
     const browseLink = document.getElementById('browse-link');
