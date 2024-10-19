@@ -75,11 +75,11 @@ async function browseShow() {
 
                 const playSong = () => {
                     const globalQuality = document.getElementById('globalQualitySelect').value;
-                    const downloadUrl = song.downloadUrl.find(url => url.quality === globalQuality);
+                    const downloadUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === globalQuality) : null; // Ensure downloadUrl exists
                     if (downloadUrl) {
-                        playInPlayer(song.name, downloadUrl.url);
+                        playInPlayer(song, downloadUrl.url);  // Pass the song object to playInPlayer
                     } else {
-                        console.error(`No download URL found for quality: ${globalQuality}`);
+                        console.error('No download URL found for the selected quality.');
                     }
                 };
 
@@ -97,9 +97,9 @@ async function browseShow() {
             document.getElementById('loadingOverlay').style.display = 'none';
             searchBtn.disabled = false;
             nextPageButton.classList.remove('hidden');
-            if (page>1) {
+            if (page > 1) {
                 previousPageButton.classList.remove('hidden');
-            }else {
+            } else {
                 previousPageButton.classList.add('hidden');
             };
             nextPageButton.disabled = false;
@@ -172,17 +172,44 @@ function playInPlayer(songName, url) {
     audio.src = url; // Set the source to the dynamic URL fetched from API
     audio.play()
         .then(() => {
+            // Update the displayed song name
             songNameDisplay.textContent = songName.replace(/&quot;/g, ' ');
-            document.title = `${(songName).replace(/&quot;/g, ' ')} - Melodify`; // Change the title dynamically
+
+            // Dynamically change the document title
+            document.title = `${songName.replace(/&quot;/g, ' ')} - Melodify`;
+
+            // Change the play button icon
             const playBtn = audioPlayer.querySelector(".controls .toggle-play");
             playBtn.classList.remove("play");
             playBtn.classList.add("pause");
+
+            // Update media session metadata for Android notifications
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: songName.replace(/&quot;/g, ' '),
+                    artwork: [
+                        { src: song.image[2].url, sizes: '500x500', type: 'image/jpeg' }  // Using the 500x500 quality image
+                    ]
+                });
+
+                // Handle media session actions (like play/pause, seek, etc.)
+                navigator.mediaSession.setActionHandler('play', () => audio.play());
+                navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+                navigator.mediaSession.setActionHandler('seekto', (details) => {
+                    if (details.fastSeek && 'fastSeek' in audio) {
+                        audio.fastSeek(details.seekTime);
+                    } else {
+                        audio.currentTime = details.seekTime;
+                    }
+                });
+
+                // Optional: handle media session "next" and "previous" actions if needed
+            }
         })
         .catch(error => {
             console.error('Error playing audio:', error);
         });
 }
-
 // Removed local storage logic
 window.addEventListener('DOMContentLoaded', () => {
     const browseLink = document.getElementById('browse-link');
