@@ -345,9 +345,8 @@ Button#nextPage:hover {
     left: 0;
     width: 100%;
     color: white;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
     z-index: 999;
-    height: 50px;
+    height: 60px;
     /* Allow the height to adjust based on content */
     pointer-events: auto;
     /* Ensure clicks pass through where no content */
@@ -364,7 +363,7 @@ Button#nextPage:hover {
     font-family: Arial, sans-serif;
     display: grid;
     grid-template-rows: 6px auto;
-    height: 50px;
+    height: 60px;
 
     /* Set height of the player */
     .timeline {
