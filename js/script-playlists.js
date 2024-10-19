@@ -5,6 +5,11 @@ document.getElementById('nextPage').addEventListener('click', () => {
     page++;
     document.getElementById('searchBtn').click();
 });
+document.getElementById('previousPage').addEventListener('click', () => {
+    previousPage.disabled = true;
+    page--;
+    document.getElementById('searchBtn').click();
+});
 
 document.getElementById('hamburger').addEventListener('click', function () {
     const navbarList = document.getElementById('navbarList');
@@ -27,6 +32,7 @@ async function browseShow() {
     document.getElementById('searchBtn').addEventListener('click', async () => {
         const songName = document.getElementById('songName').value;
         const nextPageButton = document.getElementById('nextPage');
+        const previousPageButton = document.getElementById('previousPage');
         searchBtn.disabled = true;
         document.getElementById('loadingOverlay').style.display = 'flex';
 
@@ -91,7 +97,13 @@ async function browseShow() {
             document.getElementById('loadingOverlay').style.display = 'none';
             searchBtn.disabled = false;
             nextPageButton.classList.remove('hidden');
+            if (page>1) {
+                previousPageButton.classList.remove('hidden');
+            }else {
+                previousPageButton.classList.add('hidden');
+            };
             nextPageButton.disabled = false;
+            previousPageButton.disabled = false;
         }
     });
 }

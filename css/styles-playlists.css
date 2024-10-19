@@ -243,8 +243,7 @@ h1, h2 {
 
 /* Play Button */
 Button#playBtn,
-Button#searchBtn,
-Button#nextPage {
+Button#searchBtn {
     background-color: #2D8F7A;
     color: white;
     border: none;
@@ -252,6 +251,11 @@ Button#nextPage {
     cursor: pointer;
     font-size: 16px;
     border-radius: 20px;
+}
+
+#prevNxtInline{
+    display: inline-flex;
+    width: 100%;
 }
 
 #nextPage {
@@ -270,6 +274,25 @@ Button#nextPage {
 }
 
 #nextPage.hidden {
+    display: none;
+}
+
+#previousPage {
+    display: block;
+    margin: 20px auto; /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100; /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#previousPage.hidden {
     display: none;
 }
 
