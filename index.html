@@ -19,15 +19,17 @@
             <li><a href="#">Home</a></li>
             <li><a id="browse-link" href="#">Browse</a></li>
             <li><a href="#">Downloads</a></li>
-            <li><div id="qualitySelectorFix">
-                <label for="globalQualitySelect"><strong id="hideQuality">Quality:&nbsp;</strong></label>
-                <select id="globalQualitySelect" class="quality-select">
-                    <option value="12kbps">12kbps</option>
-                    <option value="48kbps">48kbps</option>
-                    <option value="96kbps">96kbps</option>
-                    <option value="160kbps">160kbps</option>
-                    <option value="320kbps" selected>320kbps</option>
-                </select></div>
+            <li>
+                <div id="qualitySelectorFix">
+                    <label for="globalQualitySelect"><strong id="hideQuality">Quality:&nbsp;</strong></label>
+                    <select id="globalQualitySelect" class="quality-select">
+                        <option value="12kbps">12kbps</option>
+                        <option value="48kbps">48kbps</option>
+                        <option value="96kbps">96kbps</option>
+                        <option value="160kbps">160kbps</option>
+                        <option value="320kbps" selected>320kbps</option>
+                    </select>
+                </div>
             </li>
         </ul>
     </nav>
@@ -56,13 +58,12 @@
         </div>
         <h2 class="hidden" id="h2SeachResults">Search Results:</h2>
     </div>
-    <button id="nextPage" class="next-page hidden">Next Page</button>
 
     <div id="playlistShowId" class="hidden">
         <h2 id="playlist-name"></h2>
     </div>
 
-    <div id="result"></div>
+    <div id="result" class="hi"></div>
     <div>
         <!-- Hidden song template (styled as hidden by default) -->
         <div id="songTemplate" class="song" style="display: none;">
@@ -74,45 +75,46 @@
                 </div>
                 <button class="play-btn" id="playBtn">Play</button>
                 <buttons class="play-btn" id="playImg">
-                    <img src="https://img.icons8.com/flat-round/50/play--v1.png"
-                    alt="Button Image" style="width: 40px;
+                    <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
                      height: 40px;">
-                    </buttons>
-        </div>
-    </div>
-    <div id="audioPlayer" class="audio-player-container">
-        <div style="height: 10px;"></div>
-        <div class="persistent-audio">
-        <div class="audio-player">
-            <div class="timeline">
-                <div class="progress"></div>
+                </buttons>
             </div>
-            <div class="controls">
-                <div class="play-container">
-                    <div class="toggle-play play">
+        </div>
+        <button id="nextPage" class="next-page hidden">Next Page</button>
+        <button id="randomAjustor"></button>
+        <div id="audioPlayer" class="audio-player-container">
+            <div style="height: 10px;"></div>
+            <div class="persistent-audio">
+                <div class="audio-player">
+                    <div class="timeline">
+                        <div class="progress"></div>
                     </div>
-                </div>
-                <div class="time">
-                    <div class="current">0:00</div>
-                    <div class="divider">/</div>
-                    <div class="length"></div>
-                </div>
-                <div id="audioPlayer" class="name"><span id="currentSongName">None</span></div>
-                <!--     credit for icon to https://saeedalipoor.github.io/icono/ -->
-                <div class="volume-container">
-                    <div class="volume-button">
-                        <div class="volume icono-volumeMedium"></div>
-                    </div>
+                    <div class="controls">
+                        <div class="play-container">
+                            <div class="toggle-play play">
+                            </div>
+                        </div>
+                        <div class="time">
+                            <div class="current">0:00</div>
+                            <div class="divider">/</div>
+                            <div class="length"></div>
+                        </div>
+                        <div id="audioPlayer" class="name"><span id="currentSongName">None</span></div>
+                        <!--     credit for icon to https://saeedalipoor.github.io/icono/ -->
+                        <div class="volume-container">
+                            <div class="volume-button">
+                                <div class="volume icono-volumeMedium"></div>
+                            </div>
 
-                    <div class="volume-slider">
-                        <div class="volume-percentage"></div>
+                            <div class="volume-slider">
+                                <div class="volume-percentage"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-    <script src="./js/script-playlists.js"></script>
+        <script src="./js/script-playlists.js"></script>
 </body>
 
 </html>

@@ -254,6 +254,40 @@ Button#nextPage {
     border-radius: 20px;
 }
 
+#nextPage {
+    display: block;
+    margin: 20px auto; /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100; /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#nextPage.hidden {
+    display: none;
+}
+
+#randomAjustor{
+    display: block;
+    margin: 20px auto; /* Center the button horizontally and add top margin */
+    background-color: none;
+    color: none;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100; /* Ensure it's not hidden by any other content */
+    margin-bottom: 20px;
+}
+
 Button#playBtn:hover,
 Button#searchBtn:hover,
 Button#nextPage:hover {
@@ -328,13 +362,13 @@ Button#nextPage:hover {
 
 /* Add margin-bottom to prevent last song hiding under player */
 #result {
-    margin-bottom: 120px;
+    margin-bottom: 0px;
 }
 
 /* Add this to your CSS */
 
 #resultTrendingSongs {
-    margin-bottom: 140px;
+    margin-bottom: 0px;
     /* Adjust this value according to the height of your persistent player */
 }
 
