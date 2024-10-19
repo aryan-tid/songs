@@ -73,15 +73,37 @@
             </div>
         </div>
     </div>
-
-    <!-- Persistent audio player -->
-    <div id="audioPlayer" class="persistent-player">
-        <p>Now Playing: <span id="currentSongName">None</span></p>
+    <div id="audioPlayer" class="audio-player-container">
         <div class="persistent-audio">
-            <audio id="persistentAudio" controls autoplay></audio>
+        <div class="audio-player">
+            <div class="timeline">
+                <div class="progress"></div>
+            </div>
+            <div class="controls">
+                <div class="play-container">
+                    <div class="toggle-play play">
+                    </div>
+                </div>
+                <div class="time">
+                    <div class="current">0:00</div>
+                    <div class="divider">/</div>
+                    <div class="length"></div>
+                </div>
+                <div id="audioPlayer" class="name"><span id="currentSongName">None</span></div>
+                <!--     credit for icon to https://saeedalipoor.github.io/icono/ -->
+                <div class="volume-container">
+                    <div class="volume-button">
+                        <div class="volume icono-volumeMedium"></div>
+                    </div>
+
+                    <div class="volume-slider">
+                        <div class="volume-percentage"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
+</div>
     <script src="./js/script-playlists.js"></script>
 </body>
 
