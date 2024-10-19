@@ -1,0 +1,325 @@
+/* General Body Styling */
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+nav {
+    background-color: #2D8F7A;
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Headings Styling */
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+@media only screen and (max-width: 400px) {
+    button.play-btn {
+        display: none;
+    }}
+
+/* Mobile Styles */
+@media only screen and (max-width: 600px) {
+    nav ul {
+        padding: 0;
+        display: flex;
+        flex-direction: column; /* Stack items vertically */
+        align-items: center; /* Center items horizontally */
+    }
+
+    nav ul li {
+        margin: 10px 0; /* Add some space between items */
+        display: block; /* Make sure each item is a block */
+    }
+
+    nav ul li a {
+        font-size: 20px; /* Increase font size for better touch target */
+        padding: 10px 20px; /* Add padding for better touch area */
+        display: block; /* Ensure link fills the block for easier clicking */
+    }
+}
+
+
+.hamburger {
+    display: none; /* Hidden by default */
+    font-size: 28px; /* Size of the hamburger icon */
+    color: white; /* Color of the icon */
+    cursor: pointer; /* Change cursor to pointer */
+}
+
+/* Mobile Styles */
+@media only screen and (max-width: 600px) {
+    .hamburger {
+        display: block; /* Show hamburger icon on mobile */
+        text-align: center;
+        margin-bottom: 10px; /* Space below the icon */
+    }
+
+    nav ul {
+        display: none; /* Hide menu by default */
+        flex-direction: column; /* Stack items vertically */
+        align-items: center; /* Center items */
+    }
+
+    nav ul.show {
+        display: flex; /* Show menu when active */
+    }
+}
+
+/* Input and Button Containers */
+.input-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+}
+
+@media only screen and (max-width: 400px) {
+    #song-Name {
+        font-weight: bold;
+        font-size: large;
+        margin: 5px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 400px;
+    }
+}
+
+#songName {
+    border-radius: 20px;
+    background-color: #fff;
+    padding-left: 10px;
+    width: 300px;
+    border: 1px solid #ccc;
+    height: 40px;
+    font-size: 16px;
+}
+
+button {
+    margin-left: 10px;
+    height: 40px;
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 0 15px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+}
+
+button:hover {
+    background-color: #257762;
+}
+
+/* Song Card Styling */
+.song-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.song-details {
+    flex-grow: 1;
+}
+
+.song-name {
+    font-weight: bold;
+    font-size: large;
+    margin: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 290px;
+}
+
+.song-artists {
+    font-size: smaller;
+    margin: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 290px;
+}
+
+@media only screen and (max-width: 600px) {
+    .song-artists {
+        font-size: smaller;
+        margin: 5px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 200px;
+    }
+    .song-name {
+        font-weight: bold;
+        font-size: large;
+        margin: 5px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 200px;
+    }
+    #songName {
+        border-radius: 20px;
+        background-color: #fff;
+        padding-left: 10px;
+        width: 230px;
+        border: 1px solid #ccc;
+        height: 40px;
+        font-size: 16px;
+    }
+}
+
+.song-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.quality-select {
+    margin-top: -5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+/* Persistent Player */
+.persistent-player {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #2D8F7A;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+.persistent-audio {
+    padding-right: 30px;
+}
+
+#persistentAudio {
+    width: 100%;
+}
+
+/* Play Button */
+.play-btn {
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 10px;
+}
+
+.play-btn:hover {
+    background-color: #257762;
+}
+
+/* 3 Dots for Options */
+.options {
+    position: relative;
+    display: inline-block;
+}
+
+.three-dots {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.options-menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 1;
+    right: 0;
+}
+
+.options-menu button {
+    padding: 10px 20px;
+    background-color: white;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.options-menu button:hover {
+    background-color: #f1f1f1;
+}
+
+/* To display options on click */
+.options:hover .options-menu {
+    display: block;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.112);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Make sure it covers other content */
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.loader {
+    color: #ffffff;
+}
+.hidden {
+    display: none;
+}
+
+/* Add margin-bottom to prevent last song hiding under player */
+#result {
+    margin-bottom: 120px;
+}
+/* Add this to your CSS */
+
+#resultTrendingSongs {
+    margin-bottom: 140px; /* Adjust this value according to the height of your persistent player */
+}
