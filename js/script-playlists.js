@@ -27,12 +27,13 @@ async function browseShow() {
     document.getElementById('searchBtn').addEventListener('click', async () => {
         const songName = document.getElementById('songName').value;
         const nextPageButton = document.getElementById('nextPage');
-        nextPageButton.classList.remove('hidden');
         searchBtn.disabled = true;
         document.getElementById('loadingOverlay').style.display = 'flex';
 
         if (!songName) {
             alert('Please enter a song name');
+            document.getElementById('loadingOverlay').style.display = 'none';
+            searchBtn.disabled = false;
             return;
         }
 
@@ -85,9 +86,11 @@ async function browseShow() {
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
             resultDiv.textContent = 'Error fetching data';
+            document.getElementById('loadingOverlay').style.display = 'none';
         } finally {
             document.getElementById('loadingOverlay').style.display = 'none';
             searchBtn.disabled = false;
+            nextPageButton.classList.remove('hidden');
             nextPageButton.disabled = false;
         }
     });
