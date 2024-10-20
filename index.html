@@ -54,7 +54,7 @@
             <div id="song-Name">
                 <input type="text" id="songName" placeholder="What do you want to play?">
             </div>
-            <button id="searchBtn">Go</button>
+            <button id="searchBtn">search</button>
         </div>
         <h2 class="hidden" id="h2SeachResults">Search Results:</h2>
     </div>
@@ -89,6 +89,18 @@
                 </buttons>
             </div>
         </div>
+        <!-- Song Queue Popup -->
+       <!-- Song Queue Popup -->
+<div id="songQueuePopup" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-button" id="closePopup">&times;</span>
+        <h2>Song Queue</h2>
+        <div id="songQueue" class="song-queue-container">
+            <!-- Song cards will be generated dynamically here -->
+        </div>
+    </div>
+</div>
+
         <div id="prevNxtInline">
             <button id="previousPage" class="previous-page hidden">Previous Page</button>
             <button id="nextPage" class="next-page hidden">Next Page</button>
@@ -126,6 +138,7 @@
                 </div>
             </div>
         </div>
+
         <script src="./js/script-playlists.js"></script>
 </body>
 
