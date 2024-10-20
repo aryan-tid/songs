@@ -184,6 +184,18 @@ async function playlistShow(playlistId) {
                         playBtn.classList.remove("pause");
                         playBtn.classList.add("play");
                     };
+
+                    const seekBackward =async function () {
+                        const currentTime = audio.currentTime;
+                        var audio = document.getElementById('myAudio');
+                        audio.currentTime = Math.max(0, currentTime - 10); // Seek backward by 10 seconds
+                    }
+                    
+                    function seekForward() {
+                        const currentTime = audio.currentTime;
+                        var audio = document.getElementById('myAudio');
+                        audio.currentTime = Math.max(0, currentTime + 10); // Seek backward by 10 seconds
+                    }
                     // Set play/pause action handlers
                     navigator.mediaSession.setActionHandler('play', togglePlayPause1);
                     navigator.mediaSession.setActionHandler('pause', togglePlayPause2);
@@ -281,17 +293,7 @@ playBtn.addEventListener("click", () => {
     }
 }, false);
 
-function seekBackward() {
-    const currentTime = audio.currentTime;
-    var audio = document.getElementById('myAudio');
-    audio.currentTime = Math.max(0, audio.currentTime - 10); // Seek backward by 10 seconds
-}
 
-function seekForward() {
-    const currentTime = audio.currentTime;
-    var audio = document.getElementById('myAudio');
-    audio.currentTime = Math.max(0, audio.currentTime - 10); // Seek backward by 10 seconds
-}
 
 audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
     const volumeEl = audioPlayer.querySelector(".volume-container .volume");
