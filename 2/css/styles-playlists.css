@@ -607,67 +607,79 @@ Button#nextPage:hover {
 .modal {
     align-self: center;
     position: fixed;
-    /* Stay in place */
     z-index: 1;
     /* Sit on top */
     left: 0;
     top: 0;
     width: 100%;
-    max-width: 410px;
-    /* Full width */
     height: 100%;
-    /* Full height */
     overflow: auto;
     /* Enable scroll if needed */
     background-color: rgba(0, 0, 0, 0.322);
+
     /* Black w/ opacity */
-    .popup-content {
+    .modal-content {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: white;
+        background-color: #fefefe;
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
         max-width: 400px;
-        width: 100%;
-    }
-
-    .song-card {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 90%;
-    }
-
-    .song-id {
-        display: none;
-    }
-
-    .song-card img {
-        width: 50px;
-        height: 50px;
-        margin-right: 10px;
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        /* 15% from the top and centered */
-        padding: 20px;
-        border: 1px solid #888;
         width: 80%;
         /* Could be more or less, depending on screen size */
         max-height: 70vh;
         /* Set a maximum height */
         overflow-y: auto;
         /* Enable vertical scrolling */
-        border-radius: 8px;
-        /* Rounded corners */
+    }
+
+    .song-card {
+        display: flex;
+        align-items: center;
+        margin: 10px;
+        transition: transform 0.3s ease;
+        /* Animation for reordering */
+    }
+
+    .song-info {
+        display: flex;
+        align-items: center;
+    }
+
+    .drag-icon {
+        cursor: move;
+        /* Change cursor to indicate draggable */
+        margin-right: 10px;
+        /* Space between icon and song name */
+        user-select: none;
+        /* Prevent text selection on drag */
+    }
+
+    .song-img {
+        width: 50px;
+        /* Set a fixed width for song images */
+        height: 50px;
+        /* Set a fixed height for song images */
+        margin-right: 10px;
+        /* Space between image and text */
+    }
+
+    .song-card.dragging {
+        opacity: 0.5;
+        /* Makes the dragged item semi-transparent */
+    }
+
+    .song-card.hover {
+        transform: scale(1.05);
+        /* Slightly scale up the hovered item */
+    }
+
+    .song-id {
+        display: none;
+        /* Hide song ID */
     }
 
     .close-button {
@@ -688,5 +700,6 @@ Button#nextPage:hover {
         display: flex;
         flex-direction: column;
         gap: 10px;
+        /* Space between song cards */
     }
 }

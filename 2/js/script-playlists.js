@@ -453,48 +453,29 @@ function showSongQueue() {
     // Create song cards for each song in the playlist
     playlistSongName.forEach((songName, index) => {
         const songCard = document.createElement('div');
-        songCard.className = 'song-card'; // Add your existing class
+        songCard.className = 'song-card';
+        songCard.dataset.index = index; // Store index for drag-and-drop
         songCard.draggable = true; // Make the card draggable
         songCard.innerHTML = `
-            <img src="${playlistSongImg[index]}" alt="${songName}" />
+            <img src="${playlistSongImg[index]}" alt="${songName}" class="song-img" />
             <div class="song-info">
+                <div class="drag-icon">|||</div>
                 <span class="song-name">${songName}</span>
                 <span class="song-id">${playlistSongId[index]}</span>
             </div>
         `;
 
         // Handle drag events
-        songCard.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', index); // Store index of the dragged item
-        });
+        songCard.addEventListener('dragstart', dragStart);
+        songCard.addEventListener('dragover', dragOver);
+        songCard.addEventListener('drop', drop);
+        songCard.addEventListener('dragend', dragEnd);
+        songCard.addEventListener('dragleave', dragLeave);
 
-        songCard.addEventListener('dragover', (e) => {
-            e.preventDefault(); // Allow dropping
-        });
-
-        songCard.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const draggedIndex = e.dataTransfer.getData('text/plain');
-            if (draggedIndex !== index.toString()) {
-                // Swap the songs in the array
-                const tempUrl = playlistSongUrl[draggedIndex];
-                const tempImg = playlistSongImg[draggedIndex];
-                const tempName = playlistSongName[draggedIndex];
-                const tempId = playlistSongId[draggedIndex];
-
-                playlistSongUrl[draggedIndex] = playlistSongUrl[index];
-                playlistSongImg[draggedIndex] = playlistSongImg[index];
-                playlistSongName[draggedIndex] = playlistSongName[index];
-                playlistSongId[draggedIndex] = playlistSongId[index];
-
-                playlistSongUrl[index] = tempUrl;
-                playlistSongImg[index] = tempImg;
-                playlistSongName[index] = tempName;
-                playlistSongId[index] = tempId;
-
-                showSongQueue(); // Refresh the song queue
-            }
-        });
+        // Touch event listeners for mobile
+        songCard.addEventListener('touchstart', touchStart);
+        songCard.addEventListener('touchmove', touchMove);
+        songCard.addEventListener('touchend', touchEnd);
 
         songQueueContainer.appendChild(songCard);
     });
@@ -502,45 +483,112 @@ function showSongQueue() {
     songQueuePopup.classList.remove('hidden'); // Show the popup
 }
 
-// Add event listener to the song name in the player
-document.getElementById('currentSongName').addEventListener('click', showSongQueue);
+// Touch event handlers for mobile
+// Variables to track dragged and target indices
+let draggedIndex;
+let targetIndex; // Variable to keep track of the target index
 
-// Add event listener to close the popup
+function touchStart(event) {
+    draggedIndex = this.dataset.index; // Store index of the dragged item
+    event.preventDefault(); // Prevent default behavior
+}
+
+function touchMove(event) {
+    const touch = event.touches[0]; // Get touch point
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+
+    // If the target is a song card and it's different from the dragged card
+    if (target && target.classList.contains('song-card') && target.dataset.index !== draggedIndex) {
+        targetIndex = target.dataset.index; // Store target index
+        const cardElements = document.querySelectorAll('.song-card');
+        cardElements.forEach((card, index) => {
+            card.classList.remove('hover'); // Remove hover class from all cards
+            if (index == targetIndex) {
+                card.classList.add('hover'); // Add hover class for visual feedback
+            }
+        });
+    }
+}
+
+function touchEnd(event) {
+    if (targetIndex !== undefined && draggedIndex !== targetIndex) {
+        reorderSongs(draggedIndex, targetIndex); // Reorder songs
+        showSongQueue(); // Refresh the song queue
+    }
+
+    // Reset targetIndex
+    targetIndex = undefined;
+}
+
+// Event listeners for showing and closing the popup
+document.getElementById('currentSongName').addEventListener('click', showSongQueue);
 document.getElementById('closePopup').addEventListener('click', () => {
     document.getElementById('songQueuePopup').classList.add('hidden');
 });
 
+// Drag and drop functions
 function dragStart(event) {
-    event.dataTransfer.setData('text/plain', event.target.dataset.index);
+    draggedIndex = event.target.closest('.song-card').dataset.index;
+    event.dataTransfer.setData('text/plain', draggedIndex);
+    event.target.closest('.song-card').classList.add('dragging'); // Add class for animation
 }
 
 function dragOver(event) {
-    event.preventDefault(); // Prevent default to allow drop
+    event.preventDefault(); // Allow dropping
+    const target = event.target.closest('.song-card');
+    if (target && target !== event.target) {
+        target.classList.add('hover'); // Add a hover class for animation
+    }
+}
+
+function dragLeave(event) {
+    const target = event.target.closest('.song-card');
+    if (target) {
+        target.classList.remove('hover'); // Remove hover class
+    }
 }
 
 function drop(event) {
     event.preventDefault();
-    const draggedIndex = event.dataTransfer.getData('text/plain');
-    const targetIndex = event.target.dataset.index;
+    const targetIndex = event.target.closest('.song-card').dataset.index;
 
     if (draggedIndex !== targetIndex) {
-        // Swap the songs in the playlist arrays
-        const tempUrl = playlistSongUrl[draggedIndex];
-        const tempImg = playlistSongImg[draggedIndex];
-        const tempName = playlistSongName[draggedIndex];
-        const tempId = playlistSongId[draggedIndex];
-
-        playlistSongUrl[draggedIndex] = playlistSongUrl[targetIndex];
-        playlistSongImg[draggedIndex] = playlistSongImg[targetIndex];
-        playlistSongName[draggedIndex] = playlistSongName[targetIndex];
-        playlistSongId[draggedIndex] = playlistSongId[targetIndex];
-
-        playlistSongUrl[targetIndex] = tempUrl;
-        playlistSongImg[targetIndex] = tempImg;
-        playlistSongName[targetIndex] = tempName;
-        playlistSongId[targetIndex] = tempId;
-
-        // Refresh the popup to reflect the new order
-        openSongQueuePopup();
+        reorderSongs(draggedIndex, targetIndex); // Reorder songs
+        showSongQueue(); // Refresh the song queue
     }
+    event.target.closest('.song-card').classList.remove('hover'); // Remove hover class on drop
+}
+
+function dragEnd(event) {
+    const songCards = document.querySelectorAll('.song-card');
+    songCards.forEach(card => {
+        card.classList.remove('hover'); // Remove hover class from all cards
+        card.classList.remove('dragging'); // Remove dragging class
+    });
+}
+
+// Function to reorder songs based on dragged and target indices
+function reorderSongs(draggedIndex, targetIndex) {
+    // Convert string indices to integers
+    const fromIndex = parseInt(draggedIndex);
+    const toIndex = parseInt(targetIndex);
+
+    // Move the song from the dragged index to the target index
+    const movedSongUrl = playlistSongUrl[fromIndex];
+    const movedSongImg = playlistSongImg[fromIndex];
+    const movedSongName = playlistSongName[fromIndex];
+    const movedSongId = playlistSongId[fromIndex];
+
+    // Remove the song from the original position
+    playlistSongUrl.splice(fromIndex, 1);
+    playlistSongImg.splice(fromIndex, 1);
+    playlistSongName.splice(fromIndex, 1);
+    playlistSongId.splice(fromIndex, 1);
+
+    // Insert the song at the target position
+    playlistSongUrl.splice(toIndex, 0, movedSongUrl);
+    playlistSongImg.splice(toIndex, 0, movedSongImg);
+    playlistSongName.splice(toIndex, 0, movedSongName);
+    playlistSongId.splice(toIndex, 0, movedSongId);
+    showSongQueue();
 }
