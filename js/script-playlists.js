@@ -174,14 +174,21 @@ async function playlistShow(playlistId) {
                         ]
                     });
                     // // Play/Pause action handler (combined)
-                    // const togglePlayPause = async function () {
-                    //     playBtn.addEventListener('click');
-                    // };
-                    // // Set play/pause action handlers
-                    // navigator.mediaSession.setActionHandler('play', togglePlayPause);
-                    // navigator.mediaSession.setActionHandler('pause', togglePlayPause);
-                    // navigator.mediaSession.setActionHandler('seekbackward', function () { });
-                    // navigator.mediaSession.setActionHandler('seekforward', function () { });
+                    const togglePlayPause1 = async function () {
+                        audio.play()
+                        playBtn.classList.remove("play");
+                        playBtn.classList.add("pause");
+                    };
+                    const togglePlayPause2 = async function () {
+                        audio.pause()
+                        playBtn.classList.remove("pause");
+                        playBtn.classList.add("play");
+                    };
+                    // Set play/pause action handlers
+                    navigator.mediaSession.setActionHandler('play', togglePlayPause1);
+                    navigator.mediaSession.setActionHandler('pause', togglePlayPause2);
+                    navigator.mediaSession.setActionHandler('seekbackward', seekForward);
+                    navigator.mediaSession.setActionHandler('seekforward', seekBackward);
                     // navigator.mediaSession.setActionHandler('previoustrack', function () { });
                     // navigator.mediaSession.setActionHandler('nexttrack', function () { });
                 }
@@ -273,6 +280,18 @@ playBtn.addEventListener("click", () => {
         playBtn.classList.add("play");
     }
 }, false);
+
+function seekBackward() {
+    const currentTime = audio.currentTime;
+    var audio = document.getElementById('myAudio');
+    audio.currentTime = Math.max(0, audio.currentTime - 10); // Seek backward by 10 seconds
+}
+
+function seekForward() {
+    const currentTime = audio.currentTime;
+    var audio = document.getElementById('myAudio');
+    audio.currentTime = Math.max(0, audio.currentTime - 10); // Seek backward by 10 seconds
+}
 
 audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
     const volumeEl = audioPlayer.querySelector(".volume-container .volume");
