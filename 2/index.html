@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song List</title>
+    <link rel="stylesheet" href="./css/styles-playlists.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo" id="logo">Melodify</div> <!-- Added Website Name -->
+            <div class="hamburger" id="hamburger">&#9776;</div> <!-- Hamburger icon -->
+        </div>
+        <ul id="navbarList">
+            <li><a href="#">Home</a></li>
+            <li><a id="browse-link" href="#">Browse</a></li>
+            <li><a href="#">Downloads</a></li>
+            <li>
+                <div id="qualitySelectorFix">
+                    <label for="globalQualitySelect"><strong id="hideQuality">Quality:&nbsp;</strong></label>
+                    <select id="globalQualitySelect" class="quality-select">
+                        <option value="12kbps">12kbps</option>
+                        <option value="48kbps">48kbps</option>
+                        <option value="96kbps">96kbps</option>
+                        <option value="160kbps">160kbps</option>
+                        <option value="320kbps" selected>320kbps</option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!--loading bar-->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 150">
+                <path fill="none" stroke="#922D8A" stroke-width="30" stroke-linecap="round" stroke-dasharray="300 385"
+                    stroke-dashoffset="0"
+                    d="M275 75c0 31-27 50-50 50-58 0-92-100-150-100-28 0-50 22-50 50s23 50 50 50c58 0 92-100 150-100 24 0 50 19 50 50Z">
+                    <animate attributeName="stroke-dashoffset" calcMode="spline" dur="2" values="685;-685"
+                        keySplines="0 0 1 1" repeatCount="indefinite"></animate>
+                </path>
+            </svg>
+            <p class="loader">Loading, please wait...</p>
+        </div>
+    </div>
+
+    <div id="browseShowId" class="hidden">
+        <div class="input-container">
+            <div id="song-Name">
+                <input type="text" id="songName" placeholder="What do you want to play?">
+            </div>
+            <button id="searchBtn">search</button>
+        </div>
+        <h2 class="hidden" id="h2SeachResults">Search Results:</h2>
+    </div>
+
+    <div id="playlistShowId" class="hidden">
+        <img src="" alt="Playlist Image" id="playlistImg" class="hidden" />
+        <div>
+            <h2 id="playlistName" class="hidden"></h2>
+            <buttons class="btn-Add-Playlist-ToQueue hidden" id="btnAddPlaylistToQueue">
+                <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
+                 height: 40px;">
+            </buttons>
+        </div>
+    </div>
+
+    <div id="result" class="hi"></div>
+    <div>
+        <!-- Hidden song template (styled as hidden by default) -->
+        <div id="songTemplate" class="song" style="display: none;">
+            <div class="song-card">
+                <img src="" alt="Song Image" class="song-img" />
+                <div class="song-details">
+                    <p class="song-name"><span></span></p>
+                    <p class="song-artists"><span></span></p>
+                    <p class="song-ID hidden"><span></span></p>
+                    <p class="song-index hidden"><span></span></p>
+                </div>
+                <button class="play-btn" id="playBtn">Play</button>
+                <buttons class="play-btn" id="playImg">
+                    <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
+                     height: 40px;">
+                </buttons>
+            </div>
+        </div>
+        <!-- Song Queue Popup -->
+        <div id="songQueuePopup" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-button" id="closePopup">&times;</span>
+                <h2>Song Queue</h2>
+                <div id="songQueue" class="song-queue-container"></div>
+            </div>
+        </div>
+        <div id="prevNxtInline">
+            <button id="previousPage" class="previous-page hidden">Previous Page</button>
+            <button id="nextPage" class="next-page hidden">Next Page</button>
+        </div>
+        <button id="randomAjustor"></button>
+        <div id="audioPlayer" class="audio-player-container">
+            <div style="height: 10px;"></div>
+            <div class="persistent-audio">
+                <div class="audio-player">
+                    <div class="timeline">
+                        <div class="progress"></div>
+                    </div>
+                    <div class="controls">
+                        <div class="play-container">
+                            <div class="toggle-play play">
+                            </div>
+                        </div>
+                        <div class="time">
+                            <div class="current">0:00</div>
+                            <div class="divider">/</div>
+                            <div class="length"></div>
+                        </div>
+                        <div id="audioPlayer" class="name"><span id="currentSongName">None</span></div>
+                        <!--     credit for icon to https://saeedalipoor.github.io/icono/ -->
+                        <div class="volume-container">
+                            <div class="volume-button">
+                                <div class="volume icono-volumeMedium"></div>
+                            </div>
+
+                            <div class="volume-slider">
+                                <div class="volume-percentage"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="./js/script-playlists.js"></script>
+</body>
+
+</html>
