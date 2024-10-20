@@ -1,6 +1,11 @@
 let page = 1;
 let imageUniversalUrl;
 let audio = new Audio();
+let playlistSongUrl = [];
+let playlistSongImg = [];
+let playlistSongName = [];
+let playlistSongId = [];
+let currentIndexPlaylist = 0;
 
 document.getElementById('nextPage').addEventListener('click', () => {
     nextPage.disabled = true;
@@ -73,7 +78,6 @@ async function browseShow() {
                 // Update the content with song data
                 songClone.querySelector('.song-img').src = song.image[1].url;
                 songClone.querySelector('.song-name span').textContent = song.name;
-
                 songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
                 const playSong = () => {
@@ -86,21 +90,7 @@ async function browseShow() {
                     } else {
                         console.error(`No download URL found for quality: ${globalQuality}`);
                     }
-                    if ('mediaSession' in navigator) {
-
-                        navigator.mediaSession.metadata = new MediaMetadata({
-                            artwork: [
-                                { src: imageUniversalUrl, sizes: '512x512', type: 'image/png' },
-                            ]
-                        });
-
-                        // navigator.mediaSession.setActionHandler('play', function () { });
-                        // navigator.mediaSession.setActionHandler('pause', function () { });
-                        // navigator.mediaSession.setActionHandler('seekbackward', function () { });
-                        // navigator.mediaSession.setActionHandler('seekforward', function () { });
-                        // navigator.mediaSession.setActionHandler('previoustrack', function () { });
-                        // navigator.mediaSession.setActionHandler('nexttrack', function () { });
-                    }
+                    callMediaSession(imageUniversalUrl, song.name);
                 };
 
                 // Attach click event listener on the entire card
@@ -148,10 +138,16 @@ async function playlistShow(playlistId) {
         resultDiv.innerHTML = '';
 
         // Loop through the songs and clone the template for each song
-        results.forEach(song => {
+        results.forEach((song, index) => {
             const songTemplate = document.getElementById('songTemplate');
             const songClone = songTemplate.cloneNode(true); // Deep clone the template
             songClone.style.display = 'block'; // Make it visible
+            songClone.querySelector('.song-ID span').textContent = song.id;
+            songClone.querySelector('.song-index span').textContent = index + 1; // Display the song index (1-based)
+            playlistSongUrl.push((song.downloadUrl ? song.downloadUrl.find(url => url.quality === document.getElementById('globalQualitySelect').value) : null).url);
+            playlistSongImg.push(song.image[2].url);
+            playlistSongName.push(song.name.replace(/&quot;/g, ' '));
+            playlistSongId.push(song.id);
 
             // Update the content with song data
             songClone.querySelector('.song-img').src = song.image[1].url;
@@ -161,53 +157,15 @@ async function playlistShow(playlistId) {
             const playSong = () => {
                 const globalQuality = document.getElementById('globalQualitySelect').value;
                 const downloadUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === globalQuality) : null; // Ensure downloadUrl exists
-                imageUniversalUrl = song.image[2].url // Use the medium-quality image at index 1
+                imageUniversalUrl = song.image[2].url; // Use the medium-quality image at index 1
                 if (downloadUrl) {
-                    playInPlayer(song.name, downloadUrl.url);
+                    playInPlayer(song.name, downloadUrl.url, imageUniversalUrl);
                 } else {
                     console.error('No download URL found for the selected quality.');
                 }
-                if ('mediaSession' in navigator) {
 
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        artwork: [
-                            { src: imageUniversalUrl, sizes: '512x512', type: 'image/png' },
-                        ]
-                    });
-                    // // Play/Pause action handler (combined)
-                    const togglePlayPause1 = async function () {
-                        audio.play()
-                        playBtn.classList.remove("play");
-                        playBtn.classList.add("pause");
-                    };
-                    const togglePlayPause2 = async function () {
-                        audio.pause()
-                        playBtn.classList.remove("pause");
-                        playBtn.classList.add("play");
-                    };
-
-                    // Seek forward function (10 seconds)
-                    function seekForward() {
-                        if (audio) {
-                            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10); // Ensure it doesn't go beyond duration
-                        }
-                    }
-
-                    // Seek backward function (10 seconds)
-                    function seekBackward() {
-                        if (audio) {
-                            audio.currentTime = Math.max(0, audio.currentTime - 10); // Ensure it doesn't go below 0
-                        }
-                    }
-
-                    // Set play/pause action handlers
-                    navigator.mediaSession.setActionHandler('play', togglePlayPause1);
-                    navigator.mediaSession.setActionHandler('pause', togglePlayPause2);
-                    navigator.mediaSession.setActionHandler('seekbackward', seekBackward);
-                    navigator.mediaSession.setActionHandler('seekforward', seekForward);
-                    navigator.mediaSession.setActionHandler('previoustrack', previoustrack);
-                    navigator.mediaSession.setActionHandler('nexttrack', nexttrack);
-                }
+                // Set currentIndexPlaylist to the current song's index
+                currentIndexPlaylist = index;
             };
 
             // Attach click event listener on the entire card
@@ -221,15 +179,77 @@ async function playlistShow(playlistId) {
         document.getElementById('result').textContent = 'Error fetching data'; // Update to correct element
     }
 }
-
 // Call the init function to execute the code
 playlistShow(47599074);
 
+async function callMediaSession(urlImage1, SongName,) {
+    // Update mediaSession with metadata (optional)
+    if ('mediaSession' in navigator) {
+        console.log(urlImage1)
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: SongName.replace(/&quot;/g, ' '),
+            artwork: [
+                { src: urlImage1, sizes: '512x512', type: 'image/png' },
+            ],
+        });
+
+        // Play/Pause action handler
+        const togglePlayPause1 = async function () {
+            audio.play();
+            playBtn.classList.remove("play");
+            playBtn.classList.add("pause");
+        };
+        const togglePlayPause2 = async function () {
+            audio.pause();
+            playBtn.classList.remove("pause");
+            playBtn.classList.add("play");
+        };
+
+        // Seek forward/backward and next/previous track functions
+        function seekForward() {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+        }
+
+        function seekBackward() {
+            audio.currentTime = Math.max(0, audio.currentTime - 10);
+        }
+
+        function loadPreviousTrack() {
+            if (currentIndexPlaylist > 0) {
+                currentIndexPlaylist--;
+                loadTrack(currentIndexPlaylist);
+            }
+        }
+
+        function loadNextTrack() {
+            if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+                currentIndexPlaylist++;
+                loadTrack(currentIndexPlaylist);
+            }
+        }
+
+        function loadTrack(index) {
+            const audioSrc = playlistSongUrl[index];
+            const audioName = playlistSongName[index];
+            const imageUrl = playlistSongImg[index];
+            playInPlayer(audioName, audioSrc, imageUrl);
+        }
+
+        // Set mediaSession action handlers
+        navigator.mediaSession.setActionHandler('play', togglePlayPause1);
+        navigator.mediaSession.setActionHandler('pause', togglePlayPause2);
+        navigator.mediaSession.setActionHandler('seekbackward', seekBackward);
+        navigator.mediaSession.setActionHandler('seekforward', seekForward);
+        navigator.mediaSession.setActionHandler('previoustrack', loadPreviousTrack);
+        navigator.mediaSession.setActionHandler('nexttrack', loadNextTrack);
+        navigator.mediaSession.setActionHandler('stop', togglePlayPause2);
+    }
+}
+
 // Play song in the player
-function playInPlayer(songName, url) {
+function playInPlayer(songName, url, imgUrl1) {
     const audioPlayer = document.getElementById('audioPlayer');
     const songNameDisplay = document.getElementById('currentSongName');
-
     // Set the audio source and play
     audio.src = url; // Set the source to the dynamic URL fetched from API
     audio.play()
@@ -246,6 +266,7 @@ function playInPlayer(songName, url) {
         .catch(error => {
             console.error('Error playing audio:', error);
         });
+        callMediaSession(imgUrl1, songName)
 }
 
 // Removed local storage logic
