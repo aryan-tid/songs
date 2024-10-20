@@ -248,9 +248,9 @@ Button#searchBtn {
     background-color: #2D8F7A;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 13px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     border-radius: 20px;
 }
 
@@ -323,6 +323,45 @@ Button#searchBtn:hover,
 Button#nextPage:hover {
     background-color: #257762;
 }
+
+#playlistShowId {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#playlistImg {
+    width: 200px; /* Adjust the size as needed */
+    height: 200px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image maintains aspect ratio */
+    margin-bottom: 10px; /* Adds space between image and playlist name */
+}
+
+#playlistName {
+    font-size: 24px; /* Adjust the font size as needed */
+    font-weight: bold;
+    display: inline-block;
+}
+#btnAddPlaylistToQueue {
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    vertical-align: middle; /* Aligns the button with the playlist name */
+}
+
+.hidden#playlistName {
+    display: none;
+}
+.hidden#btnAddPlaylistToQueue {
+    display: none;
+}
+
+
 
 /* 3 Dots for Options */
 .options {

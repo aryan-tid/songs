@@ -6,6 +6,10 @@ let playlistSongImg = [];
 let playlistSongName = [];
 let playlistSongId = [];
 let currentIndexPlaylist = 0;
+let randomSongName;
+let testindexorder = 0;
+let isAdding = false;
+
 
 document.getElementById('nextPage').addEventListener('click', () => {
     nextPage.disabled = true;
@@ -30,6 +34,87 @@ async function hideMenu() {
     }
 }
 
+async function playSongByID(songID) {
+    const url = `https://saavn.dev/api/songs/${songID}?lyrics=false`;
+    try {
+        const responseUniqueSongID = await fetch(url);
+        if (!responseUniqueSongID.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await responseUniqueSongID.json();
+        const song = data.data[0];  // Access the first item in the array
+        const globalQuality = document.getElementById('globalQualitySelect').value;
+        const songPlayUrl = song.downloadUrl.find(url => url.quality === globalQuality);
+
+        if (song) {
+            addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, songID)
+            console.log(playlistSongUrl.length);
+            playInPlayer(song.name, songPlayUrl.url, song.image[2].url)
+        } else {
+            console.error('No song data found');
+        }
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        const resultDiv = document.getElementById('result');
+        if (resultDiv) {
+            resultDiv.textContent = 'Error fetching data';
+        }
+    } finally {
+        console.log('End');
+        currentIndexPlaylist = playlistSongUrl.length - 1;
+    }
+}
+
+function addSongToQueue(songURL, songIMG, songNAME, songID) {
+    playlistSongUrl.push(songURL);
+    playlistSongImg.push(songIMG);
+    playlistSongName.push(songNAME);
+    playlistSongId.push(songID);
+    return;
+}
+
+async function addPlaylistToQueue(playlistID) {
+    if (isAdding) return; // Prevent multiple calls
+    isAdding = true;
+    const wasQueueEmpty = playlistSongUrl.length === 0;
+    const url = `https://saavn.dev/api/playlists?id=${playlistID}&page=0&limit=100`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const results = data.data.songs; // Access songs in data.data.songs
+
+        // Loop through the songs and clone the template for each song
+        results.forEach((song) => {
+            const selectedQuality = document.getElementById('globalQualitySelect').value;
+            const songDownloadUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === selectedQuality)?.url : null;
+
+            playlistSongUrl.push(songDownloadUrl);
+            playlistSongImg.push(song.image[2].url);
+            playlistSongName.push(song.name.replace(/&quot;/g, ' '));
+            playlistSongId.push(song.id);
+
+            testindexorder++;
+            console.log(playlistSongName[testindexorder - 1]);
+
+            // If the queue was empty before, play the first song automatically
+            if (wasQueueEmpty && playlistSongUrl.length > 0) {
+                currentIndexPlaylist = 0;
+                loadTrack(currentIndexPlaylist); // Play the first song automatically
+            }
+        });
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    } finally {
+        isAdding = false;
+    }
+}
+
+
+
 async function browseShow() {
     // Show the browse section
     const browseShowId = document.getElementById('browseShowId');
@@ -38,24 +123,32 @@ async function browseShow() {
 
     document.getElementById('searchBtn').addEventListener('click', async () => {
         const songName = document.getElementById('songName').value;
+        //
+        if (randomSongName != songName) {
+            page = 1;
+        }
+        randomSongName = songName;
         const nextPageButton = document.getElementById('nextPage');
         const previousPageButton = document.getElementById('previousPage');
         searchBtn.disabled = true;
         document.getElementById('loadingOverlay').style.display = 'flex';
 
-        if (!songName) {
+        if (!randomSongName) {
             alert('Please enter a song name');
             document.getElementById('loadingOverlay').style.display = 'none';
             searchBtn.disabled = false;
             return;
         }
 
+        console.log("current page value is: " + page);
         const url = `https://saavn.dev/api/search/songs?query=${encodeURIComponent(songName)}&page=${page}&limit=20`;
 
         // Clear previous playlist results before fetching new ones
         const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = ''; // Clear the current songs
         const h2SeachResults = document.getElementById('h2SeachResults');
+        playlistImg.classList.add('hidden');
+        btnAddPlaylistToQueue.classList.add('hidden');
+        playlistName.classList.add('hidden');
         h2SeachResults.classList.remove('hidden');
 
         try {
@@ -74,6 +167,7 @@ async function browseShow() {
                 const songTemplate = document.getElementById('songTemplate');
                 const songClone = songTemplate.cloneNode(true); // Deep clone the template
                 songClone.style.display = 'block'; // Make it visible
+                songClone.querySelector('.song-ID span').textContent = song.id;
 
                 // Update the content with song data
                 songClone.querySelector('.song-img').src = song.image[1].url;
@@ -81,16 +175,8 @@ async function browseShow() {
                 songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
                 const playSong = () => {
-                    const globalQuality = document.getElementById('globalQualitySelect').value;
-                    const downloadUrl = song.downloadUrl.find(url => url.quality === globalQuality);
-                    imageUniversalUrl = song.image[2].url
-                    if (downloadUrl) {
-                        playInPlayer(song.name, downloadUrl.url);
-
-                    } else {
-                        console.error(`No download URL found for quality: ${globalQuality}`);
-                    }
-                    callMediaSession(imageUniversalUrl, song.name);
+                    console.log(song.id);
+                    playSongByID(song.id);
                 };
 
                 // Attach click event listener on the entire card
@@ -118,8 +204,15 @@ async function browseShow() {
     });
 }
 
+document.getElementById('songName').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        document.getElementById('searchBtn').click();
+    }
+});
+
 async function playlistShow(playlistId) {
-    const url = `https://saavn.dev/api/playlists?id=${playlistId}&page=0&limit=25`;
+    document.getElementById('btnAddPlaylistToQueue').disabled = false;
+    const url = `https://saavn.dev/api/playlists?id=${playlistId}&page=0&limit=100`;
 
     try {
         const response = await fetch(url);
@@ -128,9 +221,14 @@ async function playlistShow(playlistId) {
         }
         const data = await response.json();
         const resultsPlaylistName = data.data.name;
-        document.getElementById('playlist-name').textContent = resultsPlaylistName;
+        const resultsPlaylistImg = data.data.image[2].url;
+        document.getElementById('playlistName').textContent = resultsPlaylistName;
+        document.getElementById('playlistImg').src = resultsPlaylistImg;
         const playlistShowId = document.getElementById('playlistShowId');
         playlistShowId.classList.remove('hidden');
+        playlistImg.classList.remove('hidden');
+        btnAddPlaylistToQueue.classList.remove('hidden');
+        playlistName.classList.remove('hidden');
         const results = data.data.songs; // Access songs in data.data.songs
         const resultDiv = document.getElementById('result');
 
@@ -143,36 +241,21 @@ async function playlistShow(playlistId) {
             const songClone = songTemplate.cloneNode(true); // Deep clone the template
             songClone.style.display = 'block'; // Make it visible
             songClone.querySelector('.song-ID span').textContent = song.id;
-            songClone.querySelector('.song-index span').textContent = index + 1; // Display the song index (1-based)
-            playlistSongUrl.push((song.downloadUrl ? song.downloadUrl.find(url => url.quality === document.getElementById('globalQualitySelect').value) : null).url);
-            playlistSongImg.push(song.image[2].url);
-            playlistSongName.push(song.name.replace(/&quot;/g, ' '));
-            playlistSongId.push(song.id);
 
             // Update the content with song data
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
-            const playSong = () => {
-                const globalQuality = document.getElementById('globalQualitySelect').value;
-                const downloadUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === globalQuality) : null; // Ensure downloadUrl exists
-                imageUniversalUrl = song.image[2].url; // Use the medium-quality image at index 1
-                if (downloadUrl) {
-                    playInPlayer(song.name, downloadUrl.url, imageUniversalUrl);
-                } else {
-                    console.error('No download URL found for the selected quality.');
-                }
-
-                // Set currentIndexPlaylist to the current song's index
-                currentIndexPlaylist = index;
-            };
-
-            // Attach click event listener on the entire card
-            songClone.addEventListener('click', playSong);
-
+            songClone.querySelector('.song-card').addEventListener('click', () => {
+                playSongByID(song.id);
+            });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
+            document.getElementById('btnAddPlaylistToQueue').addEventListener('click', () => {
+                document.getElementById('btnAddPlaylistToQueue').disabled = true;
+                addPlaylistToQueue(playlistId); // Call the addPlaylistToQueue function
+            });
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -185,7 +268,6 @@ playlistShow(47599074);
 async function callMediaSession(urlImage1, SongName,) {
     // Update mediaSession with metadata (optional)
     if ('mediaSession' in navigator) {
-        console.log(urlImage1)
         navigator.mediaSession.metadata = new MediaMetadata({
             title: SongName.replace(/&quot;/g, ' '),
             artwork: [
@@ -266,7 +348,7 @@ function playInPlayer(songName, url, imgUrl1) {
         .catch(error => {
             console.error('Error playing audio:', error);
         });
-        callMediaSession(imgUrl1, songName)
+    callMediaSession(imgUrl1, songName)
 }
 
 // Removed local storage logic
@@ -317,6 +399,28 @@ playBtn.addEventListener("click", () => {
         playBtn.classList.add("play");
     }
 }, false);
+
+// This event triggers when the song ends, and it automatically plays the next one.
+audio.addEventListener("ended", () => {
+    loadNextTrack(); // Automatically play the next song
+}, false);
+
+// Function to load and play the next track
+function loadNextTrack() {
+    if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+        currentIndexPlaylist++;
+        loadTrack(currentIndexPlaylist);
+    } else {
+        console.log("End of playlist");
+    }
+}
+
+function loadTrack(index) {
+    const audioSrc = playlistSongUrl[index];
+    const audioName = playlistSongName[index];
+    const imageUrl = playlistSongImg[index];
+    playInPlayer(audioName, audioSrc, imageUrl);
+}
 
 
 audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
