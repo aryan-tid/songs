@@ -62,7 +62,7 @@ nav ul li a:hover {
 }
 
 #qualitySelectorFix {
-    display:inline-flex;
+    display: inline-flex;
 }
 
 /* Mobile Styles */
@@ -100,7 +100,8 @@ nav ul li a:hover {
 }
 
 /* Headings Styling */
-h1, h2 {
+h1,
+h2 {
     text-align: center;
     color: #333;
 }
@@ -155,7 +156,7 @@ h1, h2 {
 
 /* Song Card Styling */
 
-#songTemplate{
+#songTemplate {
     padding-left: 5px;
     padding-right: 5px;
 }
@@ -253,14 +254,15 @@ Button#searchBtn {
     border-radius: 20px;
 }
 
-#prevNxtInline{
+#prevNxtInline {
     display: inline-flex;
     width: 100%;
 }
 
 #nextPage {
     display: block;
-    margin: 20px auto; /* Center the button horizontally and add top margin */
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
     background-color: #2D8F7A;
     color: white;
     border: none;
@@ -269,7 +271,8 @@ Button#searchBtn {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100; /* Ensure it's not hidden by any other content */
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
 
@@ -279,7 +282,8 @@ Button#searchBtn {
 
 #previousPage {
     display: block;
-    margin: 20px auto; /* Center the button horizontally and add top margin */
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
     background-color: #2D8F7A;
     color: white;
     border: none;
@@ -288,7 +292,8 @@ Button#searchBtn {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100; /* Ensure it's not hidden by any other content */
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
 
@@ -296,9 +301,10 @@ Button#searchBtn {
     display: none;
 }
 
-#randomAjustor{
+#randomAjustor {
     display: block;
-    margin: 20px auto; /* Center the button horizontally and add top margin */
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
     background-color: none;
     color: none;
     border: none;
@@ -307,7 +313,8 @@ Button#searchBtn {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100; /* Ensure it's not hidden by any other content */
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
     margin-bottom: 20px;
 }
 

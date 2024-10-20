@@ -1,5 +1,6 @@
 let page = 1;
 let imageUniversalUrl;
+let audio = new Audio();
 
 document.getElementById('nextPage').addEventListener('click', () => {
     nextPage.disabled = true;
@@ -185,24 +186,27 @@ async function playlistShow(playlistId) {
                         playBtn.classList.add("play");
                     };
 
-                    const seekBackward =async function () {
-                        const currentTime = audio.currentTime;
-                        var audio = document.getElementById('myAudio');
-                        audio.currentTime = Math.max(0, currentTime - 10); // Seek backward by 10 seconds
-                    }
-                    
+                    // Seek forward function (10 seconds)
                     function seekForward() {
-                        const currentTime = audio.currentTime;
-                        var audio = document.getElementById('myAudio');
-                        audio.currentTime = Math.max(0, currentTime + 10); // Seek backward by 10 seconds
+                        if (audio) {
+                            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10); // Ensure it doesn't go beyond duration
+                        }
                     }
+
+                    // Seek backward function (10 seconds)
+                    function seekBackward() {
+                        if (audio) {
+                            audio.currentTime = Math.max(0, audio.currentTime - 10); // Ensure it doesn't go below 0
+                        }
+                    }
+
                     // Set play/pause action handlers
                     navigator.mediaSession.setActionHandler('play', togglePlayPause1);
                     navigator.mediaSession.setActionHandler('pause', togglePlayPause2);
-                    navigator.mediaSession.setActionHandler('seekbackward', seekForward);
-                    navigator.mediaSession.setActionHandler('seekforward', seekBackward);
-                    // navigator.mediaSession.setActionHandler('previoustrack', function () { });
-                    // navigator.mediaSession.setActionHandler('nexttrack', function () { });
+                    navigator.mediaSession.setActionHandler('seekbackward', seekBackward);
+                    navigator.mediaSession.setActionHandler('seekforward', seekForward);
+                    navigator.mediaSession.setActionHandler('previoustrack', previoustrack);
+                    navigator.mediaSession.setActionHandler('nexttrack', nexttrack);
                 }
             };
 
@@ -258,7 +262,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // New player logic
 const audioPlayer = document.querySelector(".audio-player");
-const audio = new Audio(); // You can update the song file if needed
+audio = new Audio(); // You can update the song file if needed
 
 audio.addEventListener('loadeddata', () => {
     audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(audio.duration);
@@ -292,7 +296,6 @@ playBtn.addEventListener("click", () => {
         playBtn.classList.add("play");
     }
 }, false);
-
 
 
 audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
