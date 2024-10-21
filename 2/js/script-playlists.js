@@ -448,6 +448,8 @@ function getTimeCodeFromNum(num) {
 function showSongQueue() {
     const songQueuePopup = document.getElementById('songQueuePopup');
     const songQueueContainer = document.getElementById('songQueue');
+    modal.classList.remove('hidden');
+    body.classList.add('modal-open'); // Add modal-open class when modal is opened
     songQueueContainer.innerHTML = ''; // Clear previous content
 
     // Create song cards for each song in the playlist
@@ -592,3 +594,10 @@ function reorderSongs(draggedIndex, targetIndex) {
     playlistSongId.splice(toIndex, 0, movedSongId);
     showSongQueue();
 }
+const modal = document.getElementById('songQueuePopup');
+const body = document.body;
+
+document.getElementById('closePopup').addEventListener('click', function() {
+    modal.classList.add('hidden');
+    body.classList.remove('modal-open'); // Remove modal-open class when modal is closed
+});

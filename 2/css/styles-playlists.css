@@ -301,6 +301,11 @@ Button#searchBtn {
     display: none;
 }
 
+.modal-open #nextPage,
+.modal-open #previousPage {
+    z-index: -1; /* Send them behind when modal is open */
+}
+
 #randomAjustor {
     display: block;
     margin: 20px auto;
@@ -626,14 +631,14 @@ Button#nextPage:hover {
         background-color: #fefefe;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
         max-width: 400px;
-        width: 80%;
+        width: 90%;
         /* Could be more or less, depending on screen size */
-        max-height: 70vh;
+        max-height: 80vh;
         /* Set a maximum height */
         overflow-y: auto;
         /* Enable vertical scrolling */
+        z-index: 100;
     }
 
     .song-card {
@@ -641,6 +646,8 @@ Button#nextPage:hover {
         align-items: center;
         margin: 10px;
         transition: transform 0.3s ease;
+        width: 230px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
         /* Animation for reordering */
     }
 
@@ -665,6 +672,7 @@ Button#nextPage:hover {
         /* Set a fixed height for song images */
         margin-right: 10px;
         /* Space between image and text */
+
     }
 
     .song-card.dragging {
@@ -701,5 +709,14 @@ Button#nextPage:hover {
         flex-direction: column;
         gap: 10px;
         /* Space between song cards */
+    }
+    .song-name {
+        font-weight: light;
+        font-size: medium;
+        margin: 0px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 150px;
     }
 }
