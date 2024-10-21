@@ -467,6 +467,30 @@ function showSongQueue() {
             </div>
         `;
 
+        // Create the play button dynamically
+        const playButton = document.createElement('button');
+        playButton.className = 'play-button';
+        playButton.id = 'playImg';
+        playButton.innerHTML = `
+            <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px; height: 40px;">
+        `;
+        // Add a click event to the play button to play the song
+        playButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent bubbling up to the card's click
+            const clickedIndex = songCard.dataset.index;
+            playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex]);
+        });
+
+        // Append the play button to the song card
+        songCard.appendChild(playButton);
+
+        // Add a click event to play the song when the card is clicked
+        songCard.addEventListener('click', (event) => {
+            const clickedIndex = event.currentTarget.dataset.index; // Use currentTarget to ensure the card itself is referenced
+            currentIndexPlaylist = clickedIndex;
+            playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex]);
+        });
+
         // Handle drag events
         songCard.addEventListener('dragstart', dragStart);
         songCard.addEventListener('dragover', dragOver);
@@ -486,7 +510,6 @@ function showSongQueue() {
 }
 
 // Touch event handlers for mobile
-// Variables to track dragged and target indices
 let draggedIndex;
 let targetIndex; // Variable to keep track of the target index
 
@@ -500,15 +523,23 @@ function touchMove(event) {
     const target = document.elementFromPoint(touch.clientX, touch.clientY);
 
     // If the target is a song card and it's different from the dragged card
-    if (target && target.classList.contains('song-card') && target.dataset.index !== draggedIndex) {
-        targetIndex = target.dataset.index; // Store target index
-        const cardElements = document.querySelectorAll('.song-card');
-        cardElements.forEach((card, index) => {
-            card.classList.remove('hover'); // Remove hover class from all cards
-            if (index == targetIndex) {
-                card.classList.add('hover'); // Add hover class for visual feedback
-            }
-        });
+    if (target.dataset.index !== draggedIndex) {
+        if (target && target.classList.contains('song-card')) {
+            targetIndex = target.dataset.index; // Store target index
+            console.log(targetIndex);
+            const cardElements = document.querySelectorAll('.song-card');
+            cardElements.forEach((card, index) => {
+                card.classList.remove('hover'); // Remove hover class from all cards
+                if (index == targetIndex) {
+                    card.classList.add('hover'); // Add hover class for visual feedback
+                }
+            });
+        }else {
+            event.stopPropagation(); // Prevent bubbling up to the card's click
+            const clickedIndex = draggedIndex;
+            currentIndexPlaylist = clickedIndex;
+            playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex]);
+        }
     }
 }
 
@@ -521,6 +552,7 @@ function touchEnd(event) {
     // Reset targetIndex
     targetIndex = undefined;
 }
+
 
 // Event listeners for showing and closing the popup
 document.getElementById('currentSongName').addEventListener('click', showSongQueue);
@@ -597,7 +629,7 @@ function reorderSongs(draggedIndex, targetIndex) {
 const modal = document.getElementById('songQueuePopup');
 const body = document.body;
 
-document.getElementById('closePopup').addEventListener('click', function() {
+document.getElementById('closePopup').addEventListener('click', function () {
     modal.classList.add('hidden');
     body.classList.remove('modal-open'); // Remove modal-open class when modal is closed
 });

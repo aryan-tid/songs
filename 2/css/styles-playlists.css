@@ -621,8 +621,6 @@ Button#nextPage:hover {
     overflow: auto;
     /* Enable scroll if needed */
     background-color: rgba(0, 0, 0, 0.322);
-
-    /* Black w/ opacity */
     .modal-content {
         position: absolute;
         top: 50%;
@@ -640,22 +638,24 @@ Button#nextPage:hover {
         /* Enable vertical scrolling */
         z-index: 100;
     }
-
+    
     .song-card {
         display: flex;
         align-items: center;
         margin: 10px;
+        position: relative;
         transition: transform 0.3s ease;
         width: 230px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
         /* Animation for reordering */
+        z-index: 1; /* Set lower z-index */
     }
-
+    
     .song-info {
         display: flex;
         align-items: center;
     }
-
+    
     .drag-icon {
         cursor: move;
         /* Change cursor to indicate draggable */
@@ -664,52 +664,64 @@ Button#nextPage:hover {
         user-select: none;
         /* Prevent text selection on drag */
     }
-
+    
+    .play-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        right: 10px; /* Align the button to the right of the card */
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10; /* Ensure the button is displayed on top */
+    }
+    
+    .play-button img {
+        width: 40px;
+        height: 40px;
+    }
+    
     .song-img {
         width: 50px;
-        /* Set a fixed width for song images */
         height: 50px;
-        /* Set a fixed height for song images */
         margin-right: 10px;
-        /* Space between image and text */
-
     }
-
+    
     .song-card.dragging {
         opacity: 0.5;
         /* Makes the dragged item semi-transparent */
     }
-
+    
     .song-card.hover {
         transform: scale(1.05);
         /* Slightly scale up the hovered item */
     }
-
+    
     .song-id {
         display: none;
-        /* Hide song ID */
     }
-
+    
     .close-button {
         color: #aaa;
         float: right;
         font-size: 28px;
         font-weight: bold;
     }
-
+    
     .close-button:hover,
     .close-button:focus {
         color: black;
         text-decoration: none;
         cursor: pointer;
     }
-
+    
     .song-queue-container {
         display: flex;
         flex-direction: column;
         gap: 10px;
         /* Space between song cards */
     }
+    
     .song-name {
         font-weight: light;
         font-size: medium;
