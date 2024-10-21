@@ -645,7 +645,7 @@ Button#nextPage:hover {
         margin: 10px;
         position: relative;
         transition: transform 0.3s ease;
-        width: 230px;
+        width: 90%;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
         /* Animation for reordering */
         z-index: 1; /* Set lower z-index */

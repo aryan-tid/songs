@@ -444,7 +444,6 @@ function getTimeCodeFromNum(num) {
     return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 }
 
-// Function to show the song queue in a popup
 function showSongQueue() {
     const songQueuePopup = document.getElementById('songQueuePopup');
     const songQueueContainer = document.getElementById('songQueue');
@@ -461,30 +460,33 @@ function showSongQueue() {
         songCard.innerHTML = `
             <img src="${playlistSongImg[index]}" alt="${songName}" class="song-img" />
             <div class="song-info">
-                <div class="drag-icon">|||</div>
                 <span class="song-name">${songName}</span>
                 <span class="song-id">${playlistSongId[index]}</span>
             </div>
+            <button class="Dn-btn-queue">Dn</button>
+            <button class="Up-btn-queue">Up</button>
         `;
 
-        // Create the play button dynamically
-        const playButton = document.createElement('button');
-        playButton.className = 'play-button';
-        playButton.id = 'playImg';
-        playButton.innerHTML = `
-            <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px; height: 40px;">
-        `;
-        // Add a click event to the play button to play the song
-        playButton.addEventListener('click', (event) => {
-            event.stopPropagation(); // Prevent bubbling up to the card's click
-            const clickedIndex = songCard.dataset.index;
-            playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex]);
+        // Use querySelector within the songCard to select the current buttons
+        const playBtnUp = songCard.querySelector(".Up-btn-queue");
+        const playBtnDn = songCard.querySelector(".Dn-btn-queue");
+
+        // Add event listeners for the buttons
+        playBtnUp.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent the click from triggering the song card click event
+            const clickedIndex = parseInt(songCard.dataset.index);
+            reorderSongs(clickedIndex, clickedIndex - 1); // Move song up by one position
+            console.log("Moved song up!");
         });
 
-        // Append the play button to the song card
-        songCard.appendChild(playButton);
+        playBtnDn.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent the click from triggering the song card click event
+            const clickedIndex = parseInt(songCard.dataset.index);
+            reorderSongs(clickedIndex, clickedIndex + 1); // Move song down by one position
+            console.log("Moved song down!");
+        });
 
-        // Add a click event to play the song when the card is clicked
+        // Add event listener for playing the song when the card is clicked (but not on buttons)
         songCard.addEventListener('click', (event) => {
             const clickedIndex = event.currentTarget.dataset.index; // Use currentTarget to ensure the card itself is referenced
             currentIndexPlaylist = clickedIndex;
@@ -498,60 +500,14 @@ function showSongQueue() {
         songCard.addEventListener('dragend', dragEnd);
         songCard.addEventListener('dragleave', dragLeave);
 
-        // Touch event listeners for mobile
-        songCard.addEventListener('touchstart', touchStart);
-        songCard.addEventListener('touchmove', touchMove);
-        songCard.addEventListener('touchend', touchEnd);
-
         songQueueContainer.appendChild(songCard);
     });
 
     songQueuePopup.classList.remove('hidden'); // Show the popup
 }
-
 // Touch event handlers for mobile
 let draggedIndex;
 let targetIndex; // Variable to keep track of the target index
-
-function touchStart(event) {
-    draggedIndex = this.dataset.index; // Store index of the dragged item
-    event.preventDefault(); // Prevent default behavior
-}
-
-function touchMove(event) {
-    const touch = event.touches[0]; // Get touch point
-    const target = document.elementFromPoint(touch.clientX, touch.clientY);
-
-    // If the target is a song card and it's different from the dragged card
-    if (target.dataset.index !== draggedIndex) {
-        if (target && target.classList.contains('song-card')) {
-            targetIndex = target.dataset.index; // Store target index
-            console.log(targetIndex);
-            const cardElements = document.querySelectorAll('.song-card');
-            cardElements.forEach((card, index) => {
-                card.classList.remove('hover'); // Remove hover class from all cards
-                if (index == targetIndex) {
-                    card.classList.add('hover'); // Add hover class for visual feedback
-                }
-            });
-        }else {
-            event.stopPropagation(); // Prevent bubbling up to the card's click
-            const clickedIndex = draggedIndex;
-            currentIndexPlaylist = clickedIndex;
-            playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex]);
-        }
-    }
-}
-
-function touchEnd(event) {
-    if (targetIndex !== undefined && draggedIndex !== targetIndex) {
-        reorderSongs(draggedIndex, targetIndex); // Reorder songs
-        showSongQueue(); // Refresh the song queue
-    }
-
-    // Reset targetIndex
-    targetIndex = undefined;
-}
 
 
 // Event listeners for showing and closing the popup
@@ -603,6 +559,10 @@ function dragEnd(event) {
 
 // Function to reorder songs based on dragged and target indices
 function reorderSongs(draggedIndex, targetIndex) {
+    if (targetIndex < 0 || targetIndex >= playlistSongName.length) {
+        return; // Prevent out-of-bounds reordering
+    }
+
     // Convert string indices to integers
     const fromIndex = parseInt(draggedIndex);
     const toIndex = parseInt(targetIndex);
@@ -624,8 +584,10 @@ function reorderSongs(draggedIndex, targetIndex) {
     playlistSongImg.splice(toIndex, 0, movedSongImg);
     playlistSongName.splice(toIndex, 0, movedSongName);
     playlistSongId.splice(toIndex, 0, movedSongId);
-    showSongQueue();
+
+    showSongQueue(); // Refresh the queue display after reordering
 }
+
 const modal = document.getElementById('songQueuePopup');
 const body = document.body;
 
