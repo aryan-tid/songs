@@ -659,7 +659,7 @@ async function searchForSongs() {
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
 
 
@@ -777,7 +777,7 @@ async function artistShowSongs(artistId) {
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -857,7 +857,7 @@ async function albumShow(albumId) {
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -922,7 +922,7 @@ async function playlistShow(playlistId) {
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
 
             // Append the clone to the resultDiv
