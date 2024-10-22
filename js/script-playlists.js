@@ -12,6 +12,15 @@ let testindexorder = 0;
 let isAdding = false;
 let searchQuery;
 
+window.addEventListener('beforeunload', function (e) {
+    // Custom message for the confirmation dialog
+    var confirmationMessage = 'Are you sure you want to leave?';
+
+    // The standard behavior is to show a generic browser dialog.
+    (e || window.event).returnValue = confirmationMessage; // For most browsers
+    return confirmationMessage; // For some older browsers
+});
+
 document.getElementById('hamburger').addEventListener('click', function () {
     const navbarList = document.getElementById('navbarList');
     navbarList.classList.toggle('show'); // Toggle 'show' class to display menu
@@ -58,7 +67,6 @@ function showHide(showORhide, elementName) {
         btnAddArtistToQueue.classList.remove('hidden');
         artistName.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "search") {
-        browseShowId.classList.add('hidden');
         h2SearchResults.classList.add('hidden');
         nextPagePlaylist.classList.add('hidden');
         previousPagePlaylist.classList.add('hidden');
@@ -67,10 +75,9 @@ function showHide(showORhide, elementName) {
         previousPageAlbum.classList.add('hidden');
         nextPageAlbum.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "search") {
-        h2SearchResults.classList.remove('hidden');
         browseShowId.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "searchAll") {
-        console.log("none");
+        browseShowId.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "searchAll") {
         console.log("none");
     }
@@ -235,8 +242,6 @@ async function addArtistToQueue(artistID, page) {
     }
 }
 
-
-
 function searchForInitiator() {
     // Show the browse section
     showHide("show", "search");
@@ -246,18 +251,38 @@ function searchForInitiator() {
         const searchFor = document.getElementById('searchFor').value;
         if (searchFor === "Songs") {
             page = 1;
+            showHide("hide", "search");
+            showHide("hide", "playlist");
+            showHide("hide", "album");
+            showHide("hide", "artist");
             searchForSongs();
         } else if (searchFor === "Playlists") {
+            showHide("hide", "search");
+            showHide("hide", "playlist");
+            showHide("hide", "album");
+            showHide("hide", "artist");
             page = 1;
             searchForPlaylists();
         } else if (searchFor === "Albums") {
+            showHide("hide", "search");
+            showHide("hide", "playlist");
+            showHide("hide", "album");
+            showHide("hide", "artist");
             page = 1;
             searchForAlbums();
         } else if (searchFor === "Artists") {
+            showHide("hide", "search");
+            showHide("hide", "playlist");
+            showHide("hide", "album");
+            showHide("hide", "artist");
             page = 1;
-            searchForArtisits();
+            searchForArtists();
         } else {
             page = 1;
+            showHide("hide", "search");
+            showHide("hide", "playlist");
+            showHide("hide", "album");
+            showHide("hide", "artist");
             universalSearch();
         }
     });
@@ -358,12 +383,12 @@ async function searchForPlaylists(params) {
 document.getElementById('nextPageAlbum').addEventListener('click', () => {
     nextPage.disabled = true;
     page++;
-    searchForPlaylists();
+    searchForAlbums();
 });
 document.getElementById('previousPageAlbum').addEventListener('click', () => {
     previousPage.disabled = true;
     page--;
-    searchForPlaylists();
+    searchForAlbums();
 });
 
 async function searchForAlbums(params) {
@@ -385,7 +410,7 @@ async function searchForAlbums(params) {
         return;
     }
 
-    console.log("current page value is: " + page);
+    console.log("current Albums page value is: " + page);
     const url = `https://saavn.dev/api/search/albums?query=${encodeURIComponent(albumName)}&page=${page}&limit=20`;
 
     // Clear previous playlist results before fetching new ones
@@ -448,8 +473,73 @@ async function searchForAlbums(params) {
 
 }
 
-async function searchForArtisits(params) {
-    alert("Comming Soon...");
+async function searchForArtists(params) {
+    const artistName = searchQuery
+    //
+    if (randomSongName != artistName) {
+        page = 1;
+    }
+    randomSongName = artistName;
+    searchBtn.disabled = true;
+    document.getElementById('loadingOverlay').style.display = 'flex';
+
+    if (!randomSongName) {
+        alert('Please enter a artist name');
+        document.getElementById('loadingOverlay').style.display = 'none';
+        searchBtn.disabled = false;
+        return;
+    }
+    const url = `https://saavn.dev/api/search/artists?query=${encodeURIComponent(artistName)}&page=1&limit=40`;
+
+    // Clear previous playlist results before fetching new ones
+    const resultDiv = document.getElementById('result');
+    const h2SearchResults = document.getElementById('h2SearchResults');
+    showHide("hide", "playlist");
+    showHide("hide", "album");
+    showHide("hide", "artist");
+    h2SearchResults.classList.remove('hidden');
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const results = data.data.results;
+
+        // Clear previous results
+        resultDiv.innerHTML = ''; // Ensure the result div is cleared
+
+        // Loop through the songs and clone the template for each song
+        results.forEach(song => {
+            const songTemplate = document.getElementById('songTemplate');
+            const songClone = songTemplate.cloneNode(true); // Deep clone the template
+            songClone.style.display = 'block'; // Make it visible
+            songClone.querySelector('.song-ID span').textContent = song.id;
+
+            // Update the content with song data
+            songClone.querySelector('.song-img').src = song.image[1].url;
+            songClone.querySelector('.song-name span').textContent = song.name;
+
+            const playSong = () => {
+                console.log(song.id);
+                artistShowSongs(song.id);
+            };
+
+            // Attach click event listener on the entire card
+            songClone.addEventListener('click', playSong);
+
+            // Append the clone to the resultDiv
+            resultDiv.appendChild(songClone);
+        });
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        resultDiv.textContent = 'Error fetching data';
+        document.getElementById('loadingOverlay').style.display = 'none';
+    } finally {
+        document.getElementById('loadingOverlay').style.display = 'none';
+        searchBtn.disabled = false;
+    }
 }
 
 async function universalSearch(params) {
@@ -563,15 +653,15 @@ let tempArtistID;
 document.getElementById('nextArtistPage').addEventListener('click', () => {
     nextArtistPage.disabled = true;
     artistPage++;
-    artistShow(tempArtistID);
+    artistShowSongs(tempArtistID);
 });
 document.getElementById('previousArtistPage').addEventListener('click', () => {
     previousArtistPage.disabled = true;
     artistPage--;
-    artistShow(tempArtistID);
+    artistShowSongs(tempArtistID);
 });
 
-async function artistShow(artistId) {
+async function artistShowSongs(artistId) {
     tempArtistID = artistId;
     document.getElementById('btnAddArtistToQueue').disabled = false;
     if (checkartistId != artistId) {
@@ -762,7 +852,7 @@ async function playlistShow(playlistId) {
 }
 // Call the init function to execute the code
 // playlistShow(47599074);
-artistShow(459320);
+artistShowSongs(459320);
 
 async function callMediaSession(urlImage1, SongName,) {
     // Update mediaSession with metadata (optional)
@@ -1120,6 +1210,6 @@ function prefillPage() {
 
     if (urlParams['artist']) {
         const artist = urlParams['artist']; // Get the actual album value from URL
-        artistShow(artist); // Pass it to the function
+        artistShowSongs(artist); // Pass it to the function
     }
 }

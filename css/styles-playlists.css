@@ -302,6 +302,90 @@ label {
     width: 100%;
 }
 
+#nextPagePlaylist {
+    display: block;
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#nextPagePlaylist.hidden {
+    display: none;
+}
+
+#previousPagePlaylist {
+    display: block;
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#previousPagePlaylist.hidden {
+    display: none;
+}
+
+#nextPageAlbum {
+    display: block;
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#nextPageAlbum.hidden {
+    display: none;
+}
+
+#previousPageAlbum {
+    display: block;
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#previousPageAlbum.hidden {
+    display: none;
+}
+
 #nextPage {
     display: block;
     margin: 20px auto;
@@ -391,22 +475,6 @@ label {
 .modal-open #previousPage {
     z-index: -1;
     /* Send them behind when modal is open */
-}
-
-#randomAjustor {
-    display: block;
-    margin: 20px auto;
-    /* Center the button horizontally and add top margin */
-    background-color: none;
-    color: none;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 20px;
-    position: relative;
-    /* Ensure it's not hidden by any other content */
-    margin-bottom: 20px;
 }
 
 Button#playBtn:hover,
