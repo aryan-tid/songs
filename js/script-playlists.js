@@ -1200,6 +1200,13 @@ window.addEventListener('click', function(event) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+    const elements = document.querySelectorAll('body *'); // Select all elements inside body
+    elements.forEach((element) => {
+        element.style.userSelect = 'none'; // Disable text selection
+    });
+});
+
 // Function to retrieve URL parameters
 function getUrlParams() {
     const params = {};
