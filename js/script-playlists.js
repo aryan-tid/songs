@@ -724,10 +724,10 @@ async function artistShowSongs(artistId) {
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
-            document.getElementById('btnAddArtistToQueue').addEventListener('click', () => {
+            document.getElementById('btnAddArtistToQueue').onclick = () => {
                 document.getElementById('btnAddArtistToQueue').disabled = true;
                 addArtistToQueue(artistId, artistPage); // Call the addPlaylistToQueue function
-            });
+            };
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -787,10 +787,10 @@ async function albumShow(albumId) {
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
-            document.getElementById('btnAddAlbumToQueue').addEventListener('click', () => {
+            document.getElementById('btnAddAlbumToQueue').onclick = () => {
                 document.getElementById('btnAddAlbumToQueue').disabled = true;
                 addAlbumToQueue(albumId); // Call the addPlaylistToQueue function
-            });
+            };
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -840,10 +840,11 @@ async function playlistShow(playlistId) {
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
-            document.getElementById('btnAddPlaylistToQueue').addEventListener('click', () => {
-                document.getElementById('btnAddPlaylistToQueue').disabled = true;
-                addPlaylistToQueue(playlistId); // Call the addPlaylistToQueue function
-            });
+        });
+
+        document.getElementById('btnAddPlaylistToQueue').addEventListener('click', () => {
+            document.getElementById('btnAddPlaylistToQueue').disabled = true;
+            addPlaylistToQueue(playlistId); // Call the addPlaylistToQueue function
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
