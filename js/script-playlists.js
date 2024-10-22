@@ -121,8 +121,8 @@ function addSongToQueue(songURL, songIMG, songNAME, songID) {
     playlistSongImg.push(songIMG);
     playlistSongName.push(songNAME);
     playlistSongId.push(songID);
-     // If the queue was empty before, play the first song automatically
-     if (wasQueueEmpty && playlistSongUrl.length > 0) {
+    // If the queue was empty before, play the first song automatically
+    if (wasQueueEmpty && playlistSongUrl.length > 0) {
         currentIndexPlaylist = 0;
         loadTrack(currentIndexPlaylist); // Play the first song automatically
     }
@@ -640,8 +640,6 @@ async function searchForSongs() {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name;
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
-            const selectedQuality = document.getElementById('globalQualitySelect').value;
-            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
 
             const playSong = () => {
                 console.log(song.id);
@@ -658,6 +656,8 @@ async function searchForSongs() {
             // Attach click event listener for "add to queue" button
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
@@ -763,8 +763,6 @@ async function artistShowSongs(artistId) {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
-            const selectedQuality = document.getElementById('globalQualitySelect').value;
-            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
 
             songClone.querySelector('.song-card').addEventListener('click', () => {
                 playSongByID(song.id);
@@ -776,6 +774,8 @@ async function artistShowSongs(artistId) {
             // Attach click event listener for "add to queue" button
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
@@ -840,8 +840,6 @@ async function albumShow(albumId) {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
-            const selectedQuality = document.getElementById('globalQualitySelect').value;
-            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
 
             const playSong = () => {
                 console.log(song.id);
@@ -856,6 +854,8 @@ async function albumShow(albumId) {
             // Attach click event listener for "add to queue" button
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
@@ -909,8 +909,6 @@ async function playlistShow(playlistId) {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
-            const selectedQuality = document.getElementById('globalQualitySelect').value;
-            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
             songClone.querySelector('.song-card').addEventListener('click', () => {
                 playSongByID(song.id);
             });
@@ -921,6 +919,8 @@ async function playlistShow(playlistId) {
             // Attach click event listener for "add to queue" button
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
