@@ -706,6 +706,7 @@ document.getElementById('previousArtistPage').addEventListener('click', () => {
 });
 
 async function artistShowSongs(artistId) {
+    addToTheQueue.classList.remove('hidden');
     tempArtistID = artistId;
     document.getElementById('btnAddArtistToQueue').disabled = false;
     if (checkartistId != artistId) {
@@ -802,6 +803,7 @@ async function artistShowSongs(artistId) {
 }
 
 async function albumShow(albumId) {
+    addToTheQueue.classList.remove('hidden');
     document.getElementById('btnAddAlbumToQueue').disabled = false;
     const url = `https://saavn.dev/api/albums?id=${albumId}`;
 
@@ -871,6 +873,7 @@ async function albumShow(albumId) {
 }
 
 async function playlistShow(playlistId) {
+    addToTheQueue.classList.remove('hidden');
     document.getElementById('btnAddPlaylistToQueue').disabled = false;
     const url = `https://saavn.dev/api/playlists?id=${playlistId}&page=0&limit=100`;
 
