@@ -762,6 +762,7 @@ async function playlistShow(playlistId) {
 }
 // Call the init function to execute the code
 // playlistShow(47599074);
+artistShow(459320);
 
 async function callMediaSession(urlImage1, SongName,) {
     // Update mediaSession with metadata (optional)
