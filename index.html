@@ -50,13 +50,22 @@
     </div>
 
     <div id="browseShowId" class="hidden">
+        <div class="searchForDiv">
+            <label for="searchFor"><strong id="">Search For:</strong></label>
+            <select id="searchFor" class="search-for">
+                <option value="Songs" selected>Songs</option>
+                <option value="Albums">Albums</option>
+                <option value="Playlists">Playlists</option>
+                <option value="Artists">Artists</option>
+            </select>
+        </div>
         <div class="input-container">
             <div id="song-Name">
-                <input type="text" id="songName" placeholder="What do you want to play?">
+                <input type="text" id="search" placeholder="What do you want to play?">
             </div>
             <button id="searchBtn">search</button>
         </div>
-        <h2 class="hidden" id="h2SeachResults">Search Results:</h2>
+        <h2 class="hidden" id="h2SearchResults">Search Results:</h2>
     </div>
 
     <div id="playlistShowId" class="hidden">
@@ -70,7 +79,29 @@
         </div>
     </div>
 
-    <div id="result" class="hi"></div>
+    <div id="albumShowId" class="hidden">
+        <img src="" alt="Album Image" id="albumImg" class="hidden" />
+        <div>
+            <h2 id="albumName" class="hidden"></h2>
+            <buttons class="btn-Add-Album-ToQueue hidden" id="btnAddAlbumToQueue">
+                <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
+                 height: 40px;">
+            </buttons>
+        </div>
+    </div>
+
+    <div id="artistShowId" class="hidden">
+        <img src="" alt="artist Image" id="artistImg" class="hidden" />
+        <div>
+            <h2 id="artistName" class="hidden"></h2>
+            <buttons class="btn-Add-Artist-ToQueue hidden" id="btnAddArtistToQueue">
+                <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
+                 height: 40px;">
+            </buttons>
+        </div>
+    </div>
+
+    <div id="result" class=""></div>
     <div>
         <!-- Hidden song template (styled as hidden by default) -->
         <div id="songTemplate" class="song" style="display: none;">
@@ -89,23 +120,34 @@
                 </buttons>
             </div>
         </div>
-        <!-- Song Queue Popup -->
-       <!-- Song Queue Popup -->
-<div id="songQueuePopup" class="modal hidden">
-    <div class="modal-content">
-        <span class="close-button" id="closePopup">&times;</span>
-        <h2>Song Queue</h2>
-        <div id="songQueue" class="song-queue-container">
-            <!-- Song cards will be generated dynamically here -->
-        </div>
-    </div>
-</div>
 
+        <div id="prevNxtInline">
+            <button id="previousPagePlaylist" class="previous-page hidden">Previous Page</button>
+            <button id="nextPagePlaylist" class="next-page hidden">Next Page</button>
+        </div>
+        <div id="prevNxtInline">
+            <button id="previousPageAlbum" class="previous-page hidden">Previous Page</button>
+            <button id="nextPageAlbum" class="next-page hidden">Next Page</button>
+        </div>
         <div id="prevNxtInline">
             <button id="previousPage" class="previous-page hidden">Previous Page</button>
             <button id="nextPage" class="next-page hidden">Next Page</button>
         </div>
+        <div id="prevNxtInline">
+            <button id="previousArtistPage" class="previous-artist-page hidden">Previous Page</button>
+            <button id="nextArtistPage" class="next-artist-page hidden">Next Page</button>
+        </div>
         <button id="randomAjustor"></button>
+        <!-- Song Queue Popup -->
+        <div id="songQueuePopup" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-button" id="closePopup">&times;</span>
+                <h2>Song Queue</h2>
+                <div id="songQueue" class="song-queue-container">
+                    <!-- Song cards will be generated dynamically here -->
+                </div>
+            </div>
+        </div>
         <div id="audioPlayer" class="audio-player-container">
             <div style="height: 10px;"></div>
             <div class="persistent-audio">

@@ -122,7 +122,7 @@ h2 {
 .input-container {
     display: flex;
     justify-content: center;
-    margin: 20px;
+    margin: 10px;
 }
 
 @media only screen and (max-width: 400px) {
@@ -144,7 +144,7 @@ h2 {
     }
 }
 
-#songName {
+#search {
     border-radius: 20px;
     background-color: #fff;
     padding-left: 10px;
@@ -180,11 +180,12 @@ h2 {
 .song-name {
     font-weight: bold;
     font-size: large;
-    margin: 5px 0;
+    margin: 0px 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 290px;
+    padding-right: 20px;
 }
 
 .song-artists {
@@ -216,13 +217,14 @@ h2 {
         width: 200px;
     }
 
-    #songName {
+    #search {
         border-radius: 20px;
         background-color: #fff;
         padding-left: 10px;
-        width: 230px;
+        margin: 0px;
+        width: 250px;
         border: 1px solid #ccc;
-        height: 40px;
+        height: 30px;
         font-size: 16px;
     }
 }
@@ -243,8 +245,7 @@ h2 {
 }
 
 /* Play Button */
-Button#playBtn,
-Button#searchBtn {
+Button#playBtn {
     background-color: #2D8F7A;
     color: white;
     border: none;
@@ -253,6 +254,48 @@ Button#searchBtn {
     font-size: 16px;
     border-radius: 20px;
 }
+
+Button#searchBtn {
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 8px 7px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    height: 40px;
+    padding-top: 10px;
+}
+
+.searchForDiv {
+    display: flex;
+    justify-content: center;
+    /* Centers horizontally */
+    align-items: center;
+    /* Centers vertically */
+    padding-top: 10px;
+}
+
+label {
+    margin-right: 10px;
+    /* Space between label and select */
+}
+
+.search-for {
+    text-align: center;
+    /* Centers text inside the dropdown */
+    background-color: #fff;
+    border-radius: 20px;
+
+}
+
+.search-for option:checked {
+    background-color: #257762;
+    /* Background color of selected option */
+    color: #fff;
+    /* Text color of selected option */
+}
+
 
 #prevNxtInline {
     display: inline-flex;
@@ -301,6 +344,55 @@ Button#searchBtn {
     display: none;
 }
 
+#nextArtistPage {
+    display: block;
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#nextArtistPage.hidden {
+    display: none;
+}
+
+#previousArtistPage {
+    display: block;
+    margin: 20px auto;
+    /* Center the button horizontally and add top margin */
+    background-color: #2D8F7A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 20px;
+    position: relative;
+    z-index: 100;
+    /* Ensure it's not hidden by any other content */
+    margin-bottom: 60px;
+}
+
+#previousArtistPage.hidden {
+    display: none;
+}
+
+
+.modal-open #nextPage,
+.modal-open #previousPage {
+    z-index: -1;
+    /* Send them behind when modal is open */
+}
+
 #randomAjustor {
     display: block;
     margin: 20px auto;
@@ -313,7 +405,6 @@ Button#searchBtn {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 20px;
 }
@@ -369,6 +460,92 @@ Button#nextPage:hover {
     display: none;
 }
 
+
+#albumShowId {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#albumImg {
+    width: 200px;
+    /* Adjust the size as needed */
+    height: 200px;
+    border-radius: 50%;
+    /* Makes the image circular */
+    object-fit: cover;
+    /* Ensures the image maintains aspect ratio */
+    margin-bottom: 10px;
+}
+
+#albumName {
+    font-size: 24px;
+    /* Adjust the font size as needed */
+    font-weight: bold;
+    display: inline-block;
+}
+
+#btnAddAlbumToQueue {
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.hidden#albumName {
+    display: none;
+}
+
+.hidden#btnAddAlbumToQueue {
+    display: none;
+}
+
+#artistShowId {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#artistImg {
+    width: 200px;
+    /* Adjust the size as needed */
+    height: 200px;
+    border-radius: 50%;
+    /* Makes the image circular */
+    object-fit: cover;
+    /* Ensures the image maintains aspect ratio */
+    margin-bottom: 10px;
+}
+
+#artistName {
+    font-size: 24px;
+    /* Adjust the font size as needed */
+    font-weight: bold;
+    display: inline-block;
+}
+
+#btnAddArtistToQueue {
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.hidden#artistName {
+    display: none;
+}
+
+.hidden#btnAddArtistToQueue {
+    display: none;
+}
 
 
 /* 3 Dots for Options */
@@ -617,7 +794,6 @@ Button#nextPage:hover {
     /* Enable scroll if needed */
     background-color: rgba(0, 0, 0, 0.322);
 
-    /* Black w/ opacity */
     .modal-content {
         position: absolute;
         top: 50%;
@@ -633,16 +809,20 @@ Button#nextPage:hover {
         /* Set a maximum height */
         overflow-y: auto;
         /* Enable vertical scrolling */
+        z-index: 100;
     }
 
     .song-card {
         display: flex;
         align-items: center;
         margin: 10px;
+        position: relative;
         transition: transform 0.3s ease;
-        width: 230px;
+        width: 90%;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
         /* Animation for reordering */
+        z-index: 1;
+        /* Set lower z-index */
     }
 
     .song-info {
@@ -659,14 +839,28 @@ Button#nextPage:hover {
         /* Prevent text selection on drag */
     }
 
+    .play-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        /* Align the button to the right of the card */
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        /* Ensure the button is displayed on top */
+    }
+
+    .play-button img {
+        width: 40px;
+        height: 40px;
+    }
+
     .song-img {
         width: 50px;
-        /* Set a fixed width for song images */
         height: 50px;
-        /* Set a fixed height for song images */
         margin-right: 10px;
-        /* Space between image and text */
-
     }
 
     .song-card.dragging {
@@ -681,7 +875,6 @@ Button#nextPage:hover {
 
     .song-id {
         display: none;
-        /* Hide song ID */
     }
 
     .close-button {
@@ -703,5 +896,15 @@ Button#nextPage:hover {
         flex-direction: column;
         gap: 10px;
         /* Space between song cards */
+    }
+
+    .song-name {
+        font-weight: light;
+        font-size: medium;
+        margin: 0px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 150px;
     }
 }
