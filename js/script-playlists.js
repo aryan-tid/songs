@@ -11,6 +11,7 @@ let checkartistId;
 let testindexorder = 0;
 let isAdding = false;
 let searchQuery;
+const addToTheQueue = document.getElementById('addToTheQueue');
 
 window.addEventListener('beforeunload', function (e) {
     // Custom message for the confirmation dialog
@@ -115,10 +116,16 @@ async function playSongByID(songID) {
 }
 
 function addSongToQueue(songURL, songIMG, songNAME, songID) {
+    const wasQueueEmpty = playlistSongUrl.length === 0;
     playlistSongUrl.push(songURL);
     playlistSongImg.push(songIMG);
     playlistSongName.push(songNAME);
     playlistSongId.push(songID);
+     // If the queue was empty before, play the first song automatically
+     if (wasQueueEmpty && playlistSongUrl.length > 0) {
+        currentIndexPlaylist = 0;
+        loadTrack(currentIndexPlaylist); // Play the first song automatically
+    }
     return;
 }
 
@@ -255,12 +262,14 @@ function searchForInitiator() {
             showHide("hide", "playlist");
             showHide("hide", "album");
             showHide("hide", "artist");
+            addToTheQueue.classList.remove('hidden');
             searchForSongs();
         } else if (searchFor === "Playlists") {
             showHide("hide", "search");
             showHide("hide", "playlist");
             showHide("hide", "album");
             showHide("hide", "artist");
+            addToTheQueue.classList.remove('hidden');
             page = 1;
             searchForPlaylists();
         } else if (searchFor === "Albums") {
@@ -268,6 +277,7 @@ function searchForInitiator() {
             showHide("hide", "playlist");
             showHide("hide", "album");
             showHide("hide", "artist");
+            addToTheQueue.classList.remove('hidden');
             page = 1;
             searchForAlbums();
         } else if (searchFor === "Artists") {
@@ -275,6 +285,7 @@ function searchForInitiator() {
             showHide("hide", "playlist");
             showHide("hide", "album");
             showHide("hide", "artist");
+            addToTheQueue.classList.add('hidden');
             page = 1;
             searchForArtists();
         } else {
@@ -359,6 +370,15 @@ async function searchForPlaylists(params) {
             // Attach click event listener on the entire card
             songClone.addEventListener('click', playSong);
 
+            // Get the "add to queue" button within the clone
+            const addToQueueBtn = songClone.querySelector('.play-btn');
+
+            // Attach click event listener for "add to queue" button
+            addToQueueBtn.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent the playSong function from triggering
+                console.log("addToTheQueue triggered for song: " + song.name);
+                addPlaylistToQueue(song.id);
+            });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
@@ -450,6 +470,16 @@ async function searchForAlbums(params) {
 
             // Attach click event listener on the entire card
             songClone.addEventListener('click', playSong);
+
+            // Get the "add to queue" button within the clone
+            const addToQueueBtn = songClone.querySelector('.play-btn');
+
+            // Attach click event listener for "add to queue" button
+            addToQueueBtn.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent the playSong function from triggering
+                console.log("addToTheQueue triggered for song: " + song.id);
+                addAlbumToQueue(song.id);
+            });
 
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -610,6 +640,8 @@ async function searchForSongs() {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name;
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
+            const selectedQuality = document.getElementById('globalQualitySelect').value;
+            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
 
             const playSong = () => {
                 console.log(song.id);
@@ -618,6 +650,18 @@ async function searchForSongs() {
 
             // Attach click event listener on the entire card
             songClone.addEventListener('click', playSong);
+
+
+            // Get the "add to queue" button within the clone
+            const addToQueueBtn = songClone.querySelector('.play-btn');
+
+            // Attach click event listener for "add to queue" button
+            addToQueueBtn.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent the playSong function from triggering
+                console.log("addToTheQueue triggered for song: " + song.name);
+                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
+            });
+
 
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -718,9 +762,21 @@ async function artistShowSongs(artistId) {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
+            const selectedQuality = document.getElementById('globalQualitySelect').value;
+            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
 
             songClone.querySelector('.song-card').addEventListener('click', () => {
                 playSongByID(song.id);
+            });
+
+            // Get the "add to queue" button within the clone
+            const addToQueueBtn = songClone.querySelector('.play-btn');
+
+            // Attach click event listener for "add to queue" button
+            addToQueueBtn.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent the playSong function from triggering
+                console.log("addToTheQueue triggered for song: " + song.name);
+                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -782,9 +838,24 @@ async function albumShow(albumId) {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
+            const selectedQuality = document.getElementById('globalQualitySelect').value;
+            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
 
-            songClone.querySelector('.song-card').addEventListener('click', () => {
+            const playSong = () => {
+                console.log(song.id);
                 playSongByID(song.id);
+            };
+
+            songClone.addEventListener('click', playSong);
+
+            // Get the "add to queue" button within the clone
+            const addToQueueBtn = songClone.querySelector('.play-btn');
+
+            // Attach click event listener for "add to queue" button
+            addToQueueBtn.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent the playSong function from triggering
+                console.log("addToTheQueue triggered for song: " + song.name);
+                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -835,10 +906,22 @@ async function playlistShow(playlistId) {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
-
+            const selectedQuality = document.getElementById('globalQualitySelect').value;
+            const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
             songClone.querySelector('.song-card').addEventListener('click', () => {
                 playSongByID(song.id);
             });
+
+            // Get the "add to queue" button within the clone
+            const addToQueueBtn = songClone.querySelector('.play-btn');
+
+            // Attach click event listener for "add to queue" button
+            addToQueueBtn.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevent the playSong function from triggering
+                console.log("addToTheQueue triggered for song: " + song.name);
+                addSongToQueue(songPlayUrl.url, song.image[1].url, song.name, song.id);
+            });
+
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
@@ -1176,10 +1259,10 @@ function reorderSongs(draggedIndex, targetIndex) {
 }
 
 document.getElementById('btnClearQueue').onclick = () => {
-    playlistSongUrl=[];
-    playlistSongImg=[];
-    playlistSongName=[];
-    playlistSongId=[];
+    playlistSongUrl = [];
+    playlistSongImg = [];
+    playlistSongName = [];
+    playlistSongId = [];
     showSongQueue();
 };
 
@@ -1192,7 +1275,7 @@ document.getElementById('closePopup').addEventListener('click', function () {
 });
 
 // Close the modal when clicking outside of the modal content
-window.addEventListener('click', function(event) {
+window.addEventListener('click', function (event) {
     const modal = document.getElementById('songQueuePopup');
     if (event.target === modal) {
         modal.classList.add('hidden');

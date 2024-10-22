@@ -106,18 +106,6 @@ h2 {
     color: #333;
 }
 
-@media only screen and (max-width: 390px) {
-    #playBtn {
-        display: none;
-    }
-}
-
-@media only screen and (min-width: 390px) {
-    #playImg {
-        display: none;
-    }
-}
-
 /* Input and Button Containers */
 .input-container {
     display: flex;
@@ -245,13 +233,13 @@ h2 {
 }
 
 /* Play Button */
-Button#playBtn {
+Button#addToTheQueue {
     background-color: #2D8F7A;
     color: white;
     border: none;
     padding: 8px 13px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 23px;
     border-radius: 20px;
 }
 
@@ -462,7 +450,7 @@ label {
     display: none;
 }
 
-Button#playBtn:hover,
+Button#addToTheQueue:hover,
 Button#searchBtn:hover,
 Button#nextPage:hover {
     background-color: #257762;
