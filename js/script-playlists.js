@@ -729,7 +729,7 @@ async function artistShowSongs(artistId) {
             document.getElementById('btnAddArtistToQueue').disabled = true;
             addArtistToQueue(artistId, artistPage); // Call the addPlaylistToQueue function
         };
-        
+
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
         document.getElementById('result').textContent = 'Error fetching data'; // Update to correct element
@@ -1175,12 +1175,29 @@ function reorderSongs(draggedIndex, targetIndex) {
     showSongQueue(); // Refresh the queue display after reordering
 }
 
+document.getElementById('btnClearQueue').onclick = () => {
+    playlistSongUrl=[];
+    playlistSongImg=[];
+    playlistSongName=[];
+    playlistSongId=[];
+    showSongQueue();
+};
+
 const modal = document.getElementById('songQueuePopup');
 const body = document.body;
 
 document.getElementById('closePopup').addEventListener('click', function () {
     modal.classList.add('hidden');
     body.classList.remove('modal-open'); // Remove modal-open class when modal is closed
+});
+
+// Close the modal when clicking outside of the modal content
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('songQueuePopup');
+    if (event.target === modal) {
+        modal.classList.add('hidden');
+        body.classList.remove('modal-open');
+    }
 });
 
 // Function to retrieve URL parameters
