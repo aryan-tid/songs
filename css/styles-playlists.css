@@ -314,7 +314,6 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
@@ -335,7 +334,6 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
@@ -356,7 +354,6 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
@@ -377,7 +374,6 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
@@ -398,7 +394,6 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
@@ -419,7 +414,6 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
@@ -440,7 +434,6 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
@@ -461,20 +454,12 @@ label {
     font-size: 16px;
     border-radius: 20px;
     position: relative;
-    z-index: 100;
     /* Ensure it's not hidden by any other content */
     margin-bottom: 60px;
 }
 
 #previousArtistPage.hidden {
     display: none;
-}
-
-
-.modal-open #nextPage,
-.modal-open #previousPage {
-    z-index: -1;
-    /* Send them behind when modal is open */
 }
 
 Button#playBtn:hover,
@@ -615,45 +600,6 @@ Button#nextPage:hover {
     display: none;
 }
 
-
-/* 3 Dots for Options */
-.options {
-    position: relative;
-    display: inline-block;
-}
-
-.three-dots {
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.options-menu {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    z-index: 1;
-    right: 0;
-}
-
-.options-menu button {
-    padding: 10px 20px;
-    background-color: white;
-    border: none;
-    width: 100%;
-    text-align: left;
-    cursor: pointer;
-}
-
-.options-menu button:hover {
-    background-color: #f1f1f1;
-}
-
-/* To display options on click */
-.options:hover .options-menu {
-    display: block;
-}
 
 /* Loading Overlay */
 .loading-overlay {
@@ -866,10 +812,10 @@ Button#nextPage:hover {
         transform: translate(-50%, -50%);
         background-color: #fefefe;
         padding: 20px;
-        border-radius: 8px;
+        border-radius: 20px;
         max-width: 400px;
         width: 90%;
-        max-height: 80vh;
+        max-height: 70vh;
         overflow-y: auto;
         z-index: 100;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -880,28 +826,25 @@ Button#nextPage:hover {
     .song-card {
         display: flex;
         align-items: center;
-        margin: 10px;
+        margin: 0px;
+        padding: 10px;
+        border-radius: 20px;
         position: relative;
         transition: transform 0.3s ease;
         width: 90%;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
-        /* Animation for reordering */
-        z-index: 1;
+        box-shadow: 0 2px 5px rgba(5, 168, 155, 0.3);
         /* Set lower z-index */
+    }
+
+    .h1,
+    h2 {
+        margin-block-start: 0em;
+        margin-block-end: 0em;
     }
 
     .song-info {
         display: flex;
         align-items: center;
-    }
-
-    .drag-icon {
-        cursor: move;
-        /* Change cursor to indicate draggable */
-        margin-right: 10px;
-        /* Space between icon and song name */
-        user-select: none;
-        /* Prevent text selection on drag */
     }
 
     .play-button {
@@ -913,7 +856,6 @@ Button#nextPage:hover {
         /* Align the button to the right of the card */
         top: 50%;
         transform: translateY(-50%);
-        z-index: 10;
         /* Ensure the button is displayed on top */
     }
 
@@ -946,12 +888,12 @@ Button#nextPage:hover {
         color: #aaa;
         font-size: 28px;
         font-weight: bold;
-        position: fixed;
-        /* Keep the close button fixed */
-        top: 20px;
+        position: absolute;
+        /* Change to absolute to stay within modal bounds */
+        top: 0px;
+        /* Position the close button inside the modal */
         right: 20px;
         z-index: 101;
-        /* Ensure the button stays on top */
     }
 
     .close-button:hover,
