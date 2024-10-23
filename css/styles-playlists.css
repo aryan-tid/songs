@@ -983,3 +983,42 @@ Button#nextPage:hover {
 .menu-container.show .dropdown-menu {
     display: block;
 }
+
+.playlist-menu, .album-menu, .artist-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-btn, .menu-btn-album,.menu-btn-artist {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.dropdown-menu, .dropdown-menu-album,.dropdown-menu-artist {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}
+
+.dropdown-menu button, .dropdown-menu-album button, .dropdown-menu-artist button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-menu button:hover, .dropdown-menu-album button:hover, .dropdown-menu-artist button:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown-menu button.hidden, .dropdown-menu-album button.hidden, .dropdown-menu-artist button.hidden {
+    display: none;
+}

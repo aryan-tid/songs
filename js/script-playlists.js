@@ -18,9 +18,11 @@ const menuBtn = songClone.querySelector('.menu-btn');
 function hideDropdownOnClickOutside() {
     // Listen for clicks on the entire document
     document.addEventListener('click', (event) => {
-        // Get all currently visible dropdown menus
-        const dropdowns = document.querySelectorAll('.dropdown-menu:not(.hidden)');
-        
+        // Get all currently visible dropdown menus (including all types)
+        const dropdowns = document.querySelectorAll(
+            '.dropdown-menu:not(.hidden), .dropdown-menu-album:not(.hidden), .dropdown-menu-artist:not(.hidden)'
+        );
+
         // Loop through each visible dropdown
         dropdowns.forEach((dropdown) => {
             // Check if the click was outside the dropdown or the menu button
@@ -30,6 +32,7 @@ function hideDropdownOnClickOutside() {
         });
     });
 }
+
 
 // Call this function when your page loads or after creating new dropdown menus
 hideDropdownOnClickOutside();
@@ -64,18 +67,21 @@ function showHide(showORhide, elementName) {
         btnAddPlaylistToQueue.classList.add('hidden');
         playlistName.classList.add('hidden');
         menuBtn.classList.add('hidden');
+        playlistMenuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "playlist") {
         playlistShowId.classList.remove('hidden');
         playlistImg.classList.remove('hidden');
         btnAddPlaylistToQueue.classList.remove('hidden');
         playlistName.classList.remove('hidden');
         menuBtn.classList.remove('hidden');
+        playlistMenuBtn.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "album") {
         albumShowId.classList.add('hidden');
         albumImg.classList.add('hidden');
         btnAddAlbumToQueue.classList.add('hidden');
         albumName.classList.add('hidden');
         menuBtn.classList.add('hidden');
+        albumMenuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "album") {
         albumShowId.classList.remove('hidden');
         albumImg.classList.remove('hidden');
@@ -83,6 +89,7 @@ function showHide(showORhide, elementName) {
         albumName.classList.remove('hidden');
         playlistName.classList.remove('hidden');
         menuBtn.classList.remove('hidden');
+        albumMenuBtn.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "artist") {
         nextArtistPage.classList.add('hidden');
         previousArtistPage.classList.add('hidden');
@@ -91,12 +98,14 @@ function showHide(showORhide, elementName) {
         btnAddArtistToQueue.classList.add('hidden');
         artistName.classList.add('hidden');
         menuBtn.classList.add('hidden');
+        artistMenuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "artist") {
         artistShowId.classList.remove('hidden');
         artistImg.classList.remove('hidden');
         btnAddArtistToQueue.classList.remove('hidden');
         artistName.classList.remove('hidden');
         playlistName.classList.remove('hidden');
+        artistMenuBtn.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "search") {
         h2SearchResults.classList.add('hidden');
         nextPagePlaylist.classList.add('hidden');
@@ -106,6 +115,9 @@ function showHide(showORhide, elementName) {
         previousPageAlbum.classList.add('hidden');
         nextPageAlbum.classList.add('hidden');
         menuBtn.classList.add('hidden');
+        playlistMenuBtn.classList.add('hidden');
+        albumMenuBtn.classList.add('hidden');
+        artistMenuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "search") {
         browseShowId.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "searchAll") {
@@ -200,6 +212,55 @@ async function addPlaylistToQueue(playlistID) {
     }
 }
 
+async function downloadPlaylist(playlistID) {
+    if (isAdding) return; // Prevent multiple calls
+    isAdding = true;
+    const url = `https://saavn.dev/api/playlists?id=${playlistID}&page=0&limit=100`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        const results = data.data.songs; // Access songs in data.data.songs
+        const selectedQuality = document.getElementById('globalQualitySelect').value;
+
+        results.forEach(async (song) => {
+            const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
+        
+            if (songDownloadUrl) {
+                try {
+                    const response = await fetch(songDownloadUrl.url);
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+        
+                    // Create a hidden link element and click it to download
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `${song.name}.mp3`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+        
+                    // Revoke the object URL to free memory after download
+                    window.URL.revokeObjectURL(downloadUrl);
+                } catch (error) {
+                    console.error(`Error downloading song "${song.name}":`, error);
+                }
+            } else {
+                console.error(`No download URL found for song "${song.name}" in the selected quality`);
+            }
+        });
+
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    } finally {
+        isAdding = false;
+    }
+}
+
 async function addAlbumToQueue(albumID) {
     if (isAdding) return; // Prevent multiple calls
     isAdding = true;
@@ -231,6 +292,53 @@ async function addAlbumToQueue(albumID) {
             if (wasQueueEmpty && playlistSongUrl.length > 0) {
                 currentIndexPlaylist = 0;
                 loadTrack(currentIndexPlaylist); // Play the first song automatically
+            }
+        });
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    } finally {
+        isAdding = false;
+    }
+}
+
+async function downloadAlbum(albumID) {
+    if (isAdding) return; // Prevent multiple calls
+    isAdding = true;
+    const url = `https://saavn.dev/api/albums?id=${albumID}&page=0&limit=100`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const results = data.data.songs; // Access songs in data.data.songs
+        const selectedQuality = document.getElementById('globalQualitySelect').value;
+
+        results.forEach(async (song) => {
+            const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
+        
+            if (songDownloadUrl) {
+                try {
+                    const response = await fetch(songDownloadUrl.url);
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+        
+                    // Create a hidden link element and click it to download
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `${song.name}.mp3`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+        
+                    // Revoke the object URL to free memory after download
+                    window.URL.revokeObjectURL(downloadUrl);
+                } catch (error) {
+                    console.error(`Error downloading song "${song.name}":`, error);
+                }
+            } else {
+                console.error(`No download URL found for song "${song.name}" in the selected quality`);
             }
         });
     } catch (error) {
@@ -273,6 +381,54 @@ async function addArtistToQueue(artistID, page) {
                 loadTrack(currentIndexPlaylist); // Play the first song automatically
             }
         });
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+    } finally {
+        isAdding = false;
+    }
+}
+
+async function downloadArtist(artistID, page) {
+    if (isAdding) return; // Prevent multiple calls
+    isAdding = true;
+    const url = `https://saavn.dev/api/artists/${artistID}/songs?page=${page}&sortBy=popularity&sortOrder=desc`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        const results = data.data.songs; // Access songs in data.data.songs
+        const selectedQuality = document.getElementById('globalQualitySelect').value;
+
+        results.forEach(async (song) => {
+            const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
+        
+            if (songDownloadUrl) {
+                try {
+                    const response = await fetch(songDownloadUrl.url);
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+        
+                    // Create a hidden link element and click it to download
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `${song.name}.mp3`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+        
+                    // Revoke the object URL to free memory after download
+                    window.URL.revokeObjectURL(downloadUrl);
+                } catch (error) {
+                    console.error(`Error downloading song "${song.name}":`, error);
+                }
+            } else {
+                console.error(`No download URL found for song "${song.name}" in the selected quality`);
+            }
+        });
+        
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     } finally {
@@ -899,6 +1055,22 @@ async function artistShowSongs(artistId) {
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
+        // Playlist dropdown menu logic
+        const playlistMenuBtn = document.getElementById('artistMenuBtn');
+        const playlistDropdownMenu = document.getElementById('artistDropdownMenu');
+
+        playlistMenuBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            playlistDropdownMenu.classList.toggle('hidden');
+        });
+
+        // Download Playlist button logic
+        const downloadPlaylistBtn = playlistDropdownMenu.querySelector('.download-artist-btn');
+        downloadPlaylistBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            playlistDropdownMenu.classList.add('hidden');
+            downloadArtist(artistId, artistPage); // Trigger downloadPlaylist function
+        });
         document.getElementById('btnAddArtistToQueue').onclick = () => {
             document.getElementById('btnAddArtistToQueue').disabled = true;
             addArtistToQueue(artistId, artistPage); // Call the addPlaylistToQueue function
@@ -1018,6 +1190,22 @@ async function albumShow(albumId) {
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
+        // Playlist dropdown menu logic
+        const playlistMenuBtn = document.getElementById('albumMenuBtn');
+        const playlistDropdownMenu = document.getElementById('albumDropdownMenu');
+
+        playlistMenuBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            playlistDropdownMenu.classList.toggle('hidden');
+        });
+
+        // Download Playlist button logic
+        const downloadPlaylistBtn = playlistDropdownMenu.querySelector('.download-album-btn');
+        downloadPlaylistBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            playlistDropdownMenu.classList.add('hidden');
+            downloadAlbum(albumId); // Trigger downloadPlaylist function
+        });
         document.getElementById('btnAddAlbumToQueue').onclick = () => {
             document.getElementById('btnAddAlbumToQueue').disabled = true;
             addAlbumToQueue(albumId); // Call the addPlaylistToQueue function
@@ -1121,6 +1309,22 @@ async function playlistShow(playlistId) {
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
+        });
+        // Playlist dropdown menu logic
+        const playlistMenuBtn = document.getElementById('playlistMenuBtn');
+        const playlistDropdownMenu = document.getElementById('playlistDropdownMenu');
+
+        playlistMenuBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            playlistDropdownMenu.classList.toggle('hidden');
+        });
+
+        // Download Playlist button logic
+        const downloadPlaylistBtn = playlistDropdownMenu.querySelector('.download-playlist-btn');
+        downloadPlaylistBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
+            playlistDropdownMenu.classList.add('hidden');
+            downloadPlaylist(playlistId); // Trigger downloadPlaylist function
         });
 
         document.getElementById('btnAddPlaylistToQueue').onclick = () => {

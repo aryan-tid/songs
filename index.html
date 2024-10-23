@@ -77,6 +77,12 @@
                 <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
                  height: 40px;">
             </buttons>
+            <div class="playlist-menu">
+                <button id="playlistMenuBtn" class="menu-btn hidden">⋮</button>
+                <div id="playlistDropdownMenu" class="dropdown-menu hidden">
+                    <button class="download-playlist-btn">Download</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -88,6 +94,12 @@
                 <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
                  height: 40px;">
             </buttons>
+            <div class="album-menu">
+                <button id="albumMenuBtn" class="menu-btn-album hidden">⋮</button>
+                <div id="albumDropdownMenu" class="dropdown-menu-album hidden">
+                    <button class="download-album-btn">Download</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -99,6 +111,12 @@
                 <img src="https://img.icons8.com/flat-round/50/play--v1.png" alt="Button Image" style="width: 40px;
                  height: 40px;">
             </buttons>
+            <div class="artist-menu">
+                <button id="artistMenuBtn" class="menu-btn-artist hidden">⋮</button>
+                <div id="artistDropdownMenu" class="dropdown-menu-artist hidden">
+                    <button class="download-artist-btn">Download</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -113,18 +131,17 @@
                     <p class="song-ID hidden"><span></span></p>
                 </div>
                 <button class="play-btn" id="addToTheQueue">+</button>
-        
+
                 <!-- Three dots menu button -->
                 <div class="menu-container">
                     <button class="menu-btn" id="menuBtn">⋮</button>
                     <div class="dropdown-menu hidden">
                         <button class="download-btn">Download</button>
-                        <button class="add-to-favorites-btn">Add to Favorites</button>
                     </div>
                 </div>
             </div>
         </div>
-        
+
 
         <div id="prevNxtInline">
             <button id="previousPagePlaylist" class="previous-page hidden">Previous Page</button>
@@ -179,7 +196,6 @@
                 </div>
             </div>
         </div>
-
         <script src="./js/script-playlists.js"></script>
 </body>
 
