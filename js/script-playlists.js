@@ -944,13 +944,14 @@ async function artistShowSongs(artistId) {
     tempArtistID = artistId;
     document.getElementById('btnAddArtistToQueue').disabled = false;
     if (checkartistId != artistId) {
-        page = 1;
+        artistPage = 1;
     }
     checkartistId = artistId;
+
     const nextArtistPageButton = document.getElementById('nextArtistPage');
     const previousArtistPageButton = document.getElementById('previousArtistPage');
-
     console.log("current page value is: " + artistPage);
+
     const url = `https://saavn.dev/api/artists/${artistId}/songs?page=${artistPage}&sortBy=popularity&sortOrder=desc`;
     const url2 = `https://saavn.dev/api/artists/${artistId}?songCount=1&page=1&albumCount=1`;
 
@@ -966,7 +967,7 @@ async function artistShowSongs(artistId) {
         document.getElementById('artistImg').src = resultsArtistImg;
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        document.getElementById('result').textContent = 'Error fetching data'; // Update to correct element
+        document.getElementById('result').textContent = 'Error fetching artist data'; // Update to correct element
     }
 
     try {
@@ -980,6 +981,7 @@ async function artistShowSongs(artistId) {
         showHide("hide", "search");
         showHide("hide", "searchAll");
         showHide("show", "artist");
+
         const results = data.data.songs; // Access songs in data.data.songs
         const resultDiv = document.getElementById('result');
 
@@ -987,7 +989,7 @@ async function artistShowSongs(artistId) {
         resultDiv.innerHTML = '';
 
         // Loop through the songs and clone the template for each song
-        results.forEach((song, index) => {
+        results.forEach((song) => {
             const songTemplate = document.getElementById('songTemplate');
             const songClone = songTemplate.cloneNode(true); // Deep clone the template
             songClone.style.display = 'block'; // Make it visible
@@ -998,9 +1000,12 @@ async function artistShowSongs(artistId) {
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
-            songClone.querySelector('.song-card').addEventListener('click', () => {
+            const playSong = () => {
+                console.log(song.id);
                 playSongByID(song.id);
-            });
+            };
+
+            songClone.addEventListener('click', playSong);
 
             // Get the "add to queue" button within the clone
             const addToQueueBtn = songClone.querySelector('.play-btn');
@@ -1013,6 +1018,7 @@ async function artistShowSongs(artistId) {
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
+
             // Three dots menu button logic
             const menuBtn = songClone.querySelector('.menu-btn');
             const dropdownMenu = songClone.querySelector('.dropdown-menu');
@@ -1025,71 +1031,60 @@ async function artistShowSongs(artistId) {
 
             // Download song button logic
             const downloadBtn = dropdownMenu.querySelector('.download-btn');
-            downloadBtn.addEventListener('click', async (event) => {
+            downloadBtn.addEventListener('click', (event) => {
                 event.stopPropagation(); // Prevent closing of the menu
                 dropdownMenu.classList.add('hidden'); // Hide the menu after click
-
-                const selectedQuality = document.getElementById('globalQualitySelect').value;
-                const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-
-                if (songDownloadUrl) {
-                    try {
-                        const response = await fetch(songDownloadUrl.url);
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-
-                        // Create a hidden link element and click it to download
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${song.name}.mp3`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    } catch (error) {
-                        console.error('Error downloading the song:', error);
-                    }
-                } else {
-                    console.error('No download URL found for this quality');
-                }
             });
+
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
-        // Playlist dropdown menu logic
-        const playlistMenuBtn = document.getElementById('artistMenuBtn');
-        const playlistDropdownMenu = document.getElementById('artistDropdownMenu');
 
-        playlistMenuBtn.addEventListener('click', (event) => {
+        // Artist dropdown menu logic
+        const artistMenuBtn = document.getElementById('artistMenuBtn');
+        const artistDropdownMenu = document.getElementById('artistDropdownMenu');
+
+        // Remove any existing event listeners before adding new ones
+        const newArtistMenuBtn = artistMenuBtn.cloneNode(true);
+        artistMenuBtn.parentNode.replaceChild(newArtistMenuBtn, artistMenuBtn);
+
+        newArtistMenuBtn.addEventListener('click', (event) => {
             event.stopPropagation();
-            playlistDropdownMenu.classList.toggle('hidden');
+            artistDropdownMenu.classList.toggle('hidden');
         });
 
-        // Download Playlist button logic
-        const downloadPlaylistBtn = playlistDropdownMenu.querySelector('.download-artist-btn');
-        downloadPlaylistBtn.addEventListener('click', (event) => {
+        // Download Artist button logic
+        const downloadArtistBtn = artistDropdownMenu.querySelector('.download-artist-btn');
+        const newDownloadArtistBtn = downloadArtistBtn.cloneNode(true);
+        downloadArtistBtn.parentNode.replaceChild(newDownloadArtistBtn, downloadArtistBtn);
+
+        newDownloadArtistBtn.addEventListener('click', (event) => {
             event.stopPropagation();
-            playlistDropdownMenu.classList.add('hidden');
-            downloadArtist(artistId, artistPage); // Trigger downloadPlaylist function
+            artistDropdownMenu.classList.add('hidden');
+            downloadArtist(artistId, artistPage); // Trigger downloadArtist function
         });
+
+        // Add artist to queue button logic
         document.getElementById('btnAddArtistToQueue').onclick = () => {
             document.getElementById('btnAddArtistToQueue').disabled = true;
-            addArtistToQueue(artistId, artistPage); // Call the addPlaylistToQueue function
+            addArtistToQueue(artistId, artistPage); // Call the addArtistToQueue function
         };
 
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
-        document.getElementById('result').textContent = 'Error fetching data'; // Update to correct element
+        document.getElementById('result').textContent = 'Error fetching artist songs'; // Update to correct element
     } finally {
         nextArtistPageButton.classList.remove('hidden');
         if (artistPage > 1) {
             previousArtistPageButton.classList.remove('hidden');
         } else {
             previousArtistPageButton.classList.add('hidden');
-        };
+        }
         nextArtistPageButton.disabled = false;
         previousArtistPageButton.disabled = false;
     }
 }
+
 
 async function albumShow(albumId) {
     addToTheQueue.classList.remove('hidden');
@@ -1148,6 +1143,7 @@ async function albumShow(albumId) {
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
+
             // Three dots menu button logic
             const menuBtn = songClone.querySelector('.menu-btn');
             const dropdownMenu = songClone.querySelector('.dropdown-menu');
@@ -1158,54 +1154,35 @@ async function albumShow(albumId) {
                 dropdownMenu.classList.toggle('hidden');
             });
 
-            // Download song button logic
-            const downloadBtn = dropdownMenu.querySelector('.download-btn');
-            downloadBtn.addEventListener('click', async (event) => {
-                event.stopPropagation(); // Prevent closing of the menu
-                dropdownMenu.classList.add('hidden'); // Hide the menu after click
-
-                const selectedQuality = document.getElementById('globalQualitySelect').value;
-                const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-
-                if (songDownloadUrl) {
-                    try {
-                        const response = await fetch(songDownloadUrl.url);
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-
-                        // Create a hidden link element and click it to download
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${song.name}.mp3`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    } catch (error) {
-                        console.error('Error downloading the song:', error);
-                    }
-                } else {
-                    console.error('No download URL found for this quality');
-                }
-            });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
+
         // Playlist dropdown menu logic
         const playlistMenuBtn = document.getElementById('albumMenuBtn');
         const playlistDropdownMenu = document.getElementById('albumDropdownMenu');
 
-        playlistMenuBtn.addEventListener('click', (event) => {
+        // Remove any existing event listeners before adding new ones
+        const newPlaylistMenuBtn = playlistMenuBtn.cloneNode(true);
+        playlistMenuBtn.parentNode.replaceChild(newPlaylistMenuBtn, playlistMenuBtn);
+
+        newPlaylistMenuBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             playlistDropdownMenu.classList.toggle('hidden');
         });
 
         // Download Playlist button logic
         const downloadPlaylistBtn = playlistDropdownMenu.querySelector('.download-album-btn');
-        downloadPlaylistBtn.addEventListener('click', (event) => {
+        const newDownloadPlaylistBtn = downloadPlaylistBtn.cloneNode(true);
+        downloadPlaylistBtn.parentNode.replaceChild(newDownloadPlaylistBtn, downloadPlaylistBtn);
+
+        newDownloadPlaylistBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             playlistDropdownMenu.classList.add('hidden');
             downloadAlbum(albumId); // Trigger downloadPlaylist function
         });
+
+        // Add album to queue button logic
         document.getElementById('btnAddAlbumToQueue').onclick = () => {
             document.getElementById('btnAddAlbumToQueue').disabled = true;
             addAlbumToQueue(albumId); // Call the addPlaylistToQueue function
@@ -1215,6 +1192,7 @@ async function albumShow(albumId) {
         document.getElementById('result').textContent = 'Error fetching data'; // Update to correct element
     }
 }
+
 
 async function playlistShow(playlistId) {
     addToTheQueue.classList.remove('hidden');
@@ -1243,7 +1221,7 @@ async function playlistShow(playlistId) {
         resultDiv.innerHTML = '';
 
         // Loop through the songs and clone the template for each song
-        results.forEach((song, index) => {
+        results.forEach((song) => {
             const songTemplate = document.getElementById('songTemplate');
             const songClone = songTemplate.cloneNode(true); // Deep clone the template
             songClone.style.display = 'block'; // Make it visible
@@ -1253,9 +1231,13 @@ async function playlistShow(playlistId) {
             songClone.querySelector('.song-img').src = song.image[1].url;
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
-            songClone.querySelector('.song-card').addEventListener('click', () => {
+
+            const playSong = () => {
+                console.log(song.id);
                 playSongByID(song.id);
-            });
+            };
+
+            songClone.addEventListener('click', playSong);
 
             // Get the "add to queue" button within the clone
             const addToQueueBtn = songClone.querySelector('.play-btn');
@@ -1268,6 +1250,7 @@ async function playlistShow(playlistId) {
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
+
             // Three dots menu button logic
             const menuBtn = songClone.querySelector('.menu-btn');
             const dropdownMenu = songClone.querySelector('.dropdown-menu');
@@ -1278,64 +1261,46 @@ async function playlistShow(playlistId) {
                 dropdownMenu.classList.toggle('hidden');
             });
 
-            // Download song button logic
-            const downloadBtn = dropdownMenu.querySelector('.download-btn');
-            downloadBtn.addEventListener('click', async (event) => {
-                event.stopPropagation(); // Prevent closing of the menu
-                dropdownMenu.classList.add('hidden'); // Hide the menu after click
-
-                const selectedQuality = document.getElementById('globalQualitySelect').value;
-                const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-
-                if (songDownloadUrl) {
-                    try {
-                        const response = await fetch(songDownloadUrl.url);
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-
-                        // Create a hidden link element and click it to download
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `${song.name}.mp3`;
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    } catch (error) {
-                        console.error('Error downloading the song:', error);
-                    }
-                } else {
-                    console.error('No download URL found for this quality');
-                }
-            });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
+
         // Playlist dropdown menu logic
         const playlistMenuBtn = document.getElementById('playlistMenuBtn');
         const playlistDropdownMenu = document.getElementById('playlistDropdownMenu');
 
-        playlistMenuBtn.addEventListener('click', (event) => {
+        // Remove any existing event listeners before adding new ones
+        const newPlaylistMenuBtn = playlistMenuBtn.cloneNode(true);
+        playlistMenuBtn.parentNode.replaceChild(newPlaylistMenuBtn, playlistMenuBtn);
+
+        newPlaylistMenuBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             playlistDropdownMenu.classList.toggle('hidden');
         });
 
         // Download Playlist button logic
         const downloadPlaylistBtn = playlistDropdownMenu.querySelector('.download-playlist-btn');
-        downloadPlaylistBtn.addEventListener('click', (event) => {
+        const newDownloadPlaylistBtn = downloadPlaylistBtn.cloneNode(true);
+        downloadPlaylistBtn.parentNode.replaceChild(newDownloadPlaylistBtn, downloadPlaylistBtn);
+
+        newDownloadPlaylistBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             playlistDropdownMenu.classList.add('hidden');
             downloadPlaylist(playlistId); // Trigger downloadPlaylist function
         });
 
+        // Add playlist to queue button logic
         document.getElementById('btnAddPlaylistToQueue').onclick = () => {
             document.getElementById('btnAddPlaylistToQueue').disabled = true;
             addPlaylistToQueue(playlistId); // Call the addPlaylistToQueue function
         };
+
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
         document.getElementById('result').textContent = 'Error fetching data'; // Update to correct element
     }
 }
+
 // Call the init function to execute the code
 // playlistShow(47599074);
 artistShowSongs(459320);
