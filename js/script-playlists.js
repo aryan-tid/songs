@@ -708,47 +708,30 @@ async function searchForSongs() {
             downloadBtn.addEventListener('click', async (event) => {
                 event.stopPropagation(); // Prevent closing of the menu
                 dropdownMenu.classList.add('hidden'); // Hide the menu after click
-            
+
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-            
+
                 if (songDownloadUrl) {
                     try {
                         const response = await fetch(songDownloadUrl.url);
                         const blob = await response.blob();
-                        const arrayBuffer = await blob.arrayBuffer(); // Convert Blob to ArrayBuffer
-            
-                        // Prepare metadata
-                        const writer = new ID3Writer(arrayBuffer);
-                        writer.setFrame('TIT2', song.name) // Song title
-                            .setFrame('TPE1', [song.artists.primary.map(artist => artist.name).join(', ')]) // Artists
-                            .setFrame('APIC', {
-                                type: 3, // Cover (front) image
-                                data: await fetch(song.image[2].url).then(res => res.arrayBuffer()), // Fetch the album art image
-                                description: 'Album cover'
-                            });
-            
-                        writer.addTag();
-            
-                        // Get the updated Blob with metadata
-                        const taggedBlob = writer.getBlob();
-                        const url = window.URL.createObjectURL(taggedBlob);
-            
+                        const url = window.URL.createObjectURL(blob);
+
                         // Create a hidden link element and click it to download
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `${song.name}.mp3`; // Filename with .mp3 extension
+                        a.download = `${song.name}.mp3`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
                     } catch (error) {
-                        console.error('Error downloading or tagging the song:', error);
+                        console.error('Error downloading the song:', error);
                     }
                 } else {
                     console.error('No download URL found for this quality');
                 }
             });
-            
 
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -889,47 +872,30 @@ async function artistShowSongs(artistId) {
             downloadBtn.addEventListener('click', async (event) => {
                 event.stopPropagation(); // Prevent closing of the menu
                 dropdownMenu.classList.add('hidden'); // Hide the menu after click
-            
+
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-            
+
                 if (songDownloadUrl) {
                     try {
                         const response = await fetch(songDownloadUrl.url);
                         const blob = await response.blob();
-                        const arrayBuffer = await blob.arrayBuffer(); // Convert Blob to ArrayBuffer
-            
-                        // Prepare metadata
-                        const writer = new ID3Writer(arrayBuffer);
-                        writer.setFrame('TIT2', song.name) // Song title
-                            .setFrame('TPE1', [song.artists.primary.map(artist => artist.name).join(', ')]) // Artists
-                            .setFrame('APIC', {
-                                type: 3, // Cover (front) image
-                                data: await fetch(song.image[2].url).then(res => res.arrayBuffer()), // Fetch the album art image
-                                description: 'Album cover'
-                            });
-            
-                        writer.addTag();
-            
-                        // Get the updated Blob with metadata
-                        const taggedBlob = writer.getBlob();
-                        const url = window.URL.createObjectURL(taggedBlob);
-            
+                        const url = window.URL.createObjectURL(blob);
+
                         // Create a hidden link element and click it to download
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `${song.name}.mp3`; // Filename with .mp3 extension
+                        a.download = `${song.name}.mp3`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
                     } catch (error) {
-                        console.error('Error downloading or tagging the song:', error);
+                        console.error('Error downloading the song:', error);
                     }
                 } else {
                     console.error('No download URL found for this quality');
                 }
             });
-            
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
@@ -1025,47 +991,30 @@ async function albumShow(albumId) {
             downloadBtn.addEventListener('click', async (event) => {
                 event.stopPropagation(); // Prevent closing of the menu
                 dropdownMenu.classList.add('hidden'); // Hide the menu after click
-            
+
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-            
+
                 if (songDownloadUrl) {
                     try {
                         const response = await fetch(songDownloadUrl.url);
                         const blob = await response.blob();
-                        const arrayBuffer = await blob.arrayBuffer(); // Convert Blob to ArrayBuffer
-            
-                        // Prepare metadata
-                        const writer = new ID3Writer(arrayBuffer);
-                        writer.setFrame('TIT2', song.name) // Song title
-                            .setFrame('TPE1', [song.artists.primary.map(artist => artist.name).join(', ')]) // Artists
-                            .setFrame('APIC', {
-                                type: 3, // Cover (front) image
-                                data: await fetch(song.image[2].url).then(res => res.arrayBuffer()), // Fetch the album art image
-                                description: 'Album cover'
-                            });
-            
-                        writer.addTag();
-            
-                        // Get the updated Blob with metadata
-                        const taggedBlob = writer.getBlob();
-                        const url = window.URL.createObjectURL(taggedBlob);
-            
+                        const url = window.URL.createObjectURL(blob);
+
                         // Create a hidden link element and click it to download
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `${song.name}.mp3`; // Filename with .mp3 extension
+                        a.download = `${song.name}.mp3`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
                     } catch (error) {
-                        console.error('Error downloading or tagging the song:', error);
+                        console.error('Error downloading the song:', error);
                     }
                 } else {
                     console.error('No download URL found for this quality');
                 }
             });
-            
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
@@ -1146,47 +1095,30 @@ async function playlistShow(playlistId) {
             downloadBtn.addEventListener('click', async (event) => {
                 event.stopPropagation(); // Prevent closing of the menu
                 dropdownMenu.classList.add('hidden'); // Hide the menu after click
-            
+
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-            
+
                 if (songDownloadUrl) {
                     try {
                         const response = await fetch(songDownloadUrl.url);
                         const blob = await response.blob();
-                        const arrayBuffer = await blob.arrayBuffer(); // Convert Blob to ArrayBuffer
-            
-                        // Prepare metadata
-                        const writer = new ID3Writer(arrayBuffer);
-                        writer.setFrame('TIT2', song.name) // Song title
-                            .setFrame('TPE1', [song.artists.primary.map(artist => artist.name).join(', ')]) // Artists
-                            .setFrame('APIC', {
-                                type: 3, // Cover (front) image
-                                data: await fetch(song.image[2].url).then(res => res.arrayBuffer()), // Fetch the album art image
-                                description: 'Album cover'
-                            });
-            
-                        writer.addTag();
-            
-                        // Get the updated Blob with metadata
-                        const taggedBlob = writer.getBlob();
-                        const url = window.URL.createObjectURL(taggedBlob);
-            
+                        const url = window.URL.createObjectURL(blob);
+
                         // Create a hidden link element and click it to download
                         const a = document.createElement('a');
                         a.href = url;
-                        a.download = `${song.name}.mp3`; // Filename with .mp3 extension
+                        a.download = `${song.name}.mp3`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
                     } catch (error) {
-                        console.error('Error downloading or tagging the song:', error);
+                        console.error('Error downloading the song:', error);
                     }
                 } else {
                     console.error('No download URL found for this quality');
                 }
             });
-            
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
