@@ -192,7 +192,7 @@ h2 {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 200px;
+        width: 180px;
     }
 
     .song-name {
@@ -202,7 +202,7 @@ h2 {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 200px;
+        width: 180px;
     }
 
     #search {
@@ -925,4 +925,61 @@ Button#nextPage:hover {
         background-color: #e60000;
         /* Darker red on hover */
     }
+}
+
+/* Style for the 3-dots menu button */
+.menu-container {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+    padding: 15px;
+    border-radius: 20px;
+}
+
+.menu-btn:focus {
+    background-color: #00000016;
+}
+
+.menu-btn:hover {
+    background-color: #00000016;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    min-width: 160px;
+}
+
+.dropdown-menu button {
+    background: none;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: #333;
+}
+
+.dropdown-menu button:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu when menu button is clicked */
+.menu-container.show .dropdown-menu {
+    display: block;
 }

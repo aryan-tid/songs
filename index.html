@@ -104,7 +104,6 @@
 
     <div id="result" class=""></div>
     <div>
-        <!-- Hidden song template (styled as hidden by default) -->
         <div id="songTemplate" class="song" style="display: none;">
             <div class="song-card">
                 <img src="" alt="Song Image" class="song-img" />
@@ -114,8 +113,18 @@
                     <p class="song-ID hidden"><span></span></p>
                 </div>
                 <button class="play-btn" id="addToTheQueue">+</button>
+        
+                <!-- Three dots menu button -->
+                <div class="menu-container">
+                    <button class="menu-btn" id="menuBtn">⋮</button>
+                    <div class="dropdown-menu hidden">
+                        <button class="download-btn">Download</button>
+                        <button class="add-to-favorites-btn">Add to Favorites</button>
+                    </div>
+                </div>
             </div>
         </div>
+        
 
         <div id="prevNxtInline">
             <button id="previousPagePlaylist" class="previous-page hidden">Previous Page</button>

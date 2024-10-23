@@ -11,8 +11,31 @@ let checkartistId;
 let testindexorder = 0;
 let isAdding = false;
 let searchQuery;
-const addToTheQueue = document.getElementById('addToTheQueue');
+const songTemplate = document.getElementById('songTemplate');
+const songClone = songTemplate.cloneNode(true);
+const menuBtn = songClone.querySelector('.menu-btn');
 
+function hideDropdownOnClickOutside() {
+    // Listen for clicks on the entire document
+    document.addEventListener('click', (event) => {
+        // Get all currently visible dropdown menus
+        const dropdowns = document.querySelectorAll('.dropdown-menu:not(.hidden)');
+        
+        // Loop through each visible dropdown
+        dropdowns.forEach((dropdown) => {
+            // Check if the click was outside the dropdown or the menu button
+            if (!dropdown.contains(event.target) && !dropdown.previousElementSibling.contains(event.target)) {
+                dropdown.classList.add('hidden'); // Hide the dropdown
+            }
+        });
+    });
+}
+
+// Call this function when your page loads or after creating new dropdown menus
+hideDropdownOnClickOutside();
+
+
+const addToTheQueue = document.getElementById('addToTheQueue');
 window.addEventListener('beforeunload', function (e) {
     // Custom message for the confirmation dialog
     var confirmationMessage = 'Are you sure you want to leave?';
@@ -40,21 +63,26 @@ function showHide(showORhide, elementName) {
         playlistImg.classList.add('hidden');
         btnAddPlaylistToQueue.classList.add('hidden');
         playlistName.classList.add('hidden');
+        menuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "playlist") {
         playlistShowId.classList.remove('hidden');
         playlistImg.classList.remove('hidden');
         btnAddPlaylistToQueue.classList.remove('hidden');
         playlistName.classList.remove('hidden');
+        menuBtn.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "album") {
         albumShowId.classList.add('hidden');
         albumImg.classList.add('hidden');
         btnAddAlbumToQueue.classList.add('hidden');
         albumName.classList.add('hidden');
+        menuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "album") {
         albumShowId.classList.remove('hidden');
         albumImg.classList.remove('hidden');
         btnAddAlbumToQueue.classList.remove('hidden');
         albumName.classList.remove('hidden');
+        playlistName.classList.remove('hidden');
+        menuBtn.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "artist") {
         nextArtistPage.classList.add('hidden');
         previousArtistPage.classList.add('hidden');
@@ -62,11 +90,13 @@ function showHide(showORhide, elementName) {
         artistImg.classList.add('hidden');
         btnAddArtistToQueue.classList.add('hidden');
         artistName.classList.add('hidden');
+        menuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "artist") {
         artistShowId.classList.remove('hidden');
         artistImg.classList.remove('hidden');
         btnAddArtistToQueue.classList.remove('hidden');
         artistName.classList.remove('hidden');
+        playlistName.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "search") {
         h2SearchResults.classList.add('hidden');
         nextPagePlaylist.classList.add('hidden');
@@ -75,6 +105,7 @@ function showHide(showORhide, elementName) {
         previousPage.classList.add('hidden');
         previousPageAlbum.classList.add('hidden');
         nextPageAlbum.classList.add('hidden');
+        menuBtn.classList.add('hidden');
     } else if (showORhide === "show" && elementName === "search") {
         browseShowId.classList.remove('hidden');
     } else if (showORhide === "hide" && elementName === "searchAll") {
@@ -258,6 +289,7 @@ function searchForInitiator() {
         const searchFor = document.getElementById('searchFor').value;
         if (searchFor === "Songs") {
             page = 1;
+            menuBtn.classList.remove('hidden');
             showHide("hide", "search");
             showHide("hide", "playlist");
             showHide("hide", "album");
@@ -265,6 +297,7 @@ function searchForInitiator() {
             addToTheQueue.classList.remove('hidden');
             searchForSongs();
         } else if (searchFor === "Playlists") {
+            menuBtn.classList.add('hidden');
             showHide("hide", "search");
             showHide("hide", "playlist");
             showHide("hide", "album");
@@ -273,6 +306,7 @@ function searchForInitiator() {
             page = 1;
             searchForPlaylists();
         } else if (searchFor === "Albums") {
+            menuBtn.classList.add('hidden');
             showHide("hide", "search");
             showHide("hide", "playlist");
             showHide("hide", "album");
@@ -281,6 +315,7 @@ function searchForInitiator() {
             page = 1;
             searchForAlbums();
         } else if (searchFor === "Artists") {
+            menuBtn.classList.add('hidden');
             showHide("hide", "search");
             showHide("hide", "playlist");
             showHide("hide", "album");
@@ -289,6 +324,7 @@ function searchForInitiator() {
             page = 1;
             searchForArtists();
         } else {
+            menuBtn.classList.add('hidden');
             page = 1;
             showHide("hide", "search");
             showHide("hide", "playlist");
@@ -480,7 +516,6 @@ async function searchForAlbums(params) {
                 console.log("addToTheQueue triggered for song: " + song.id);
                 addAlbumToQueue(song.id);
             });
-
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
@@ -558,7 +593,6 @@ async function searchForArtists(params) {
 
             // Attach click event listener on the entire card
             songClone.addEventListener('click', playSong);
-
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
@@ -649,11 +683,8 @@ async function searchForSongs() {
             // Attach click event listener on the entire card
             songClone.addEventListener('click', playSong);
 
-
             // Get the "add to queue" button within the clone
             const addToQueueBtn = songClone.querySelector('.play-btn');
-
-            // Attach click event listener for "add to queue" button
             addToQueueBtn.addEventListener('click', function (event) {
                 event.stopPropagation(); // Prevent the playSong function from triggering
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
@@ -662,9 +693,56 @@ async function searchForSongs() {
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
 
+            // Three dots menu button logic
+            const menuBtn = songClone.querySelector('.menu-btn');
+            const dropdownMenu = songClone.querySelector('.dropdown-menu');
+
+            // Show or hide the dropdown when the menu button is clicked
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); // Stop it from triggering other click events
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            // Download song button logic
+            const downloadBtn = dropdownMenu.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', async (event) => {
+                event.stopPropagation(); // Prevent closing of the menu
+                dropdownMenu.classList.add('hidden'); // Hide the menu after click
+
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
+
+                if (songDownloadUrl) {
+                    try {
+                        const response = await fetch(songDownloadUrl.url);
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Create a hidden link element and click it to download
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${song.name}.mp3`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    } catch (error) {
+                        console.error('Error downloading the song:', error);
+                    }
+                } else {
+                    console.error('No download URL found for this quality');
+                }
+            });
 
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
+        });
+        // Handle clicks outside of the dropdown to close it
+        window.addEventListener('click', (event) => {
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (!menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                }
+            });
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -743,9 +821,9 @@ async function artistShowSongs(artistId) {
         const data = await response.json();
         showHide("hide", "playlist");
         showHide("hide", "album");
-        showHide("show", "artist");
         showHide("hide", "search");
         showHide("hide", "searchAll");
+        showHide("show", "artist");
         const results = data.data.songs; // Access songs in data.data.songs
         const resultDiv = document.getElementById('result');
 
@@ -778,6 +856,45 @@ async function artistShowSongs(artistId) {
                 const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
+            });
+            // Three dots menu button logic
+            const menuBtn = songClone.querySelector('.menu-btn');
+            const dropdownMenu = songClone.querySelector('.dropdown-menu');
+
+            // Show or hide the dropdown when the menu button is clicked
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); // Stop it from triggering other click events
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            // Download song button logic
+            const downloadBtn = dropdownMenu.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', async (event) => {
+                event.stopPropagation(); // Prevent closing of the menu
+                dropdownMenu.classList.add('hidden'); // Hide the menu after click
+
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
+
+                if (songDownloadUrl) {
+                    try {
+                        const response = await fetch(songDownloadUrl.url);
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Create a hidden link element and click it to download
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${song.name}.mp3`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    } catch (error) {
+                        console.error('Error downloading the song:', error);
+                    }
+                } else {
+                    console.error('No download URL found for this quality');
+                }
             });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
@@ -859,6 +976,45 @@ async function albumShow(albumId) {
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
+            // Three dots menu button logic
+            const menuBtn = songClone.querySelector('.menu-btn');
+            const dropdownMenu = songClone.querySelector('.dropdown-menu');
+
+            // Show or hide the dropdown when the menu button is clicked
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); // Stop it from triggering other click events
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            // Download song button logic
+            const downloadBtn = dropdownMenu.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', async (event) => {
+                event.stopPropagation(); // Prevent closing of the menu
+                dropdownMenu.classList.add('hidden'); // Hide the menu after click
+
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
+
+                if (songDownloadUrl) {
+                    try {
+                        const response = await fetch(songDownloadUrl.url);
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Create a hidden link element and click it to download
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${song.name}.mp3`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    } catch (error) {
+                        console.error('Error downloading the song:', error);
+                    }
+                } else {
+                    console.error('No download URL found for this quality');
+                }
+            });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
@@ -887,11 +1043,11 @@ async function playlistShow(playlistId) {
         const resultsPlaylistImg = data.data.image[2].url;
         document.getElementById('playlistName').textContent = resultsPlaylistName;
         document.getElementById('playlistImg').src = resultsPlaylistImg;
-        showHide("show", "playlist");
         showHide("hide", "album");
         showHide("hide", "artist");
         showHide("hide", "search");
         showHide("hide", "searchAll");
+        showHide("show", "playlist");
         const results = data.data.songs; // Access songs in data.data.songs
         const resultDiv = document.getElementById('result');
 
@@ -924,7 +1080,45 @@ async function playlistShow(playlistId) {
                 console.log("addToTheQueue triggered for song: " + song.name);
                 addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
             });
+            // Three dots menu button logic
+            const menuBtn = songClone.querySelector('.menu-btn');
+            const dropdownMenu = songClone.querySelector('.dropdown-menu');
 
+            // Show or hide the dropdown when the menu button is clicked
+            menuBtn.addEventListener('click', (event) => {
+                event.stopPropagation(); // Stop it from triggering other click events
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            // Download song button logic
+            const downloadBtn = dropdownMenu.querySelector('.download-btn');
+            downloadBtn.addEventListener('click', async (event) => {
+                event.stopPropagation(); // Prevent closing of the menu
+                dropdownMenu.classList.add('hidden'); // Hide the menu after click
+
+                const selectedQuality = document.getElementById('globalQualitySelect').value;
+                const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
+
+                if (songDownloadUrl) {
+                    try {
+                        const response = await fetch(songDownloadUrl.url);
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+
+                        // Create a hidden link element and click it to download
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `${song.name}.mp3`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    } catch (error) {
+                        console.error('Error downloading the song:', error);
+                    }
+                } else {
+                    console.error('No download URL found for this quality');
+                }
+            });
             // Append the clone to the resultDiv
             resultDiv.appendChild(songClone);
         });
