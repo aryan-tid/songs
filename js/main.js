@@ -8,13 +8,26 @@ let playlistSongId = [];
 let currentIndexPlaylist = 0;
 let randomSongName;
 let checkartistId;
-let testindexorder = 0;
 let isAdding = false;
 let searchQuery;
 const songTemplate = document.getElementById('songTemplate');
 const songClone = songTemplate.cloneNode(true);
 const menuBtn = songClone.querySelector('.menu-btn');
+// const APIbaseURL = "http://192.168.1.7:3000/api/";
+const APIbaseURL = "https://saavn.dev/api/";
 
+
+const toggle = document.getElementById("loopToggle");
+const status = document.getElementById("loopStatus");
+
+let loop = false; // Initial value for loop
+
+toggle.addEventListener("change", () => {
+    toggle.style.background = toggle.checked ? "#4CAF50" : "#ccc";
+    status.innerText = toggle.checked ? "On" : "Off";
+    loop = toggle.checked; // Set loop to true if on, false if off
+    console.log(loop);
+});
 function hideDropdownOnClickOutside() {
     // Listen for clicks on the entire document
     document.addEventListener('click', (event) => {
@@ -39,14 +52,6 @@ hideDropdownOnClickOutside();
 
 
 const addToTheQueue = document.getElementById('addToTheQueue');
-window.addEventListener('beforeunload', function (e) {
-    // Custom message for the confirmation dialog
-    var confirmationMessage = 'Are you sure you want to leave?';
-
-    // The standard behavior is to show a generic browser dialog.
-    (e || window.event).returnValue = confirmationMessage; // For most browsers
-    return confirmationMessage; // For some older browsers
-});
 
 document.getElementById('hamburger').addEventListener('click', function () {
     const navbarList = document.getElementById('navbarList');
@@ -128,7 +133,7 @@ function showHide(showORhide, elementName) {
 }
 
 async function playSongByID(songID) {
-    const url = `https://saavn.dev/api/songs/${songID}?lyrics=false`;
+    const url = `${APIbaseURL}songs/${songID}?lyrics=false`;
     try {
         const responseUniqueSongID = await fetch(url);
         if (!responseUniqueSongID.ok) {
@@ -159,35 +164,41 @@ async function playSongByID(songID) {
 }
 
 function addSongToQueue(songURL, songIMG, songNAME, songID) {
-    const wasQueueEmpty = playlistSongUrl.length === 0;
-    playlistSongUrl.push(songURL);
-    playlistSongImg.push(songIMG);
-    playlistSongName.push(songNAME);
-    playlistSongId.push(songID);
-    // If the queue was empty before, play the first song automatically
-    if (wasQueueEmpty && playlistSongUrl.length > 0) {
-        currentIndexPlaylist = 0;
-        loadTrack(currentIndexPlaylist); // Play the first song automatically
+
+    const index = playlistSongId.indexOf(songID);
+    if (index !== -1) {
+        showMessage(`'${songNAME}' already exists in Queue`, "negative");
+    } else {
+        const wasQueueEmpty = playlistSongUrl.length === 0;
+        playlistSongUrl.push(songURL);
+        playlistSongImg.push(songIMG);
+        playlistSongName.push(songNAME);
+        playlistSongId.push(songID);
+        // If the queue was empty before, play the first song automatically
+        if (wasQueueEmpty && playlistSongUrl.length > 0) {
+            currentIndexPlaylist = 0;
+            loadTrack(currentIndexPlaylist); // Play the first song automatically
+        }
     }
-    return;
 }
 
-async function addPlaylistToQueue(playlistID) {
+async function addPlaylistToQueue(playlistID,playSong) {
     if (isAdding) return; // Prevent multiple calls
     isAdding = true;
-    const wasQueueEmpty = playlistSongUrl.length === 0;
-    const url = `https://saavn.dev/api/playlists?id=${playlistID}&page=0&limit=100`;
+    const url = `${APIbaseURL}playlists?id=${playlistID}&page=0&limit=100`;
 
     try {
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
+        clearQueue();
         const data = await response.json();
         const results = data.data.songs; // Access songs in data.data.songs
 
         // Loop through the songs and clone the template for each song
         results.forEach((song) => {
+
             const selectedQuality = document.getElementById('globalQualitySelect').value;
             const songDownloadUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === selectedQuality)?.url : null;
 
@@ -195,19 +206,17 @@ async function addPlaylistToQueue(playlistID) {
             playlistSongImg.push(song.image[2].url);
             playlistSongName.push(song.name.replace(/&quot;/g, ' '));
             playlistSongId.push(song.id);
-
-            testindexorder++;
-            console.log(playlistSongName[testindexorder - 1]);
-
-            // If the queue was empty before, play the first song automatically
-            if (wasQueueEmpty && playlistSongUrl.length > 0) {
-                currentIndexPlaylist = 0;
-                loadTrack(currentIndexPlaylist); // Play the first song automatically
-            }
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     } finally {
+        // If we don't want to play a specific song, auto-play first song
+        if (!playSong) {
+            if (wasQueueEmpty && playlistSongUrl.length > 0) {
+                currentIndexPlaylist = 0;
+                loadTrack(currentIndexPlaylist); // Play the first song automatically
+            }
+        }
         isAdding = false;
     }
 }
@@ -215,7 +224,7 @@ async function addPlaylistToQueue(playlistID) {
 async function downloadPlaylist(playlistID) {
     if (isAdding) return; // Prevent multiple calls
     isAdding = true;
-    const url = `https://saavn.dev/api/playlists?id=${playlistID}&page=0&limit=100`;
+    const url = `${APIbaseURL}playlists?id=${playlistID}&page=0&limit=100`;
 
     try {
         const response = await fetch(url);
@@ -229,13 +238,13 @@ async function downloadPlaylist(playlistID) {
 
         results.forEach(async (song) => {
             const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-        
+
             if (songDownloadUrl) {
                 try {
                     const response = await fetch(songDownloadUrl.url);
                     const blob = await response.blob();
                     const downloadUrl = window.URL.createObjectURL(blob);
-        
+
                     // Create a hidden link element and click it to download
                     const a = document.createElement('a');
                     a.href = downloadUrl;
@@ -243,7 +252,7 @@ async function downloadPlaylist(playlistID) {
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
-        
+
                     // Revoke the object URL to free memory after download
                     window.URL.revokeObjectURL(downloadUrl);
                 } catch (error) {
@@ -261,17 +270,17 @@ async function downloadPlaylist(playlistID) {
     }
 }
 
-async function addAlbumToQueue(albumID) {
+async function addAlbumToQueue(albumID, playSong) {
     if (isAdding) return; // Prevent multiple calls
     isAdding = true;
-    const wasQueueEmpty = playlistSongUrl.length === 0;
-    const url = `https://saavn.dev/api/albums?id=${albumID}&page=0&limit=100`;
+    const url = `${APIbaseURL}albums?id=${albumID}&page=0&limit=100`;
 
     try {
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
+        clearQueue();
         const data = await response.json();
         const results = data.data.songs; // Access songs in data.data.songs
 
@@ -284,19 +293,17 @@ async function addAlbumToQueue(albumID) {
             playlistSongImg.push(song.image[2].url);
             playlistSongName.push(song.name.replace(/&quot;/g, ' '));
             playlistSongId.push(song.id);
-
-            testindexorder++;
-            console.log(playlistSongName[testindexorder - 1]);
-
-            // If the queue was empty before, play the first song automatically
-            if (wasQueueEmpty && playlistSongUrl.length > 0) {
-                currentIndexPlaylist = 0;
-                loadTrack(currentIndexPlaylist); // Play the first song automatically
-            }
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     } finally {
+        // If we don't want to play a specific song, auto-play first song
+        if (!playSong) {
+            if (wasQueueEmpty && playlistSongUrl.length > 0) {
+                currentIndexPlaylist = 0;
+                loadTrack(currentIndexPlaylist); // Play the first song automatically
+            }
+        }
         isAdding = false;
     }
 }
@@ -304,7 +311,7 @@ async function addAlbumToQueue(albumID) {
 async function downloadAlbum(albumID) {
     if (isAdding) return; // Prevent multiple calls
     isAdding = true;
-    const url = `https://saavn.dev/api/albums?id=${albumID}&page=0&limit=100`;
+    const url = `${APIbaseURL}albums?id=${albumID}&page=0&limit=100`;
 
     try {
         const response = await fetch(url);
@@ -317,13 +324,13 @@ async function downloadAlbum(albumID) {
 
         results.forEach(async (song) => {
             const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-        
+
             if (songDownloadUrl) {
                 try {
                     const response = await fetch(songDownloadUrl.url);
                     const blob = await response.blob();
                     const downloadUrl = window.URL.createObjectURL(blob);
-        
+
                     // Create a hidden link element and click it to download
                     const a = document.createElement('a');
                     a.href = downloadUrl;
@@ -331,7 +338,7 @@ async function downloadAlbum(albumID) {
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
-        
+
                     // Revoke the object URL to free memory after download
                     window.URL.revokeObjectURL(downloadUrl);
                 } catch (error) {
@@ -348,11 +355,11 @@ async function downloadAlbum(albumID) {
     }
 }
 
-async function addArtistToQueue(artistID, page) {
+async function addArtistToQueue(artistID, page, playSong) {
     if (isAdding) return; // Prevent multiple calls
     isAdding = true;
     const wasQueueEmpty = playlistSongUrl.length === 0;
-    const url = `https://saavn.dev/api/artists/${artistID}/songs?page=${page}&sortBy=popularity&sortOrder=desc`;
+    const url = `${APIbaseURL}artists/${artistID}/songs?page=${page}&sortBy=popularity&sortOrder=desc`;
 
     try {
         const response = await fetch(url);
@@ -371,19 +378,18 @@ async function addArtistToQueue(artistID, page) {
             playlistSongImg.push(song.image[2].url);
             playlistSongName.push(song.name.replace(/&quot;/g, ' '));
             playlistSongId.push(song.id);
-
-            testindexorder++;
-            console.log(playlistSongName[testindexorder - 1]);
-
-            // If the queue was empty before, play the first song automatically
-            if (wasQueueEmpty && playlistSongUrl.length > 0) {
-                currentIndexPlaylist = 0;
-                loadTrack(currentIndexPlaylist); // Play the first song automatically
-            }
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     } finally {
+        // If we don't want to play a specific song, auto-play first song
+        if (!playSong) {
+            if (wasQueueEmpty && playlistSongUrl.length > 0) {
+                currentIndexPlaylist = 0;
+                loadTrack(currentIndexPlaylist); // Play the first song automatically
+                console.log("False");
+            }
+        }
         isAdding = false;
     }
 }
@@ -391,7 +397,7 @@ async function addArtistToQueue(artistID, page) {
 async function downloadArtist(artistID, page) {
     if (isAdding) return; // Prevent multiple calls
     isAdding = true;
-    const url = `https://saavn.dev/api/artists/${artistID}/songs?page=${page}&sortBy=popularity&sortOrder=desc`;
+    const url = `${APIbaseURL}artists/${artistID}/songs?page=${page}&sortBy=popularity&sortOrder=desc`;
 
     try {
         const response = await fetch(url);
@@ -404,13 +410,13 @@ async function downloadArtist(artistID, page) {
 
         results.forEach(async (song) => {
             const songDownloadUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
-        
+
             if (songDownloadUrl) {
                 try {
                     const response = await fetch(songDownloadUrl.url);
                     const blob = await response.blob();
                     const downloadUrl = window.URL.createObjectURL(blob);
-        
+
                     // Create a hidden link element and click it to download
                     const a = document.createElement('a');
                     a.href = downloadUrl;
@@ -418,7 +424,7 @@ async function downloadArtist(artistID, page) {
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
-        
+
                     // Revoke the object URL to free memory after download
                     window.URL.revokeObjectURL(downloadUrl);
                 } catch (error) {
@@ -428,7 +434,7 @@ async function downloadArtist(artistID, page) {
                 console.error(`No download URL found for song "${song.name}" in the selected quality`);
             }
         });
-        
+
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     } finally {
@@ -522,7 +528,7 @@ async function searchForPlaylists(params) {
     }
 
     console.log("current page value is: " + page);
-    const url = `https://saavn.dev/api/search/playlists?query=${encodeURIComponent(playlistName)}&page=${page}&limit=20`;
+    const url = `${APIbaseURL}search/playlists?query=${encodeURIComponent(playlistName)}&page=${page}&limit=20`;
 
     // Clear previous playlist results before fetching new ones
     const resultDiv = document.getElementById('result');
@@ -623,7 +629,7 @@ async function searchForAlbums(params) {
     }
 
     console.log("current Albums page value is: " + page);
-    const url = `https://saavn.dev/api/search/albums?query=${encodeURIComponent(albumName)}&page=${page}&limit=20`;
+    const url = `${APIbaseURL}search/albums?query=${encodeURIComponent(albumName)}&page=${page}&limit=20`;
 
     // Clear previous playlist results before fetching new ones
     const resultDiv = document.getElementById('result');
@@ -710,7 +716,7 @@ async function searchForArtists(params) {
         searchBtn.disabled = false;
         return;
     }
-    const url = `https://saavn.dev/api/search/artists?query=${encodeURIComponent(artistName)}&page=1&limit=40`;
+    const url = `${APIbaseURL}search/artists?query=${encodeURIComponent(artistName)}&page=1&limit=40`;
 
     // Clear previous playlist results before fetching new ones
     const resultDiv = document.getElementById('result');
@@ -798,7 +804,7 @@ async function searchForSongs() {
     }
 
     console.log("current page value is: " + page);
-    const url = `https://saavn.dev/api/search/songs?query=${encodeURIComponent(songName)}&page=${page}&limit=20`;
+    const url = `${APIbaseURL}search/songs?query=${encodeURIComponent(songName)}&page=${page}&limit=20`;
 
     // Clear previous playlist results before fetching new ones
     const resultDiv = document.getElementById('result');
@@ -942,6 +948,7 @@ document.getElementById('previousArtistPage').addEventListener('click', () => {
 async function artistShowSongs(artistId) {
     addToTheQueue.classList.remove('hidden');
     tempArtistID = artistId;
+    scrollToTop()
     document.getElementById('btnAddArtistToQueue').disabled = false;
     if (checkartistId != artistId) {
         artistPage = 1;
@@ -952,8 +959,8 @@ async function artistShowSongs(artistId) {
     const previousArtistPageButton = document.getElementById('previousArtistPage');
     console.log("current page value is: " + artistPage);
 
-    const url = `https://saavn.dev/api/artists/${artistId}/songs?page=${artistPage}&sortBy=popularity&sortOrder=desc`;
-    const url2 = `https://saavn.dev/api/artists/${artistId}?songCount=1&page=1&albumCount=1`;
+    const url = `${APIbaseURL}artists/${artistId}/songs?page=${artistPage}&sortBy=popularity&sortOrder=desc`;
+    const url2 = `${APIbaseURL}artists/${artistId}?songCount=1&page=1&albumCount=1`;
 
     try {
         const response = await fetch(url2);
@@ -1000,10 +1007,12 @@ async function artistShowSongs(artistId) {
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
-            const playSong = () => {
-                console.log(song.id);
-                playSongByID(song.id);
+            const playSong = async () => {
+                clearQueue();
+                await addArtistToQueue(artistId, artistPage, true); // Wait for this to complete
+                playQueueSongByID(song.id); // Now this runs only after addArtistToQueue finishes
             };
+
 
             songClone.addEventListener('click', playSong);
 
@@ -1067,7 +1076,7 @@ async function artistShowSongs(artistId) {
         // Add artist to queue button logic
         document.getElementById('btnAddArtistToQueue').onclick = () => {
             document.getElementById('btnAddArtistToQueue').disabled = true;
-            addArtistToQueue(artistId, artistPage); // Call the addArtistToQueue function
+            addArtistToQueue(artistId, artistPage, false); // Call the addArtistToQueue function
         };
 
     } catch (error) {
@@ -1089,7 +1098,8 @@ async function artistShowSongs(artistId) {
 async function albumShow(albumId) {
     addToTheQueue.classList.remove('hidden');
     document.getElementById('btnAddAlbumToQueue').disabled = false;
-    const url = `https://saavn.dev/api/albums?id=${albumId}`;
+    const url = `${APIbaseURL}albums?id=${albumId}`;
+    scrollToTop()
 
     try {
         const response = await fetch(url);
@@ -1125,9 +1135,10 @@ async function albumShow(albumId) {
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
-            const playSong = () => {
-                console.log(song.id);
-                playSongByID(song.id);
+            const playSong = async () => {
+                clearQueue();
+                await addAlbumToQueue(albumId, true); // Wait for this to complete
+                playQueueSongByID(song.id);
             };
 
             songClone.addEventListener('click', playSong);
@@ -1197,7 +1208,8 @@ async function albumShow(albumId) {
 async function playlistShow(playlistId) {
     addToTheQueue.classList.remove('hidden');
     document.getElementById('btnAddPlaylistToQueue').disabled = false;
-    const url = `https://saavn.dev/api/playlists?id=${playlistId}&page=0&limit=100`;
+    const url = `${APIbaseURL}playlists?id=${playlistId}&page=0&limit=100`;
+    scrollToTop()
 
     try {
         const response = await fetch(url);
@@ -1232,9 +1244,10 @@ async function playlistShow(playlistId) {
             songClone.querySelector('.song-name span').textContent = song.name.replace(/&quot;/g, ' ');
             songClone.querySelector('.song-artists span').textContent = song.artists.primary.map(artist => artist.name).join(', ');
 
-            const playSong = () => {
-                console.log(song.id);
-                playSongByID(song.id);
+            const playSong = async () => {
+                clearQueue();
+                await addPlaylistToQueue(playlistId, true); // Wait for this to complete
+                playQueueSongByID(song.id);
             };
 
             songClone.addEventListener('click', playSong);
@@ -1304,69 +1317,6 @@ async function playlistShow(playlistId) {
 // Call the init function to execute the code
 // playlistShow(47599074);
 artistShowSongs(459320);
-
-async function callMediaSession(urlImage1, SongName,) {
-    // Update mediaSession with metadata (optional)
-    if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: SongName.replace(/&quot;/g, ' '),
-            artwork: [
-                { src: urlImage1, sizes: '512x512', type: 'image/png' },
-            ],
-        });
-
-        // Play/Pause action handler
-        const togglePlayPause1 = async function () {
-            audio.play();
-            playBtn.classList.remove("play");
-            playBtn.classList.add("pause");
-        };
-        const togglePlayPause2 = async function () {
-            audio.pause();
-            playBtn.classList.remove("pause");
-            playBtn.classList.add("play");
-        };
-
-        // Seek forward/backward and next/previous track functions
-        function seekForward() {
-            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-        }
-
-        function seekBackward() {
-            audio.currentTime = Math.max(0, audio.currentTime - 10);
-        }
-
-        function loadPreviousTrack() {
-            if (currentIndexPlaylist > 0) {
-                currentIndexPlaylist--;
-                loadTrack(currentIndexPlaylist);
-            }
-        }
-
-        function loadNextTrack() {
-            if (currentIndexPlaylist < playlistSongUrl.length - 1) {
-                currentIndexPlaylist++;
-                loadTrack(currentIndexPlaylist);
-            }
-        }
-
-        function loadTrack(index) {
-            const audioSrc = playlistSongUrl[index];
-            const audioName = playlistSongName[index];
-            const imageUrl = playlistSongImg[index];
-            playInPlayer(audioName, audioSrc, imageUrl);
-        }
-
-        // Set mediaSession action handlers
-        navigator.mediaSession.setActionHandler('play', togglePlayPause1);
-        navigator.mediaSession.setActionHandler('pause', togglePlayPause2);
-        navigator.mediaSession.setActionHandler('seekbackward', seekBackward);
-        navigator.mediaSession.setActionHandler('seekforward', seekForward);
-        navigator.mediaSession.setActionHandler('previoustrack', loadPreviousTrack);
-        navigator.mediaSession.setActionHandler('nexttrack', loadNextTrack);
-        navigator.mediaSession.setActionHandler('stop', togglePlayPause2);
-    }
-}
 
 // Play song in the player
 function playInPlayer(songName, url, imgUrl1) {
@@ -1442,14 +1392,17 @@ playBtn.addEventListener("click", () => {
 audio.addEventListener("ended", () => {
     loadNextTrack(); // Automatically play the next song
 }, false);
-
-// Function to load and play the next track
 function loadNextTrack() {
-    if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+    if(loop) {
+        audio.currentTime = 0;
+        audio.play();
+    } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
         currentIndexPlaylist++;
         loadTrack(currentIndexPlaylist);
-    } else {
-        console.log("End of playlist");
+    }  else {
+        audio.pause(); // Stop playback
+        playBtn.classList.remove("pause");
+        playBtn.classList.add("play");
     }
 }
 
@@ -1458,6 +1411,9 @@ function loadTrack(index) {
     const audioName = playlistSongName[index];
     const imageUrl = playlistSongImg[index];
     playInPlayer(audioName, audioSrc, imageUrl);
+    if(songQueueOpen){
+        showSongQueue()
+    }
 }
 
 
@@ -1480,11 +1436,14 @@ function getTimeCodeFromNum(num) {
     return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 }
 
+let songQueueOpen = false;
+
 function showSongQueue() {
     const songQueuePopup = document.getElementById('songQueuePopup');
     const songQueueContainer = document.getElementById('songQueue');
     modal.classList.remove('hidden');
     body.classList.add('modal-open'); // Add modal-open class when modal is opened
+    songQueueOpen = true;
     songQueueContainer.innerHTML = ''; // Clear previous content
 
     // Create song cards for each song in the playlist
@@ -1499,27 +1458,42 @@ function showSongQueue() {
                 <span class="song-name">${songName}</span>
                 <span class="song-id">${playlistSongId[index]}</span>
             </div>
-            <button class="Dn-btn-queue">Dn</button>
-            <button class="Up-btn-queue">Up</button>
+            <button class="del-song">x</button>
         `;
-
         // Use querySelector within the songCard to select the current buttons
-        const playBtnUp = songCard.querySelector(".Up-btn-queue");
-        const playBtnDn = songCard.querySelector(".Dn-btn-queue");
+        const deleteSong = songCard.querySelector(".del-song");
 
         // Add event listeners for the buttons
-        playBtnUp.addEventListener("click", function (event) {
+        deleteSong.addEventListener("click", function (event) {
+            const songIdToFind = playlistSongId[currentIndexPlaylist];
             event.stopPropagation(); // Prevent the click from triggering the song card click event
             const clickedIndex = parseInt(songCard.dataset.index);
-            reorderSongs(clickedIndex, clickedIndex - 1); // Move song up by one position
-            console.log("Moved song up!");
-        });
 
-        playBtnDn.addEventListener("click", function (event) {
-            event.stopPropagation(); // Prevent the click from triggering the song card click event
-            const clickedIndex = parseInt(songCard.dataset.index);
-            reorderSongs(clickedIndex, clickedIndex + 1); // Move song down by one position
-            console.log("Moved song down!");
+            // Remove song from the arrays
+            playlistSongName.splice(clickedIndex, 1);
+            playlistSongUrl.splice(clickedIndex, 1);
+            playlistSongImg.splice(clickedIndex, 1);
+            playlistSongId.splice(clickedIndex, 1);
+
+            // If the current song was deleted, stop playing or play the next song
+            if (currentIndexPlaylist === clickedIndex) {
+                if (playlistSongUrl.length > 0) {
+                    currentIndexPlaylist = (clickedIndex === playlistSongUrl.length) ? clickedIndex - 1 : clickedIndex; // Ensure we don't go out of bounds
+                    playInPlayer(playlistSongName[currentIndexPlaylist], playlistSongUrl[currentIndexPlaylist], playlistSongImg[currentIndexPlaylist]);
+                } else {
+                    loadNextTrack();
+                }
+            } else {
+                const index = playlistSongId.indexOf(songIdToFind);
+
+                if (index !== -1) {
+                    currentIndexPlaylist = index;
+                    console.log(`Song ID found at index: ${index}`);
+                } else {
+                    console.log("Song ID not found in the playlist.");
+                }
+            }
+            showSongQueue(); // Refresh the queue display after reordering
         });
 
         // Add event listener for playing the song when the card is clicked (but not on buttons)
@@ -1527,6 +1501,9 @@ function showSongQueue() {
             const clickedIndex = event.currentTarget.dataset.index; // Use currentTarget to ensure the card itself is referenced
             currentIndexPlaylist = clickedIndex;
             playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex]);
+
+            // Highlight the current playing song card
+            highlightCurrentSongCard();
         });
 
         // Handle drag events
@@ -1540,7 +1517,29 @@ function showSongQueue() {
     });
 
     songQueuePopup.classList.remove('hidden'); // Show the popup
+
+    // Call to highlight the currently playing song card (in case the playlist is being shown after a song is already playing)
+    highlightCurrentSongCard();
 }
+
+// Function to highlight the current song card
+function highlightCurrentSongCard() {
+    const allSongCards = document.querySelectorAll('#songQueue .song-card'); // Target only cards inside #songQueue
+
+    // Remove highlight from all song cards and reset text color
+    allSongCards.forEach(card => {
+        card.style.backgroundColor = ''; // Reset background color
+        card.style.color = ''; // Reset text color
+    });
+
+    // Highlight the current song card
+    const currentCard = allSongCards[currentIndexPlaylist];
+    if (currentCard) {
+        currentCard.style.backgroundColor = '#2D8F7A'; // Set background color to highlight the current song
+        currentCard.style.color = 'white'; // Change text color to white for the current song
+    }
+}
+
 // Touch event handlers for mobile
 let draggedIndex;
 let targetIndex; // Variable to keep track of the target index
@@ -1550,6 +1549,7 @@ let targetIndex; // Variable to keep track of the target index
 document.getElementById('currentSongName').addEventListener('click', showSongQueue);
 document.getElementById('closePopup').addEventListener('click', () => {
     document.getElementById('songQueuePopup').classList.add('hidden');
+    songQueueOpen = false;
 });
 
 // Drag and drop functions
@@ -1603,6 +1603,8 @@ function reorderSongs(draggedIndex, targetIndex) {
     const fromIndex = parseInt(draggedIndex);
     const toIndex = parseInt(targetIndex);
 
+    const songIdToFind = playlistSongId[currentIndexPlaylist];
+
     // Move the song from the dragged index to the target index
     const movedSongUrl = playlistSongUrl[fromIndex];
     const movedSongImg = playlistSongImg[fromIndex];
@@ -1621,16 +1623,29 @@ function reorderSongs(draggedIndex, targetIndex) {
     playlistSongName.splice(toIndex, 0, movedSongName);
     playlistSongId.splice(toIndex, 0, movedSongId);
 
+    const index = playlistSongId.indexOf(songIdToFind);
+
+    if (index !== -1) {
+        currentIndexPlaylist = index;
+        console.log(`Song ID found at index: ${index}`);
+    } else {
+        console.log("Song ID not found in the playlist.");
+    }
+
     showSongQueue(); // Refresh the queue display after reordering
 }
 
 document.getElementById('btnClearQueue').onclick = () => {
+    clearQueue();
+    showSongQueue();
+};
+
+function clearQueue() {
     playlistSongUrl = [];
     playlistSongImg = [];
     playlistSongName = [];
     playlistSongId = [];
-    showSongQueue();
-};
+}
 
 const modal = document.getElementById('songQueuePopup');
 const body = document.body;
@@ -1646,6 +1661,7 @@ window.addEventListener('click', function (event) {
     if (event.target === modal) {
         modal.classList.add('hidden');
         body.classList.remove('modal-open');
+        songQueueOpen = false;
     }
 });
 
@@ -1686,5 +1702,123 @@ function prefillPage() {
     if (urlParams['artist']) {
         const artist = urlParams['artist']; // Get the actual album value from URL
         artistShowSongs(artist); // Pass it to the function
+    }
+}
+
+function showMessage(messageText, messageType) {
+    const message = document.getElementById("message");
+    message.textContent = messageText;
+
+    // Set color based on message type
+    if (messageType === "positive") {
+        message.style.backgroundColor = "#006400"; // Dark Green
+        message.style.color = "white";
+    } else {
+        message.style.backgroundColor = "#D20103"; // Red
+        message.style.color = "white";
+    }
+
+    // Show the message
+    message.style.display = "block";
+
+    // Hide message after 5 seconds
+    setTimeout(() => {
+        message.style.display = "none";
+    }, 5000);
+}
+
+// Close message immediately on tap
+document.getElementById("message").addEventListener("click", () => {
+    document.getElementById("message").style.display = "none";
+});
+
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+function playQueueSongByID(songID){
+    const index = playlistSongId.indexOf(songID);
+    if (index !== -1) {
+        currentIndexPlaylist=index;
+        loadTrack(currentIndexPlaylist);
+    } else {
+        showMessage(`Unkown Error Occured!!!`, "negative")
+    }
+}
+
+/*
+window.addEventListener('beforeunload', function (e) {
+    // Custom message for the confirmation dialog
+    var confirmationMessage = 'Are you sure you want to leave?';
+
+    // The standard behavior is to show a generic browser dialog.
+    (e || window.event).returnValue = confirmationMessage; // For most browsers
+    return confirmationMessage; // For some older browsers
+}); */
+async function callMediaSession(urlImage1, SongName) {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: SongName.replace(/&quot;/g, ' '),
+            artwork: [{ src: urlImage1, sizes: '512x512', type: 'image/png' }],
+        });
+
+        function togglePlayPause() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.classList.remove("play");
+                playBtn.classList.add("pause");
+            } else {
+                audio.pause();
+                playBtn.classList.remove("pause");
+                playBtn.classList.add("play");
+            }
+        }
+
+        function seekForward() {
+            audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+        }
+
+        function seekBackward() {
+            audio.currentTime = Math.max(0, audio.currentTime - 10);
+        }
+
+        function loadPreviousTrack() {
+            if (audio.currentTime > 8) {
+                audio.currentTime = 0;
+            } else if (currentIndexPlaylist > 0) {
+                currentIndexPlaylist--;
+                loadTrack(currentIndexPlaylist);
+            }
+        }
+
+        function loadNextTrack() {
+            if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+                currentIndexPlaylist++;
+                loadTrack(currentIndexPlaylist);
+            }  else {
+                showMessage('Last song in Queue',"negative")
+            }
+        }
+
+        function loadTrack(index) {
+            const audioSrc = playlistSongUrl[index];
+            const audioName = playlistSongName[index];
+            const imageUrl = playlistSongImg[index];
+            playInPlayer(audioName, audioSrc, imageUrl);
+            if(songQueueOpen){
+                showSongQueue()
+            }
+        }
+
+        // Media session action handlers
+        navigator.mediaSession.setActionHandler('play', togglePlayPause);
+        navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+        navigator.mediaSession.setActionHandler('seekbackward', seekBackward);
+        navigator.mediaSession.setActionHandler('seekforward', seekForward);
+        navigator.mediaSession.setActionHandler('previoustrack', loadPreviousTrack);
+        navigator.mediaSession.setActionHandler('nexttrack', loadNextTrack);
+        navigator.mediaSession.setActionHandler('stop', togglePlayPause);
     }
 }

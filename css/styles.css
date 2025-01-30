@@ -818,7 +818,7 @@ Button#nextPage:hover {
         border-radius: 20px;
         position: relative;
         transition: transform 0.3s ease;
-        width: 90%;
+        width: 100%;
         box-shadow: 0 2px 5px rgba(5, 168, 155, 0.3);
         /* Set lower z-index */
     }
@@ -904,7 +904,7 @@ Button#nextPage:hover {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        width: 150px;
+        width: 225px;
     }
 
     #btnClearQueue {
@@ -1002,6 +1002,8 @@ Button#nextPage:hover {
     background-color: white;
     border: 1px solid #ccc;
     z-index: 1000;
+    width: 150px;
+    border-radius: 10px;
 }
 
 .dropdown-menu button, .dropdown-menu-album button, .dropdown-menu-artist button {
@@ -1020,4 +1022,27 @@ Button#nextPage:hover {
 
 .dropdown-menu button.hidden, .dropdown-menu-album button.hidden, .dropdown-menu-artist button.hidden {
     display: none;
+}
+#message {
+    position: fixed;
+    bottom: 60px; /* Moved 20px above the bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 16px;
+    display: none;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.del-song {
+    border-radius: 10px;
+    color: #dddddd;
+    background-color: #ff4c4c;
+    font-size: 17px;
+    font-weight: bolder;
+    padding: 9px;
+    border-color: #ff4c4c;
+    cursor: pointer;
 }

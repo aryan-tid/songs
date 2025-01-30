@@ -41,6 +41,7 @@
 </head>
 
 <body>
+<div id="message"></div> <!-- Message element -->
     <div class="print-Alert">
         <h1>You are not allowed to Print or Save this Page</h1>
         <p>Please close the print tab...</p>
@@ -68,6 +69,7 @@
                         </select>
                     </div>
                 </li>
+                <li><label style="display:flex;align-items:center;cursor:pointer;color:white;">Loop: <span id="loopStatus" style="margin:0 8px;font-weight:bold;color:white;">Off</span><input type="checkbox" id="loopToggle" style="appearance:none;width:40px;height:20px;background:#ccc;border-radius:10px;position:relative;cursor:pointer;outline:none;transition:0.3s;"><span style="content:'';position:absolute;width:16px;height:16px;background:white;border-radius:50%;top:2px;left:2px;transition:0.3s;"></span></label></li>
             </ul>
         </nav>
 
@@ -152,6 +154,7 @@
                     <button id="artistMenuBtn" class="menu-btn-artist hidden">⋮</button>
                     <div id="artistDropdownMenu" class="dropdown-menu-artist hidden">
                         <button class="download-artist-btn">Download</button>
+<!--                        <button class="addQueue-artist-btn">Add to Queue</button>-->
                     </div>
                 </div>
             </div>
@@ -222,7 +225,7 @@
                             <!--     credit for icon to https://saeedalipoor.github.io/icono/ -->
                             <div class="volume-container">
                                 <div class="volume-button">
-                                    <div class="volume icono-volumeMedium"></div>
+                                    <div class="volume icon-volumeMedium"></div>
                                 </div>
 
                                 <div class="volume-slider">
