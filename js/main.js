@@ -13,8 +13,14 @@ let searchQuery;
 const songTemplate = document.getElementById('songTemplate');
 const songClone = songTemplate.cloneNode(true);
 const menuBtn = songClone.querySelector('.menu-btn');
-// const APIbaseURL = "http://192.168.1.7:3000/api/";
-const APIbaseURL = "https://saavn.dev/api/";
+
+function getAPIBaseURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isLocal = urlParams.get('local') === 'true';
+    return isLocal ? "http://192.168.1.7:3000/api/" : "https://saavn.dev/api/";
+}
+
+const APIbaseURL = getAPIBaseURL();
 
 
 const toggle = document.getElementById("loopToggle");
