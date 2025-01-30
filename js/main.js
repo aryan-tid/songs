@@ -1753,8 +1753,7 @@ function playQueueSongByID(songID){
         showMessage(`Unkown Error Occured!!!`, "negative")
     }
 }
-
-/*
+
 window.addEventListener('beforeunload', function (e) {
     // Custom message for the confirmation dialog
     var confirmationMessage = 'Are you sure you want to leave?';
@@ -1762,7 +1761,7 @@ window.addEventListener('beforeunload', function (e) {
     // The standard behavior is to show a generic browser dialog.
     (e || window.event).returnValue = confirmationMessage; // For most browsers
     return confirmationMessage; // For some older browsers
-}); */
+});
 async function callMediaSession(urlImage1, SongName) {
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
