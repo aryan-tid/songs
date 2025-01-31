@@ -5,6 +5,7 @@ let playlistSongUrl = [];
 let playlistSongImg = [];
 let playlistSongName = [];
 let playlistSongId = [];
+let playlistSongArtist = [];
 let currentIndexPlaylist = 0;
 let randomSongName;
 let checkartistId;
@@ -23,24 +24,30 @@ function getAPIBaseURL() {
 const APIbaseURL = getAPIBaseURL();
 
 
+let loop = false; // Default loop state
+
 function toggleLoop() {
     const checkbox = document.getElementById('loopToggle');
     const dot = document.getElementById('switchDot');
     const loopStatus = document.getElementById('loopStatus');
     const switchContainer = document.getElementById('switchContainer');
 
-    checkbox.checked = !checkbox.checked; // Toggle checkbox state
+    // Toggle the checkbox state
+    checkbox.checked = !checkbox.checked;
 
     if (checkbox.checked) {
         dot.style.left = '22px'; // Move dot to the right
         switchContainer.style.background = '#4CAF50'; // Green background for ON state
         loopStatus.innerText = 'On';
+        loop = true; // Set loop to true
     } else {
         dot.style.left = '2px'; // Move dot to the left
         switchContainer.style.background = '#ccc'; // Gray background for OFF state
         loopStatus.innerText = 'Off';
+        loop = false; // Set loop to false
     }
 }
+
 
 function hideDropdownOnClickOutside() {
     // Listen for clicks on the entire document
@@ -161,7 +168,7 @@ async function playSongByID(songID) {
         if (song) {
             addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, songID)
             console.log(playlistSongUrl.length);
-            playInPlayer(song.name, songPlayUrl.url, song.image[2].url)
+            playInPlayer(song.name, songPlayUrl.url, song.image[2].url, song.artists.primary.map(artist => artist.name).join(', '))
         } else {
             console.error('No song data found');
         }
@@ -177,7 +184,7 @@ async function playSongByID(songID) {
     }
 }
 
-function addSongToQueue(songURL, songIMG, songNAME, songID) {
+function addSongToQueue(songURL, songIMG, songNAME, songID, songArtist) {
 
     const index = playlistSongId.indexOf(songID);
     if (index !== -1) {
@@ -188,6 +195,7 @@ function addSongToQueue(songURL, songIMG, songNAME, songID) {
         playlistSongImg.push(songIMG);
         playlistSongName.push(songNAME);
         playlistSongId.push(songID);
+        playlistSongArtist.push(songArtist);
         // If the queue was empty before, play the first song automatically
         if (wasQueueEmpty && playlistSongUrl.length > 0) {
             currentIndexPlaylist = 0;
@@ -220,6 +228,7 @@ async function addPlaylistToQueue(playlistID,playSong) {
             playlistSongImg.push(song.image[2].url);
             playlistSongName.push(song.name.replace(/&quot;/g, ' '));
             playlistSongId.push(song.id);
+            playlistSongArtist.push(song.artists.primary.map(artist => artist.name).join(', '));
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -307,6 +316,7 @@ async function addAlbumToQueue(albumID, playSong) {
             playlistSongImg.push(song.image[2].url);
             playlistSongName.push(song.name.replace(/&quot;/g, ' '));
             playlistSongId.push(song.id);
+            playlistSongArtist.push(song.artists.primary.map(artist => artist.name).join(', '));
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -392,6 +402,7 @@ async function addArtistToQueue(artistID, page, playSong) {
             playlistSongImg.push(song.image[2].url);
             playlistSongName.push(song.name.replace(/&quot;/g, ' '));
             playlistSongId.push(song.id);
+            playlistSongArtist.push(song.artists.primary.map(artist => artist.name).join(', '));
         });
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -866,7 +877,7 @@ async function searchForSongs() {
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id, song.artists.primary.map(artist => artist.name).join(', '));
             });
 
             // Three dots menu button logic
@@ -1039,7 +1050,7 @@ async function artistShowSongs(artistId) {
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id, song.artists.primary.map(artist => artist.name).join(', '));
             });
 
             // Three dots menu button logic
@@ -1166,7 +1177,7 @@ async function albumShow(albumId) {
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id, song.artists.primary.map(artist => artist.name).join(', '));
             });
 
             // Three dots menu button logic
@@ -1275,7 +1286,7 @@ async function playlistShow(playlistId) {
                 const selectedQuality = document.getElementById('globalQualitySelect').value;
                 const songPlayUrl = song.downloadUrl.find(url => url.quality === selectedQuality);
                 console.log("addToTheQueue triggered for song: " + song.name);
-                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id);
+                addSongToQueue(songPlayUrl.url, song.image[2].url, song.name, song.id, song.artists.primary.map(artist => artist.name).join(', '));
             });
 
             // Three dots menu button logic
@@ -1333,9 +1344,12 @@ async function playlistShow(playlistId) {
 artistShowSongs(459320);
 
 // Play song in the player
-function playInPlayer(songName, url, imgUrl1) {
+function playInPlayer(songName, url, imgUrl1, songArtist) {
     const audioPlayer = document.getElementById('audioPlayer');
     const songNameDisplay = document.getElementById('currentSongName');
+    document.getElementById('newPlayerImg').src = imgUrl1;
+    document.getElementById('newPlayerName').textContent = songName;
+    document.getElementById('newPlayerArtist').textContent = songArtist;
     // Set the audio source and play
     audio.src = url; // Set the source to the dynamic URL fetched from API
     audio.play()
@@ -1345,11 +1359,16 @@ function playInPlayer(songName, url, imgUrl1) {
             const playBtn = audioPlayer.querySelector(".controls .toggle-play");
             playBtn.classList.remove("play");
             playBtn.classList.add("pause");
+            const playButton = document.querySelector(".play svg path");
+            // Change to Pause Icon
+            playButton.setAttribute("d", "M8 5h5v20H8V5zm9 0h5v20h-5V5z");
+
         })
         .catch(error => {
             console.error('Error playing audio:', error);
         });
-    callMediaSession(imgUrl1, songName)
+    callMediaSession(imgUrl1, songName);
+    showSongQueueNewSize();
 }
 
 // Removed local storage logic
@@ -1367,10 +1386,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // New player logic
 const audioPlayer = document.querySelector(".audio-player");
+const audioPlayer2 = document.querySelector("#player02"); // New Player
 audio = new Audio(); // You can update the song file if needed
 
 audio.addEventListener('loadeddata', () => {
     audioPlayer.querySelector(".time .length").textContent = getTimeCodeFromNum(audio.duration);
+    audioPlayer2.querySelector(".total-time").textContent = getTimeCodeFromNum(audio.duration);
     audio.volume = 1;
 }, false);
 
@@ -1387,20 +1408,59 @@ audio.addEventListener("timeupdate", () => {
     const timelineProgress = (currentTime / audio.duration) * parseFloat(timelineWidth);
     timeline.querySelector(".progress").style.width = `${timelineProgress}px`;
     audioPlayer.querySelector(".time .current").textContent = getTimeCodeFromNum(currentTime);
+    audioPlayer2.querySelector(".current-time").textContent = getTimeCodeFromNum(currentTime);
 }, false);
+
+const progressContainer = document.getElementById('progress-container');
+const progress = document.getElementById('progress');
+
+// Update progress bar as audio plays
+audio.addEventListener('timeupdate', updateProgress);
+
+// Click on progress bar to seek
+progressContainer.addEventListener('click', setProgress);
+
+function updateProgress(e) {
+    const { duration, currentTime } = e.srcElement;
+    const progressPercent = (currentTime / duration) * 100;
+    progress.style.width = `${progressPercent}%`;
+}
+
+function setProgress(e) {
+    const width = this.clientWidth;
+    const clickX = e.offsetX;
+    const duration = audio.duration;
+    audio.currentTime = (clickX / width) * duration;
+}
 
 const playBtn = audioPlayer.querySelector(".controls .toggle-play");
 playBtn.addEventListener("click", () => {
+    togglePlayPause2();
+}, false);
+
+function togglePlayPause2() {
+    const playButton = document.querySelector(".play svg path");
     if (audio.paused) {
         audio.play();
         playBtn.classList.remove("play");
         playBtn.classList.add("pause");
+        // Change to Pause Icon
+        playButton.setAttribute("d", "M8 5h5v20H8V5zm9 0h5v20h-5V5z");
     } else {
         audio.pause();
         playBtn.classList.remove("pause");
         playBtn.classList.add("play");
+        // Change to Play Icon
+        playButton.setAttribute("d", "M8.32137 25.586C7.9759 25.5853 7.63655 25.4948 7.33669 25.3232C6.66148 24.9406 6.24173 24.1978 6.24173 23.3915V7.07398C6.24173 6.26542 6.66148 5.52494 7.33669 5.14232C7.64369 4.96589 7.99244 4.87516 8.3465 4.87961C8.70056 4.88407 9.04692 4.98354 9.34938 5.16764L23.2952 13.5155C23.5859 13.6977 23.8255 13.9508 23.9916 14.251C24.1577 14.5511 24.2448 14.8886 24.2448 15.2316C24.2448 15.5747 24.1577 15.9121 23.9916 16.2123C23.8255 16.5125 23.5859 16.7655 23.2952 16.9478L9.34713 25.2979C9.0376 25.485 8.68307 25.5846 8.32137 25.586V25.586Z");
     }
-}, false);
+}
+
+// Function to get time code from number
+function getTimeCodeFromNum(num) {
+    const minutes = Math.floor(num / 60);
+    const seconds = Math.floor(num % 60);
+    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+}
 
 // This event triggers when the song ends, and it automatically plays the next one.
 audio.addEventListener("ended", () => {
@@ -1413,21 +1473,39 @@ function loadNextTrack() {
     } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
         currentIndexPlaylist++;
         loadTrack(currentIndexPlaylist);
-    }  else {
+    } else {
         audio.pause(); // Stop playback
         playBtn.classList.remove("pause");
         playBtn.classList.add("play");
     }
 }
 
+function loadNextTrack2() {
+    if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+        currentIndexPlaylist++;
+        loadTrack(currentIndexPlaylist);
+    }  else {
+        showMessage('Last song in Queue',"negative")
+    }
+}
+
+function loadPreviousTrack2() {
+    if (audio.currentTime > 8) {
+        audio.currentTime = 0;
+    } else if (currentIndexPlaylist > 0) {
+        currentIndexPlaylist--;
+        loadTrack(currentIndexPlaylist);
+    }
+}
+
+
 function loadTrack(index) {
     const audioSrc = playlistSongUrl[index];
     const audioName = playlistSongName[index];
     const imageUrl = playlistSongImg[index];
-    playInPlayer(audioName, audioSrc, imageUrl);
-    if(songQueueOpen){
-        showSongQueue()
-    }
+    const artistName = playlistSongArtist[index];
+    playInPlayer(audioName, audioSrc, imageUrl, artistName);
+    showSongQueueNewSize();
 }
 
 
@@ -1443,98 +1521,7 @@ audioPlayer.querySelector(".volume-button").addEventListener("click", () => {
     }
 }, false);
 
-// Function to get time code from number
-function getTimeCodeFromNum(num) {
-    const minutes = Math.floor(num / 60);
-    const seconds = Math.floor(num % 60);
-    return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-}
-
 let songQueueOpen = false;
-
-function showSongQueue() {
-    const songQueuePopup = document.getElementById('songQueuePopup');
-    const songQueueContainer = document.getElementById('songQueue');
-    modal.classList.remove('hidden');
-    body.classList.add('modal-open'); // Add modal-open class when modal is opened
-    songQueueOpen = true;
-    songQueueContainer.innerHTML = ''; // Clear previous content
-
-    // Create song cards for each song in the playlist
-    playlistSongName.forEach((songName, index) => {
-        const songCard = document.createElement('div');
-        songCard.className = 'song-card';
-        songCard.dataset.index = index; // Store index for drag-and-drop
-        songCard.draggable = true; // Make the card draggable
-        songCard.innerHTML = `
-            <img src="${playlistSongImg[index]}" alt="${songName}" class="song-img" />
-            <div class="song-info">
-                <span class="song-name">${songName}</span>
-                <span class="song-id">${playlistSongId[index]}</span>
-            </div>
-            <button class="del-song">x</button>
-        `;
-        // Use querySelector within the songCard to select the current buttons
-        const deleteSong = songCard.querySelector(".del-song");
-
-        // Add event listeners for the buttons
-        deleteSong.addEventListener("click", function (event) {
-            const songIdToFind = playlistSongId[currentIndexPlaylist];
-            event.stopPropagation(); // Prevent the click from triggering the song card click event
-            const clickedIndex = parseInt(songCard.dataset.index);
-
-            // Remove song from the arrays
-            playlistSongName.splice(clickedIndex, 1);
-            playlistSongUrl.splice(clickedIndex, 1);
-            playlistSongImg.splice(clickedIndex, 1);
-            playlistSongId.splice(clickedIndex, 1);
-
-            // If the current song was deleted, stop playing or play the next song
-            if (currentIndexPlaylist === clickedIndex) {
-                if (playlistSongUrl.length > 0) {
-                    currentIndexPlaylist = (clickedIndex === playlistSongUrl.length) ? clickedIndex - 1 : clickedIndex; // Ensure we don't go out of bounds
-                    playInPlayer(playlistSongName[currentIndexPlaylist], playlistSongUrl[currentIndexPlaylist], playlistSongImg[currentIndexPlaylist]);
-                } else {
-                    loadNextTrack();
-                }
-            } else {
-                const index = playlistSongId.indexOf(songIdToFind);
-
-                if (index !== -1) {
-                    currentIndexPlaylist = index;
-                    console.log(`Song ID found at index: ${index}`);
-                } else {
-                    console.log("Song ID not found in the playlist.");
-                }
-            }
-            showSongQueue(); // Refresh the queue display after reordering
-        });
-
-        // Add event listener for playing the song when the card is clicked (but not on buttons)
-        songCard.addEventListener('click', (event) => {
-            const clickedIndex = event.currentTarget.dataset.index; // Use currentTarget to ensure the card itself is referenced
-            currentIndexPlaylist = clickedIndex;
-            playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex]);
-
-            // Highlight the current playing song card
-            highlightCurrentSongCard();
-        });
-
-        // Handle drag events
-        songCard.addEventListener('dragstart', dragStart);
-        songCard.addEventListener('dragover', dragOver);
-        songCard.addEventListener('drop', drop);
-        songCard.addEventListener('dragend', dragEnd);
-        songCard.addEventListener('dragleave', dragLeave);
-
-        songQueueContainer.appendChild(songCard);
-    });
-
-    songQueuePopup.classList.remove('hidden'); // Show the popup
-
-    // Call to highlight the currently playing song card (in case the playlist is being shown after a song is already playing)
-    highlightCurrentSongCard();
-}
 
 // Function to highlight the current song card
 function highlightCurrentSongCard() {
@@ -1560,9 +1547,9 @@ let targetIndex; // Variable to keep track of the target index
 
 
 // Event listeners for showing and closing the popup
-document.getElementById('currentSongName').addEventListener('click', showSongQueue);
+document.getElementById('currentSongName').addEventListener('click', showSongQueueNew);
 document.getElementById('closePopup').addEventListener('click', () => {
-    document.getElementById('songQueuePopup').classList.add('hidden');
+    document.getElementById('songQueuePopup').classList.add('hiddenNew');
     songQueueOpen = false;
 });
 
@@ -1594,7 +1581,7 @@ function drop(event) {
 
     if (draggedIndex !== targetIndex) {
         reorderSongs(draggedIndex, targetIndex); // Reorder songs
-        showSongQueue(); // Refresh the song queue
+        showSongQueueNew();
     }
     event.target.closest('.song-card').classList.remove('hover'); // Remove hover class on drop
 }
@@ -1646,12 +1633,12 @@ function reorderSongs(draggedIndex, targetIndex) {
         console.log("Song ID not found in the playlist.");
     }
 
-    showSongQueue(); // Refresh the queue display after reordering
+    showSongQueueNew();
 }
 
 document.getElementById('btnClearQueue').onclick = () => {
     clearQueue();
-    showSongQueue();
+    showSongQueueNew();
 };
 
 function clearQueue() {
@@ -1665,15 +1652,15 @@ const modal = document.getElementById('songQueuePopup');
 const body = document.body;
 
 document.getElementById('closePopup').addEventListener('click', function () {
-    modal.classList.add('hidden');
+    modal.classList.add('hiddenNew');
     body.classList.remove('modal-open'); // Remove modal-open class when modal is closed
 });
 
 // Close the modal when clicking outside of the modal content
 window.addEventListener('click', function (event) {
-    const modal = document.getElementById('songQueuePopup');
+    const modal2 = document.getElementById('songQueuePopup');
     if (event.target === modal) {
-        modal.classList.add('hidden');
+        modal.classList.add('hiddenNew');
         body.classList.remove('modal-open');
         songQueueOpen = false;
     }
@@ -1779,14 +1766,19 @@ async function callMediaSession(urlImage1, SongName) {
         });
 
         function togglePlayPause() {
+            const playButton = document.querySelector(".play svg path");
             if (audio.paused) {
                 audio.play();
                 playBtn.classList.remove("play");
                 playBtn.classList.add("pause");
+                // Change to Pause Icon
+                playButton.setAttribute("d", "M8 5h5v20H8V5zm9 0h5v20h-5V5z");
             } else {
                 audio.pause();
                 playBtn.classList.remove("pause");
                 playBtn.classList.add("play");
+                // Change to Play Icon
+                playButton.setAttribute("d", "M8.32137 25.586C7.9759 25.5853 7.63655 25.4948 7.33669 25.3232C6.66148 24.9406 6.24173 24.1978 6.24173 23.3915V7.07398C6.24173 6.26542 6.66148 5.52494 7.33669 5.14232C7.64369 4.96589 7.99244 4.87516 8.3465 4.87961C8.70056 4.88407 9.04692 4.98354 9.34938 5.16764L23.2952 13.5155C23.5859 13.6977 23.8255 13.9508 23.9916 14.251C24.1577 14.5511 24.2448 14.8886 24.2448 15.2316C24.2448 15.5747 24.1577 15.9121 23.9916 16.2123C23.8255 16.5125 23.5859 16.7655 23.2952 16.9478L9.34713 25.2979C9.0376 25.485 8.68307 25.5846 8.32137 25.586V25.586Z");
             }
         }
 
@@ -1820,10 +1812,9 @@ async function callMediaSession(urlImage1, SongName) {
             const audioSrc = playlistSongUrl[index];
             const audioName = playlistSongName[index];
             const imageUrl = playlistSongImg[index];
-            playInPlayer(audioName, audioSrc, imageUrl);
-            if(songQueueOpen){
-                showSongQueue()
-            }
+            const artistName = playlistSongArtist[index];
+            playInPlayer(audioName, audioSrc, imageUrl, artistName);
+            showSongQueueNew();
         }
 
         // Media session action handlers
@@ -1836,3 +1827,134 @@ async function callMediaSession(urlImage1, SongName) {
         navigator.mediaSession.setActionHandler('stop', togglePlayPause);
     }
 }
+
+
+
+
+function showSongQueueNew() {
+    const songQueueContainer = document.getElementById('songQueueNew');
+    const songQueuePopup = document.getElementById('songQueuePopup');
+    const modal = document.getElementById('songQueuePopup');
+    modal.classList.remove('hiddenNew');
+    const body = document.body;
+    body.classList.add('modal-open'); // Add modal-open class when modal is opened
+    songQueueOpen = true;
+
+    songQueueContainer.innerHTML = ''; // Clear previous content
+
+    // Create song cards for each song in the playlist
+    playlistSongName.forEach((songName, index) => {
+        const songCard = document.createElement('div');
+        songCard.className = 'song-card';
+        songCard.dataset.index = index; // Store index for drag-and-drop
+        songCard.draggable = true; // Make the card draggable
+        songCard.innerHTML = `
+            <img src="${playlistSongImg[index]}" alt="${songName}" class="song-img" />
+            <div class="song-info">
+                <span class="song-name">${songName}</span>
+                <span class="song-id">${playlistSongId[index]}</span>
+            </div>
+            <button class="del-song">x</button>
+        `;
+        // Use querySelector within the songCard to select the current buttons
+        const deleteSong = songCard.querySelector(".del-song");
+
+        // Add event listeners for the buttons
+        deleteSong.addEventListener("click", function (event) {
+            const songIdToFind = playlistSongId[currentIndexPlaylist];
+            event.stopPropagation(); // Prevent the click from triggering the song card click event
+            const clickedIndex = parseInt(songCard.dataset.index);
+
+            // Remove song from the arrays
+            playlistSongName.splice(clickedIndex, 1);
+            playlistSongUrl.splice(clickedIndex, 1);
+            playlistSongImg.splice(clickedIndex, 1);
+            playlistSongId.splice(clickedIndex, 1);
+
+            // If the current song was deleted, stop playing or play the next song
+            if (currentIndexPlaylist === clickedIndex) {
+                if (playlistSongUrl.length > 0) {
+                    currentIndexPlaylist = (clickedIndex === playlistSongUrl.length) ? clickedIndex - 1 : clickedIndex; // Ensure we don't go out of bounds
+                    playInPlayer(playlistSongName[currentIndexPlaylist], playlistSongUrl[currentIndexPlaylist], playlistSongImg[currentIndexPlaylist],artistName = playlistSongArtist[currentIndexPlaylist]);
+                } else {
+                    loadNextTrack();
+                }
+            } else {
+                const index = playlistSongId.indexOf(songIdToFind);
+
+                if (index !== -1) {
+                    currentIndexPlaylist = index;
+                    console.log(`Song ID found at index: ${index}`);
+                } else {
+                    console.log("Song ID not found in the playlist.");
+                }
+            }
+            showSongQueueNew(); // Refresh the queue display after reordering
+        });
+
+        // Add event listener for playing the song when the card is clicked (but not on buttons)
+        songCard.addEventListener('click', (event) => {
+            const clickedIndex = event.currentTarget.dataset.index; // Use currentTarget to ensure the card itself is referenced
+            currentIndexPlaylist = clickedIndex;
+            playInPlayer(playlistSongName[clickedIndex], playlistSongUrl[clickedIndex], playlistSongImg[clickedIndex], playlistSongArtist[clickedIndex]);
+
+            // Highlight the current playing song card
+            highlightCurrentSongCard();
+        });
+
+        // Handle drag events
+        songCard.addEventListener('dragstart', dragStart);
+        songCard.addEventListener('dragover', dragOver);
+        songCard.addEventListener('drop', drop);
+        songCard.addEventListener('dragend', dragEnd);
+        songCard.addEventListener('dragleave', dragLeave);
+
+        songQueueContainer.appendChild(songCard);
+    });
+
+    // Call to highlight the currently playing song card (in case the playlist is being shown after a song is already playing)
+    highlightCurrentSongCards();
+
+    console.log("refresh");
+}
+// Function to highlight the current song card
+function highlightCurrentSongCards() {
+    const allSongCards = document.querySelectorAll('.song-card'); // Target only cards inside #songQueue
+
+    // Remove highlight from all song cards and reset text color
+    allSongCards.forEach(card => {
+        card.style.backgroundColor = ''; // Reset background color
+        card.style.color = ''; // Reset text color
+    });
+
+    // Highlight the current song card
+    const currentCard = allSongCards[currentIndexPlaylist];
+    if (currentCard) {
+        currentCard.style.backgroundColor = '#2D8F7A'; // Set background color to highlight the current song
+        currentCard.style.color = 'white'; // Change text color to white for the current song
+    }
+}
+function checkScreenWidth() {
+    const modal = document.querySelector('.modal'); // Select the modal
+    if (window.innerWidth < 921) {
+        modal.classList.add('hiddenNew'); // Hide modal
+    } else {
+        modal.classList.remove('hiddenNew'); // Show modal if width is 900 or more
+    }
+}
+
+function showSongQueueNewSize() {
+    if (window.innerWidth < 921) {
+        if(songQueueOpen){
+            showSongQueueNew();
+        }
+    } else {
+            showSongQueueNew();
+    }
+}
+
+// Run on page load
+checkScreenWidth();
+
+// Run on window resize
+window.addEventListener('resize', checkScreenWidth);

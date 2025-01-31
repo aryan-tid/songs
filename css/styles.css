@@ -155,6 +155,7 @@ h2 {
     margin-bottom: 15px;
     border-radius: 10px;
     cursor: pointer;
+    max-width: 390px;
 }
 
 .song-details {
@@ -168,7 +169,7 @@ h2 {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 290px;
+    width: 250px;
     padding-right: 20px;
 }
 
@@ -178,7 +179,7 @@ h2 {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 290px;
+    width: 250px;
 }
 
 @media only screen and (max-width: 600px) {
@@ -615,6 +616,8 @@ Button#nextPage:hover {
 /* Add margin-bottom to prevent last song hiding under player */
 #result {
     margin-bottom: 0px;
+    display: grid;
+    justify-content: center;
 }
 
 /* Add this to your CSS */
@@ -778,34 +781,159 @@ Button#nextPage:hover {
         }
     }
 }
-
-.modal {
-    align-self: center;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.322);
-
-    .modal-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #0b2d39;
-        padding: 20px;
-        border-radius: 20px;
-        max-width: 400px;
-        width: 90%;
-        max-height: 70vh;
-        overflow-y: auto;
-        z-index: 100;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding-top: 40px;
-        /* Extra space for the fixed close button */
+/* Mobile Styles */
+@media only screen and (max-width: 920px) {
+    .hiddenNew {
+        display: none;
     }
+    .modal {
+        align-self: center;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.322);
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #0b2d39;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding-top: 40px;
+            /* Extra space for the fixed close button */
+        }
+
+        .song-card {
+            display: flex;
+            align-items: center;
+            margin: 0px;
+            padding: 10px;
+            border-radius: 20px;
+            position: relative;
+            transition: transform 0.3s ease;
+            width: 100%;
+            /* Set lower z-index */
+        }
+
+        .h1,
+        h2 {
+            margin-block-start: 0em;
+            margin-block-end: 0em;
+        }
+
+        .song-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .play-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            /* Align the button to the right of the card */
+            top: 50%;
+            transform: translateY(-50%);
+            /* Ensure the button is displayed on top */
+        }
+
+        .play-button img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .song-img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .song-card.dragging {
+            opacity: 0.5;
+            /* Makes the dragged item semi-transparent */
+        }
+
+        .song-card.hover {
+            transform: scale(1.05);
+            /* Slightly scale up the hovered item */
+        }
+
+        .song-id {
+            display: none;
+        }
+
+        .close-button {
+            color: red;
+            background-color: #071e26;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            /* Change to absolute to stay within modal bounds */
+            top: 0px;
+            /* Position the close button inside the modal */
+            right: 20px;
+            z-index: 101;
+            border-radius: 13px;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            background-color: darkred;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .song-queue-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            /* Space between song cards */
+        }
+
+        .song-name {
+            font-weight: light;
+            font-size: medium;
+            margin: 0px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 225px;
+        }
+
+        #btnClearQueue {
+            background-color: #ff4c4c;
+            /* Red background for a strong CTA */
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            margin: 8px 0;
+        }
+
+        #btnClearQueue:hover {
+            background-color: #e60000;
+            /* Darker red on hover */
+        }
+    }
+}
+
+#songQueueNew {
+
 
     .song-card {
         display: flex;
@@ -815,7 +943,7 @@ Button#nextPage:hover {
         border-radius: 20px;
         position: relative;
         transition: transform 0.3s ease;
-        width: 100%;
+        max-width: 350px;
         /* Set lower z-index */
     }
 
@@ -867,26 +995,6 @@ Button#nextPage:hover {
         display: none;
     }
 
-    .close-button {
-        color: red;
-        background-color: #071e26;
-        font-size: 28px;
-        font-weight: bold;
-        position: absolute;
-        /* Change to absolute to stay within modal bounds */
-        top: 0px;
-        /* Position the close button inside the modal */
-        right: 20px;
-        z-index: 101;
-        border-radius: 13px;
-    }
-
-    .close-button:hover,
-    .close-button:focus {
-        background-color: darkred;
-        text-decoration: none;
-        cursor: pointer;
-    }
 
     .song-queue-container {
         display: flex;
@@ -904,26 +1012,24 @@ Button#nextPage:hover {
         text-overflow: ellipsis;
         width: 225px;
     }
-
-    #btnClearQueue {
-        background-color: #ff4c4c;
-        /* Red background for a strong CTA */
-        color: white;
-        padding: 10px 18px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.3s ease;
-        margin: 8px 0;
-    }
-
-    #btnClearQueue:hover {
-        background-color: #e60000;
-        /* Darker red on hover */
-    }
+}
+#btnClearQueue2 {
+    background-color: #ff4c4c;
+    /* Red background for a strong CTA */
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    margin: 8px 0;
 }
 
+#btnClearQueue2:hover {
+    background-color: #e60000;
+    /* Darker red on hover */
+}
 /* Style for the 3-dots menu button */
 .menu-container {
     position: relative;
@@ -1044,4 +1150,118 @@ Button#nextPage:hover {
     padding: 9px;
     border-color: #ff4c4c;
     cursor: pointer;
+}
+@media only screen and (min-width: 920px) {
+.parent-div {
+    display: flex;
+    justify-content: center; /* Centers the divs horizontally */
+    align-items: flex-start; /* Aligns the divs at the top vertically */
+}
+
+.left-div, .right-div {
+    height: 100%; /* Full height of parent */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    padding: 10px; /* Optional: Add padding to prevent content from touching the edges */
+}
+
+.left-div {
+    width: 400px; /* Set desired width */
+}
+}
+
+.right-div {
+}
+
+#boxes * {
+    border: 1px solid transparent;
+}
+
+#boxes {
+}
+#player02 {
+    grid-area: B;
+    height: fit-content;
+}
+
+#player02 .controls {
+    display: flex;
+    justify-content: space-around;
+}
+.player {
+    padding: 28px;
+    border-radius: 20px;
+}
+
+.player img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+
+.info {
+    color: #E1E1E6;
+}
+
+.info p {
+    opacity: 0.68;
+    font-size: 15px;
+    margin-block-start: 1px;
+    margin-block-end: 1px;
+}
+
+.info h1{
+        max-width: 220px; /* Restrict width to 200px */
+        white-space: nowrap; /* Prevent text from wrapping */
+        overflow: hidden; /* Hide overflowing text */
+        text-overflow: ellipsis; /* Add "..." for overflowed text */
+
+}
+
+.info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.player h1 {
+    font-size: 27px;
+    color: #E1E1E6;
+    padding-bottom: 7px;
+    margin-block-start: 1px;
+    margin-block-end: 1px;
+}
+
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 15px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 9px;
+    background: #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.progress {
+    height: 100%;
+    background: #2D8F7A;
+    width: 0;
+    border-radius: 5px;
+}
+
+.time {
+    opacity: 0.7;
+    font-size: 14px;
+    color: gainsboro;
+
+    display: flex;
+    justify-content: space-between;
+    padding-top: 9.6px;
 }
