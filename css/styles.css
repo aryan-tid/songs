@@ -1,7 +1,7 @@
 /* General Body Styling */
 body {
-    background-color: #f5f5f5;
-    color: #333;
+    background-color: #0b2d39;
+    color: #f0f0f0;
     font-family: Arial, sans-serif;
     margin: 0px;
 }
@@ -9,7 +9,7 @@ body {
 /* Navbar Styling */
 
 nav {
-    background-color: #2D8F7A;
+    background-color: #071e26;
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
@@ -102,7 +102,6 @@ nav ul li a:hover {
 h1,
 h2 {
     text-align: center;
-    color: #333;
 }
 
 /* Input and Button Containers */
@@ -152,11 +151,9 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #f9f9f9;
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
 
@@ -461,7 +458,7 @@ Button#nextPage:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 2px;
 }
 
 #playlistImg {
@@ -507,7 +504,7 @@ Button#nextPage:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 2px;
 }
 
 #albumImg {
@@ -797,7 +794,7 @@ Button#nextPage:hover {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background-color: #fefefe;
+        background-color: #0b2d39;
         padding: 20px;
         border-radius: 20px;
         max-width: 400px;
@@ -819,7 +816,6 @@ Button#nextPage:hover {
         position: relative;
         transition: transform 0.3s ease;
         width: 100%;
-        box-shadow: 0 2px 5px rgba(5, 168, 155, 0.3);
         /* Set lower z-index */
     }
 
@@ -872,7 +868,8 @@ Button#nextPage:hover {
     }
 
     .close-button {
-        color: #aaa;
+        color: red;
+        background-color: #071e26;
         font-size: 28px;
         font-weight: bold;
         position: absolute;
@@ -881,11 +878,12 @@ Button#nextPage:hover {
         /* Position the close button inside the modal */
         right: 20px;
         z-index: 101;
+        border-radius: 13px;
     }
 
     .close-button:hover,
     .close-button:focus {
-        color: black;
+        background-color: darkred;
         text-decoration: none;
         cursor: pointer;
     }
@@ -911,13 +909,13 @@ Button#nextPage:hover {
         background-color: #ff4c4c;
         /* Red background for a strong CTA */
         color: white;
-        padding: 10px 20px;
+        padding: 10px 18px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 16px;
+        font-size: 14px;
         transition: background-color 0.3s ease;
-        margin: 10px 0;
+        margin: 8px 0;
     }
 
     #btnClearQueue:hover {
@@ -993,6 +991,7 @@ Button#nextPage:hover {
     border: none;
     font-size: 24px;
     cursor: pointer;
+    color: white;
 }
 
 .dropdown-menu, .dropdown-menu-album,.dropdown-menu-artist {

@@ -23,17 +23,25 @@ function getAPIBaseURL() {
 const APIbaseURL = getAPIBaseURL();
 
 
-const toggle = document.getElementById("loopToggle");
-const status = document.getElementById("loopStatus");
+function toggleLoop() {
+    const checkbox = document.getElementById('loopToggle');
+    const dot = document.getElementById('switchDot');
+    const loopStatus = document.getElementById('loopStatus');
+    const switchContainer = document.getElementById('switchContainer');
 
-let loop = false; // Initial value for loop
+    checkbox.checked = !checkbox.checked; // Toggle checkbox state
 
-toggle.addEventListener("change", () => {
-    toggle.style.background = toggle.checked ? "#4CAF50" : "#ccc";
-    status.innerText = toggle.checked ? "On" : "Off";
-    loop = toggle.checked; // Set loop to true if on, false if off
-    console.log(loop);
-});
+    if (checkbox.checked) {
+        dot.style.left = '22px'; // Move dot to the right
+        switchContainer.style.background = '#4CAF50'; // Green background for ON state
+        loopStatus.innerText = 'On';
+    } else {
+        dot.style.left = '2px'; // Move dot to the left
+        switchContainer.style.background = '#ccc'; // Gray background for OFF state
+        loopStatus.innerText = 'Off';
+    }
+}
+
 function hideDropdownOnClickOutside() {
     // Listen for clicks on the entire document
     document.addEventListener('click', (event) => {
@@ -1753,7 +1761,8 @@ function playQueueSongByID(songID){
         showMessage(`Unkown Error Occured!!!`, "negative")
     }
 }
-
+
+/*
 window.addEventListener('beforeunload', function (e) {
     // Custom message for the confirmation dialog
     var confirmationMessage = 'Are you sure you want to leave?';
@@ -1761,7 +1770,7 @@ window.addEventListener('beforeunload', function (e) {
     // The standard behavior is to show a generic browser dialog.
     (e || window.event).returnValue = confirmationMessage; // For most browsers
     return confirmationMessage; // For some older browsers
-});
+}); */
 async function callMediaSession(urlImage1, SongName) {
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
