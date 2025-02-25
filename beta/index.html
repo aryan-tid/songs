@@ -1,0 +1,99 @@
+<!DOCTYPE html><html data-bs-theme="auto" lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"><title>Melodify</title>
+			<script>
+(function() {
+
+	// JavaScript snippet handling Dark/Light mode switching
+
+	const getStoredTheme = () => localStorage.getItem('theme');
+	const setStoredTheme = theme => localStorage.setItem('theme', theme);
+	const forcedTheme = document.documentElement.getAttribute('data-bss-forced-theme');
+
+	const getPreferredTheme = () => {
+
+		if (forcedTheme) return forcedTheme;
+
+		const storedTheme = getStoredTheme();
+		if (storedTheme) {
+			return storedTheme;
+		}
+
+		const pageTheme = document.documentElement.getAttribute('data-bs-theme');
+
+		if (pageTheme) {
+			return pageTheme;
+		}
+
+		return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+	}
+
+	const setTheme = theme => {
+		if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			document.documentElement.setAttribute('data-bs-theme', 'dark');
+		} else {
+			document.documentElement.setAttribute('data-bs-theme', theme);
+		}
+	}
+
+	setTheme(getPreferredTheme());
+
+	const showActiveTheme = (theme, focus = false) => {
+		const themeSwitchers = [].slice.call(document.querySelectorAll('.theme-switcher'));
+
+		if (!themeSwitchers.length) return;
+
+		document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+			element.classList.remove('active');
+			element.setAttribute('aria-pressed', 'false');
+		});
+
+		for (const themeSwitcher of themeSwitchers) {
+
+			const btnToActivate = themeSwitcher.querySelector('[data-bs-theme-value="' + theme + '"]');
+
+			if (btnToActivate) {
+				btnToActivate.classList.add('active');
+				btnToActivate.setAttribute('aria-pressed', 'true');
+			}
+		}
+	}
+
+	window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+		const storedTheme = getStoredTheme();
+		if (storedTheme !== 'light' && storedTheme !== 'dark') {
+			setTheme(getPreferredTheme());
+		}
+	});
+
+	window.addEventListener('DOMContentLoaded', () => {
+		showActiveTheme(getPreferredTheme());
+
+		document.querySelectorAll('[data-bs-theme-value]')
+			.forEach(toggle => {
+				toggle.addEventListener('click', (e) => {
+					e.preventDefault();
+					const theme = toggle.getAttribute('data-bs-theme-value');
+					setStoredTheme(theme);
+					setTheme(theme);
+					showActiveTheme(theme);
+				})
+			})
+	});
+})();
+</script><link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f"><link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f"><link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f" media="(prefers-color-scheme: dark)"><link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f"><link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f"><link rel="icon" type="image/png" sizes="512x512" href="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f"><link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=a549af2a81cd9900ee897d8bc9c4b5e9"><link rel="manifest" href="manifest.json?h=e2031fab99b81a1ad06a97122d55af87" crossorigin="use-credentials"><link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css?h=03bc88feb8c0ce198a12645fce792b30"><link rel="stylesheet" href="assets/fonts/material-icons.min.css?h=03bc88feb8c0ce198a12645fce792b30"><link rel="stylesheet" href="assets/css/bs-theme-overrides.css?h=1041d609295e3322662d454aaba9a81e"><link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=befd8a398792e305b7ffd4a176b5b585"><link rel="stylesheet" href="assets/css/Player-1.css?h=0335e23f40f6c90949baa87fa3d47e8c"><link rel="stylesheet" href="assets/css/Player-2.css?h=7d590f24e27ae9ab7233ab4c68a0f5f7"><link rel="stylesheet" href="assets/css/styles.css?h=8262c297d6c6cfb9af96fef8e66ca670"></head><body class="bg-secondary" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;"><nav class="navbar navbar-expand-md py-3" style="height: 60px;background: var(--bs-secondary);"><div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span>Melodify</span></a><div class="theme-switcher dropdown"><a class="dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill mb-1">
+  <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+</svg></a><div class="dropdown-menu"><a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="light"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill opacity-50 me-2">
+  <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
+</svg>Light</a><a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="dark"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-moon-stars-fill opacity-50 me-2">
+  <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278"></path>
+  <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"></path>
+</svg>Dark</a><a class="dropdown-item d-flex align-items-center" href="#" data-bs-theme-value="auto"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-circle-half opacity-50 me-2">
+  <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"></path>
+</svg>Auto</a></div></div><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2" style="--bs-border-radius: 0rem;"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navcol-2" style="height: 41.1px;"><ul class="navbar-nav ms-auto"><li class="nav-item" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;text-align: center;padding-right: 10px;padding-left: 10px;padding-top: 10px;"><a class="nav-link active" href="#" style="border-radius: 7px;border: 2px solid var(--bs-gray-500);text-align: center;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search" style="margin-left: 0px;margin-bottom: 0px;margin-right: 6px;text-align: center;">
+  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
+</svg>Browse</a></li><li class="nav-item" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;text-align: center;padding-right: 10px;padding-left: 10px;padding-top: 10px;"><a class="nav-link active nav-link active github-link" href="https://github.com/aryan-tid" target="_blank" style="border-radius:7px;border:2px solid var(--bs-gray-500);">GitHub<svg class="bi bi-box-arrow-up-right" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewbox="0 0 16 16" style="margin-bottom:7px;margin-left:6px;"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"></path><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"></path></svg></a></li></ul></div></div></nav><div id="popup" class="popup-overlay audio-player11 hidden"><div class="text-light text-bg-secondary audio-player1" style="box-shadow: 0px 0px 6px 4px var(--bs-primary);margin: 0px;padding: 15px;padding-right: 20px;padding-left: 20px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrows-angle-contract unexpand-player" style="font-size: 16px;margin-top: 4px;margin-left: 6px;">
+  <path fill-rule="evenodd" d="M.172 15.828a.5.5 0 0 0 .707 0l4.096-4.096V14.5a.5.5 0 1 0 1 0v-3.975a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1h2.768L.172 15.121a.5.5 0 0 0 0 .707zM15.828.172a.5.5 0 0 0-.707 0l-4.096 4.096V1.5a.5.5 0 1 0-1 0v3.975a.5.5 0 0 0 .5.5H14.5a.5.5 0 0 0 0-1h-2.768L15.828.879a.5.5 0 0 0 0-.707z"></path>
+</svg><div class="album-art"><img src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f" alt="Album Art" style="width:100%;height:100%;object-fit:cover;"></div><div class="track-info"><div class="track-title"><span style="color:var(--bs-light);">Melodify</span></div><div class="text-light track-artist"><span>With ❤️ by Aryan</span></div></div><div class="text-light progress-container"><div class="text-primary progress-bar progress-bar123"><div class="text-primary progress progress123"></div></div><div class="text-light time-info"><span class="currentTime1">0:00</span><span class="totalTime1">3:45</span></div></div><div class="controls"><button class="control-btn"><i class="fas fa-backward"></i></button><button class="control-btn play-pause play-pause-btn1"><i class="fas fa-play"></i></button><button class="control-btn"><i class="fas fa-forward"></i></button><button class="btn control-btn loop-btn" type="button"><i class="material-icons">loop</i></button></div><div class="volume-container"><i class="fas fa-volume-up"></i><div id="volumeSlider" class="volume-slider"><div id="volumeLevel" class="volume-level"></div></div></div></div><div class="popup-content"></div></div><div class="text-light text-bg-secondary audio-player2" style="color: var(--bs-light);box-shadow: 0px 0px 6px 4px var(--bs-primary);margin-top: 20px;transform: translate(0px);height: 70px;padding-left: 0px;"><div class="audio-file hidden">
+    <audio src=""></audio>
+</div><div class="track-info2" style="text-align: right;margin-left: 0px;"><div class="track-title"><span style="color:var(--bs-light);">Melodify</span></div><div class="text-light track-artist"><span>With ❤️ by Aryan</span></div></div><div class="album-art" style="width: 60px;height: 60px;margin-bottom: 0px;margin-left: 13px;"><img src="https://aryantidke.me/songs/logo.png" alt="Album Art" style="width: 100%;height: 100%;object-fit: cover;"></div><div class="text-light progress-container"><div class="text-primary progress-bar progress-bar12" style="margin-left: 10px;margin-right: 0px;height: 10px;background: rgb(216,217,218);"><div class="text-primary progress progress12"></div></div><div class="text-light time-info" style="margin-right: 11px;margin-left: 11px;margin-top: 3px;"><span class="currentTime">00:00</span><div class="track-info1"><div class="track-title" style="margin-bottom: 4px;"><span style="color:var(--bs-light);">Melodify</span></div></div><div class="controls" style="width: 100%;height: 100%;font-size: 12px;margin-top: 10px;"><button class="control-btn" style="width: 30px;height: 30px;"><i class="fas fa-backward"></i></button><button class="control-btn play-pause play-pause-btn" style="width: 35px;height: 35px;"><i class="fas fa-play"></i></button><button class="control-btn" style="width: 30px;height: 30px;"><i class="fas fa-forward"></i></button><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrows-angle-expand expand-player" style="font-size: 16px;margin-top: 4px;margin-left: 6px;">
+  <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"></path>
+</svg></div><span class="totalTime" style="margin-right: -20px;">3:45</span></div></div></div><script src="assets/bootstrap/js/bootstrap.min.js?h=374d178d651fa0eaf680a1fa7b40c788"></script><script src="assets/js/player.js?h=e24e13024afab64c60b081946b907884"></script></body></html>

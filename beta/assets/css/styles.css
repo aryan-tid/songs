@@ -1,0 +1,27 @@
+@media (max-width: 692px) {
+  bg-body {
+    display: none;
+  }
+}
+
+@media (min-width: 800px) {
+  .track-info1 .track-title {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .audio-player2 .track-info2 {
+    display: none;
+  }
+}
+
+.hidden {
+  display: none;
+}
+
+body {
+  margin: 0px;
+  padding: 0px;
+}
+
