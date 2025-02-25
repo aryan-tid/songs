@@ -16,6 +16,13 @@ const playIcon = '<i class="fas fa-play"></i>';  // Play icon
 const pauseIcon = '<i class="fas fa-pause"></i>'; // Pause icon
 const volumeSlider = document.getElementById("volumeSlider");
 const volumeLevel = document.getElementById("volumeLevel")
+const img1 = document.querySelector(".player1-img")
+const img2 = document.querySelector(".player2-img")
+const songName1 = document.querySelector(".player1-name");
+const songName21 = document.querySelector(".player21-name");
+const songName22 = document.querySelector(".player22-name");
+const songArtists1 = document.querySelector(".player1-artists");
+const songArtists2 = document.querySelector(".player2-artists");
 const loopElement = document.querySelector('.loop-btn');
 let loop = false;
 
@@ -32,10 +39,19 @@ loopElement.addEventListener("click", function () {
 
 
 
-function playAudio(url) {
+function playAudio(name,url,img,artists) {
     audio.src = url; // Assign the actual URL, not the string "url"
+    callMediaSession(img,name);
+    img1.src=img;
+    img2.src=img;
+    songName1.textContent=name;
+    songName21.textContent=name;
+    songName22.textContent=name;
+    songArtists1.textContent=artists;
+    songArtists2.textContent=artists;
+    audio1("play");
+
 }
-playAudio("https://aac.saavncdn.com/179/072d8e825c532778560b38b4042c8fc3_320.mp4");
 // Function to format time (mm:ss)
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
@@ -53,7 +69,6 @@ audio.addEventListener("loadedmetadata", function () {
 playPauseBtn.addEventListener("click", function () {
     if (audio.paused) {
         audio1("play");  // Pass "play" as a string
-        callMediaSession();
     } else {
         audio1("pause"); // Pass "pause" as a string
     }
@@ -314,3 +329,10 @@ updateVolumeUI();
 function updateVolumeUI() {
     volumeLevel.style.width = `${audio.volume * 100}%`;
 }
+ // Block text selection
+ document.body.style.userSelect = 'none';
+
+ // Block right-click
+ document.addEventListener('contextmenu', function(e) {
+   e.preventDefault();
+ });

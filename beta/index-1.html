@@ -96,7 +96,9 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css?h=a549af2a81cd9900ee897d8bc9c4b5e9">
     <link rel="manifest" href="manifest.json?h=e2031fab99b81a1ad06a97122d55af87" crossorigin="use-credentials">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css?h=03bc88feb8c0ce198a12645fce792b30">
+    <link rel="stylesheet" href="assets/fonts/ionicons.min.css?h=03bc88feb8c0ce198a12645fce792b30">
     <link rel="stylesheet" href="assets/fonts/material-icons.min.css?h=03bc88feb8c0ce198a12645fce792b30">
+    <link rel="stylesheet" href="assets/fonts/simple-line-icons.min.css?h=03bc88feb8c0ce198a12645fce792b30">
     <link rel="stylesheet" href="assets/css/bs-theme-overrides.css?h=1041d609295e3322662d454aaba9a81e">
     <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=befd8a398792e305b7ffd4a176b5b585">
     <link rel="stylesheet" href="assets/css/Player-1.css?h=0335e23f40f6c90949baa87fa3d47e8c">
@@ -107,7 +109,14 @@
 
 <body class="bg-secondary" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;">
     <nav class="navbar navbar-expand-md py-3" style="height: 60px;background: var(--bs-secondary);">
-        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span>Melodify</span></a>
+        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span>Melodify</span></a><select class="universal-quality" name="quality">
+  <option value="12kbps">12 kbps</option>
+  <option value="48kbps">48 kbps</option>
+  <option value="96kbps">96 kbps</option>
+  <option value="160kbps">160 kbps</option>
+  <option value="320kbps" selected>320 kbps</option>
+</select>
+
             <div class="theme-switcher dropdown"><a class="dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-sun-fill mb-1">
                         <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
                     </svg></a>
@@ -121,7 +130,7 @@
                         </svg>Auto</a></div>
             </div><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2" style="--bs-border-radius: 0rem;"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-2" style="height: 41.1px;">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto" style="background: rgba(255,255,255,0);opacity: 1;filter: blur(0px);backdrop-filter: blur(12px);-webkit-backdrop-filter: blur(12px);">
                     <li class="nav-item" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;text-align: center;padding-right: 10px;padding-left: 10px;padding-top: 10px;"><a class="nav-link active" href="#" style="border-radius: 7px;border: 2px solid var(--bs-gray-500);text-align: center;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search" style="margin-left: 0px;margin-bottom: 0px;margin-right: 6px;text-align: center;">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
                             </svg>Browse</a></li>
@@ -130,14 +139,24 @@
             </div>
         </div>
     </nav>
+    <div class="song-card-list"><span class="card-list-header">Heading</span>
+        <div class="song-card-container">
+            <div class="container song-card hidden">
+                <div class="song-card-cont1"><img class="song-card-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f">
+                    <div class="song-details"><span class="song-card-name">Melodify</span><span class="song-card-artists">With ❤️ by Aryan</span><span class="song-card-song-id hidden">With ❤️ by Aryan</span><span class="song-card-song-url0 hidden">With ❤️ by Aryan</span><span class="song-card-song-url1 hidden">With ❤️ by Aryan</span><span class="song-card-song-url2 hidden">With ❤️ by Aryan</span><span class="song-card-song-url3 hidden">With ❤️ by Aryan</span><span class="song-card-song-url4 hidden">With ❤️ by Aryan</span><span class="song-card-song-imgHD hidden">With ❤️ by Aryan</span></div>
+                </div>
+                <div class="song-card-cont1"><button class="btn btn-primary song-card-btn" type="button"><i class="icon ion-android-add"></i></button><button class="btn btn-primary song-card-btn" type="button"><i class="icon-options-vertical" style="font-size: 16px;"></i></button></div>
+            </div>
+        </div>
+    </div>
     <div id="popup" class="popup-overlay audio-player11 hidden">
         <div class="text-light text-bg-secondary audio-player1" style="box-shadow: 0px 0px 6px 4px var(--bs-primary);margin: 0px;padding: 15px;padding-right: 20px;padding-left: 20px;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrows-angle-contract unexpand-player" style="font-size: 16px;margin-top: 4px;margin-left: 6px;">
                 <path fill-rule="evenodd" d="M.172 15.828a.5.5 0 0 0 .707 0l4.096-4.096V14.5a.5.5 0 1 0 1 0v-3.975a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1h2.768L.172 15.121a.5.5 0 0 0 0 .707zM15.828.172a.5.5 0 0 0-.707 0l-4.096 4.096V1.5a.5.5 0 1 0-1 0v3.975a.5.5 0 0 0 .5.5H14.5a.5.5 0 0 0 0-1h-2.768L15.828.879a.5.5 0 0 0 0-.707z"></path>
             </svg>
-            <div class="album-art"><img src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f" alt="Album Art" style="width:100%;height:100%;object-fit:cover;"></div>
+            <div id="player1-img" class="album-art"><img class="player1-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f" alt="Album Art" style="width:100%;height:100%;object-fit:cover;"></div>
             <div class="track-info">
-                <div class="track-title"><span style="color:var(--bs-light);">Melodify</span></div>
-                <div class="text-light track-artist"><span>With ❤️ by Aryan</span></div>
+                <div class="track-title"><span class="player1-name" style="color:var(--bs-light);">Melodify</span></div>
+                <div class="text-light track-artist"><span class="player1-artists">With ❤️ by Aryan</span></div>
             </div>
             <div class="text-light progress-container">
                 <div class="text-primary progress-bar progress-bar123">
@@ -158,21 +177,21 @@
     <audio src=""></audio>
 </div>
         <div class="track-info2" style="text-align: right;margin-left: 0px;">
-            <div class="track-title"><span style="color:var(--bs-light);">Melodify</span></div>
-            <div class="text-light track-artist"><span>With ❤️ by Aryan</span></div>
+            <div class="track-title"><span class="player21-name" style="color:var(--bs-light);">Melodify</span></div>
+            <div class="text-light track-artist"><span class="player2-artists">With ❤️ by Aryan</span></div>
         </div>
-        <div class="album-art" style="width: 60px;height: 60px;margin-bottom: 0px;margin-left: 13px;"><img src="https://aryantidke.me/songs/logo.png" alt="Album Art" style="width: 100%;height: 100%;object-fit: cover;"></div>
+        <div class="album-art" style="width: 60px;height: 60px;margin-bottom: 0px;margin-left: 13px;"><img class="player2-img" src="https://aryantidke.me/songs/logo.png" alt="Album Art" style="width: 100%;height: 100%;object-fit: cover;"></div>
         <div class="text-light progress-container">
-            <div class="text-primary progress-bar progress-bar12" style="margin-left: 10px;margin-right: 0px;height: 10px;background: rgb(216,217,218);">
+            <div class="text-primary progress-bar progress-bar12" style="margin-left: 10px;margin-right: 0px;background: rgb(216,217,218);">
                 <div class="text-primary progress progress12"></div>
             </div>
-            <div class="text-light time-info" style="margin-right: 11px;margin-left: 11px;margin-top: 3px;"><span class="currentTime">00:00</span>
+            <div class="text-light time-info" style="margin-right: 11px;margin-left: 11px;margin-top: 3px;">
                 <div class="track-info1">
-                    <div class="track-title" style="margin-bottom: 4px;"><span style="color:var(--bs-light);">Melodify</span></div>
+                    <div class="track-title" style="margin-bottom: 4px;padding-left: 21px;"><span class="player22-name" style="color:var(--bs-light);">Melodify</span></div>
                 </div>
                 <div class="controls" style="width: 100%;height: 100%;font-size: 12px;margin-top: 10px;"><button class="control-btn" style="width: 30px;height: 30px;"><i class="fas fa-backward"></i></button><button class="control-btn play-pause play-pause-btn" style="width: 35px;height: 35px;"><i class="fas fa-play"></i></button><button class="control-btn" style="width: 30px;height: 30px;"><i class="fas fa-forward"></i></button><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrows-angle-expand expand-player" style="font-size: 16px;margin-top: 4px;margin-left: 6px;">
                         <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"></path>
-                    </svg></div><span class="totalTime" style="margin-right: -20px;">3:45</span>
+                    </svg></div><span class="currentTime" style="height: 22px;">0:00</span><span style="height: 22px;">/</span><span class="totalTime" style="margin-right: -20px;height: 22px;">-:-</span>
             </div>
         </div>
     </div>

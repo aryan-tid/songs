@@ -60,6 +60,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   bottom: 0;
+  max-width: 92px;
 }
 
 .audio-player2 .track-artist {
@@ -80,7 +81,7 @@
 }
 
 .audio-player2 .progress-bar {
-  height: 4px;
+  height: 9px;
   background: #e9ecef;
   border-radius: 5px;
   position: relative;
@@ -90,7 +91,7 @@
 }
 
 .audio-player2 .progress-bar:hover {
-  height: 8px;
+  height: 9px;
   background: #e9ecef;
   border-radius: 5px;
   position: relative;
