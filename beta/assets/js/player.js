@@ -356,9 +356,17 @@ function updateVolumeUI() {
  
  let observer = new ResizeObserver(() => {
      let computedStyle = window.getComputedStyle(element);
-     element2.style.width = computedStyle.width;
+     let width = parseFloat(computedStyle.width); // Convert width from "px" string to number
+ 
+     if (width > 150) { // Only update if width > 150px
+         element2.style.width = computedStyle.width;
+        } else {
+            
+            element2.style.width = "150px";
+     }
  });
  
  // Observe changes in `element`
  observer.observe(element);
+ 
  
