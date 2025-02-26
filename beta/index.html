@@ -102,9 +102,9 @@
     <link rel="stylesheet" href="assets/css/bs-theme-overrides.css?h=1041d609295e3322662d454aaba9a81e">
     <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=befd8a398792e305b7ffd4a176b5b585">
     <link rel="stylesheet" href="assets/css/Player-1.css?h=0335e23f40f6c90949baa87fa3d47e8c">
-    <link rel="stylesheet" href="assets/css/Player-2.css?h=0b1eaab1e822db190b0b07cf31cfe21c">
+    <link rel="stylesheet" href="assets/css/Player-2.css?h=b7dfb2dab9dfe7849eaafc269df09240">
     <link rel="stylesheet" href="assets/css/song-card.css?h=c3477da93e5ee4986d7cde0a74fc8495">
-    <link rel="stylesheet" href="assets/css/styles.css?h=8262c297d6c6cfb9af96fef8e66ca670">
+    <link rel="stylesheet" href="assets/css/styles.css?h=78d934ef8a3b0960e72fd4ec9c794018">
 </head>
 
 <body class="bg-secondary" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;">
@@ -173,30 +173,32 @@
         </div>
         <div class="popup-content"></div>
     </div>
-    <div class="text-light text-bg-secondary audio-player2" style="color: var(--bs-light);box-shadow: 0px 0px 6px 4px var(--bs-primary);margin-top: 20px;transform: translate(0px);height: 70px;padding-left: 0px;"><div class="audio-file hidden">
+    <div class="text-light text-bg-secondary audio-player2" style="color: var(--bs-light);margin-top: 20px;transform: translate(0px);height: 70px;padding-left: 0px;"><div class="audio-file hidden">
     <audio src=""></audio>
 </div>
-        <div class="track-info2" style="text-align: right;margin-left: 0px;">
-            <div class="track-title"><span class="player21-name" style="color:var(--bs-light);">Melodify</span></div>
-            <div class="text-light track-artist"><span class="player2-artists">With ❤️ by Aryan</span></div>
-        </div>
-        <div class="album-art" style="width: 60px;height: 60px;margin-bottom: 0px;margin-left: 13px;"><img class="player2-img" src="https://aryantidke.me/songs/logo.png" alt="Album Art" style="width: 100%;height: 100%;object-fit: cover;"></div>
-        <div class="text-light progress-container">
-            <div class="text-primary progress-bar progress-bar12" style="margin-left: 10px;margin-right: 0px;background: rgb(216,217,218);">
+        <div style="width: 100%;padding-right: 0px;">
+            <div class="text-primary progress-bar progress-bar12" style="box-shadow: 0px -2px 12px 2px var(--bs-success);">
                 <div class="text-primary progress progress12"></div>
             </div>
-            <div class="text-light time-info" style="margin-right: 11px;margin-left: 11px;margin-top: 3px;">
-                <div class="track-info1">
-                    <div class="track-title" style="margin-bottom: 4px;padding-left: 21px;"><span class="player22-name" style="color:var(--bs-light);">Melodify</span></div>
+            <div class="text-light progress-container">
+                <div class="controls" style="margin-left: 0px;">
+                    <div class="div-details expand-player">
+                        <div class="album-art" style="width: 50px;height: 50px;margin-bottom: 0px;margin-left: 13px;"><img class="player2-img expand-player" src="https://aryantidke.me/songs/logo.png" alt="Album Art" style="width: 100%;height: 100%;object-fit: cover;"></div>
+                        <div class="track-info2" style="margin-left: 0px;">
+                            <div id="trackTitle" class="track-title"><span class="player21-name" style="color:var(--bs-light);">Melodify</span></div>
+                            <div class="text-light track-artist"><span class="player2-artists">With ❤️ by Aryan</span></div>
+                        </div>
+                    </div>
+                    <div id="large-player1" class="div-large"><button class="control-btn1" style="width: 30px;height: 30px;"><i class="fas fa-backward"></i></button><button class="control-btn1 play-pause1 play-pause-btn22" style="padding: 0px;"><i class="fas fa-play"></i></button><button class="control-btn1" style="width: 30px;height: 30px;"><i class="fas fa-forward"></i></button></div>
+                    <div id="timePausePlay" class="time-pause-play">
+                        <div class="time-pause-play" style="padding-right: 30px;"><span class="currentTime expand-player" style="height: 22px;">0:00</span><span class="expand-player" style="height: 22px;padding-left: 5px;padding-right: 5px;">/</span><span class="totalTime expand-player" style="margin-right: -20px;height: 22px;">-:-</span></div><button class="control-btn play-pause play-pause-btn" style="padding: 0px;"><i class="fas fa-play"></i></button>
+                    </div>
                 </div>
-                <div class="controls" style="width: 100%;height: 100%;font-size: 12px;margin-top: 10px;"><button class="control-btn" style="width: 30px;height: 30px;"><i class="fas fa-backward"></i></button><button class="control-btn play-pause play-pause-btn" style="width: 35px;height: 35px;"><i class="fas fa-play"></i></button><button class="control-btn" style="width: 30px;height: 30px;"><i class="fas fa-forward"></i></button><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-arrows-angle-expand expand-player" style="font-size: 16px;margin-top: 4px;margin-left: 6px;">
-                        <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707"></path>
-                    </svg></div><span class="currentTime" style="height: 22px;">0:00</span><span style="height: 22px;">/</span><span class="totalTime" style="margin-right: -20px;height: 22px;">-:-</span>
             </div>
         </div>
     </div>
     <script src="assets/bootstrap/js/bootstrap.min.js?h=374d178d651fa0eaf680a1fa7b40c788"></script>
-    <script src="assets/js/player.js?h=6bcb44ae55415a031e57383234ce2965"></script>
+    <script src="assets/js/player.js?h=85d87f7f6647fb6babf8fe9005af0dbf"></script>
     <script src="assets/js/search-api.js?h=541b1627c03b0e70d6a2faf8fb02fbae"></script>
 </body>
 

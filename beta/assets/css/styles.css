@@ -4,13 +4,13 @@
   }
 }
 
-@media (min-width: 800px) {
-  .track-info1 .track-title {
+@media (max-width: 800px) {
+  #large-player1 {
     display: none;
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 100px) {
   .audio-player2 .track-info2 {
     display: none;
   }

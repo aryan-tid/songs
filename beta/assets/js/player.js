@@ -1,6 +1,7 @@
 const audio = document.querySelector(".audio-file audio");
 const playPauseBtn = document.querySelector(".play-pause-btn");
 const playPauseBtn1 = document.querySelector(".play-pause-btn1");
+const playPauseBtn22 = document.querySelector(".play-pause-btn22");
 const currentTimeElement = document.querySelector(".currentTime");
 const totalTimeElement = document.querySelector(".totalTime");
 const currentTimeElement1 = document.querySelector(".currentTime1");
@@ -20,7 +21,6 @@ const img1 = document.querySelector(".player1-img")
 const img2 = document.querySelector(".player2-img")
 const songName1 = document.querySelector(".player1-name");
 const songName21 = document.querySelector(".player21-name");
-const songName22 = document.querySelector(".player22-name");
 const songArtists1 = document.querySelector(".player1-artists");
 const songArtists2 = document.querySelector(".player2-artists");
 const loopElement = document.querySelector('.loop-btn');
@@ -46,7 +46,6 @@ function playAudio(name,url,img,artists) {
     img2.src=img;
     songName1.textContent=name;
     songName21.textContent=name;
-    songName22.textContent=name;
     songArtists1.textContent=artists;
     songArtists2.textContent=artists;
     audio1("play");
@@ -80,6 +79,13 @@ playPauseBtn1.addEventListener("click", function () {
         audio1("pause"); // Pass "pause" as a string
     }
 });
+playPauseBtn22.addEventListener("click", function () {
+    if (audio.paused) {
+        audio1("play");  // Pass "play" as a string
+    } else {
+        audio1("pause"); // Pass "pause" as a string
+    }
+});
 
 
 function audio1(action) {
@@ -87,10 +93,12 @@ function audio1(action) {
         audio.play();
         playPauseBtn.innerHTML = pauseIcon; // Change to pause icon
         playPauseBtn1.innerHTML = pauseIcon; // Change to pause icon
+        playPauseBtn22.innerHTML = pauseIcon; // Change to pause icon
     } else if (action === "pause") { // Compare with string "pause"
         audio.pause();
         playPauseBtn.innerHTML = playIcon; // Change to play icon
         playPauseBtn1.innerHTML = playIcon; // Change to play icon
+        playPauseBtn22.innerHTML = playIcon; // Change to pause icon
     }
 }
 
@@ -102,6 +110,7 @@ audio.addEventListener("ended", function () {
     } else {
         playPauseBtn1.innerHTML = playIcon; // Reset to play icon when audio ends
         playPauseBtn.innerHTML = playIcon; // Reset to play icon when audio ends
+        playPauseBtn22.innerHTML = playIcon; // Change to pause icon
     }
 });
 
@@ -194,9 +203,13 @@ async function callMediaSession(urlImage1, SongName) {
             if (audio.paused) {
                 audio.play();
                 playPauseBtn.innerHTML = pauseIcon;
+                playPauseBtn1.innerHTML = pauseIcon;
+                playPauseBtn22.innerHTML = pauseIcon; // Change to pause icon
             } else {
                 audio.pause();
                 playPauseBtn.innerHTML = playIcon;
+                playPauseBtn1.innerHTML = playIcon;
+                playPauseBtn22.innerHTML = playIcon;
             }
         }
 
@@ -336,3 +349,16 @@ function updateVolumeUI() {
  document.addEventListener('contextmenu', function(e) {
    e.preventDefault();
  });
+
+
+ let element = document.getElementById('trackTitle');
+ let element2 = document.getElementById('timePausePlay');
+ 
+ let observer = new ResizeObserver(() => {
+     let computedStyle = window.getComputedStyle(element);
+     element2.style.width = computedStyle.width;
+ });
+ 
+ // Observe changes in `element`
+ observer.observe(element);
+ 

@@ -4,17 +4,16 @@
   left: 0;
   width: 100%;
   background: var(--bs-secondary);
-  box-shadow: 0px 0px 6px 4px var(--bs-primary);
-  padding: 10px 20px;
+  padding: 0px 0px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   align-content: center;
 }
 
-.audio-player2 .album-art {
-  width: 80px;
-  height: 80px;
+.audio-player2 .player2-img {
+  width: 70px;
+  height: 70px;
   border-radius: 10px;
   overflow: hidden;
   flex-shrink: 0;
@@ -22,8 +21,6 @@
 }
 
 .audio-player2 .album-art img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
@@ -47,12 +44,30 @@
   flex-grow: 1;
   text-align: center;
   margin-left: -25px;
-  min-width: 150px;
-  margin-bottom: 4px;
+  margin-bottom: 0px;
+  text-align: left;
+  max-width: 160px;
+  padding-left: 10px;
+}
+
+@media (min-width: 992px) {
+  .audio-player2 .track-info2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;
+    text-align: center;
+    margin-left: -25px;
+    margin-bottom: 0px;
+    text-align: left;
+    max-width: 350px;
+    padding-left: 10px;
+  }
 }
 
 .audio-player2 .track-title {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: bold;
   color: var(--bs-light);
   width: 100%;
@@ -60,11 +75,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   bottom: 0;
-  max-width: 92px;
 }
 
 .audio-player2 .track-artist {
-  font-size: 0.7rem;
+  font-size: 0.9rem;
   font-weight: bold;
   color: var(--bs-light);
   width: 100%;
@@ -76,24 +90,22 @@
 
 .audio-player2 .progress-container {
   width: 100%;
-  margin: 5px 0;
-  max-width: 1200px;
 }
 
 .audio-player2 .progress-bar {
-  height: 9px;
-  background: #e9ecef;
-  border-radius: 5px;
+  border-radius: 0px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  /*max-width: 900px;*/
+  height: 10px;
+  background: rgb(216,217,218);
+  width: 100%;
 }
 
 .audio-player2 .progress-bar:hover {
   height: 9px;
   background: #e9ecef;
-  border-radius: 5px;
+  border-radius: 0px;
   position: relative;
   cursor: pointer;
   overflow: hidden;
@@ -102,8 +114,9 @@
 .audio-player2 .progress {
   height: 100%;
   background: var(--bs-primary);
-  transition: width 0.1s linear;
+  transition: width 1s linear;
   width: 0%;
+  border-radius: 0px;
 }
 
 .audio-player2 .time-info {
@@ -115,16 +128,20 @@
 
 .audio-player2 .controls {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 15px;
   margin-left: 15px;
+  width: 100%;
+  height: 50px;
+  margin-top: 0px;
+  margin-bottom: 10px;
 }
 
 .audio-player2 .control-btn {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 0%;
   border: none;
   background: #f8f9fa;
   color: #333;
@@ -133,13 +150,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
+}
+
+.audio-player2 .control-btn1 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  color: var(--bs-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  font-size: 22px;
 }
 
 .audio-player2 .control-btn.play-pause {
+  width: 57px;
+  height: 100%;
+  background: var(--bs-primary);
+  color: white;
+}
+
+.audio-player2 .control-btn1.play-pause1 {
   width: 50px;
   height: 50px;
   background: var(--bs-primary);
   color: white;
+  margin-left: 40px;
+  margin-right: 40px;
 }
 
 .audio-player2 .volume-container {
@@ -170,5 +211,26 @@
   background: var(--bs-primary);
   border-radius: 2px;
   width: 70%;
+}
+
+.time-pause-play {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 58px;
+  flex-direction: row;
+}
+
+.div-details {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.div-large {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-right: 70px;
 }
 
