@@ -1,6 +1,6 @@
 function search(query) {
     // fetch(`http://192.168.1.4:3000/api/search/songs?query=${query}`)
-    fetch(`https://api-auth-henna.vercel.app/api/proxy?text_api=search/songs?query=${query}&page=1&limit=1`)
+    fetch(`https://api-auth-henna.vercel.app/api/proxy?text_api=search/songs?query=${query}?page=1?limit=1`)
         .then(response => response.json())
         .then(apiResponse => generateSongCards(apiResponse))
         .catch(error => console.error("Error fetching data:", error));
