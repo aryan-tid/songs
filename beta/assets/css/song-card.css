@@ -1,0 +1,120 @@
+.song-card-img {
+  border-radius: 10px;
+  width: 56px;
+  height: auto;
+  margin: 8px;
+}
+
+.song-card, .song-card-queue2 {
+  border-width: 1px;
+  border-radius: 10px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  max-width: 380px;
+  cursor: pointer;
+  width: inherit;
+  justify-content: space-between;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  min-width: 350px;
+}
+
+.song-card:hover, .song-card-queue2:hover {
+  border: solid;
+  border-width: 2px;
+  border-radius: 10px;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  max-width: 400px;
+  cursor: pointer;
+  width: auto;
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.song-card-name {
+  max-width: 150px;
+  width: 150px;
+  font-size: 19px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 700;
+}
+
+.song-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.song-card-artists {
+  max-width: 150px;
+  width: 150px;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-card-btn {
+  font-size: 20px;
+  font-weight: bolder;
+  color: white;
+  border-radius: 25px;
+  padding-right: 13px;
+  padding-left: 13px;
+  padding-bottom: 7px;
+  padding-top: 7px;
+  cursor: pointer;
+  height: 45px;
+  width: 45px;
+  margin: 5px;
+}
+
+.song-card-btn:hover {
+  font-size: 21px;
+  font-weight: 900;
+  color: white;
+  border-radius: 25px;
+  padding-right: 13px;
+  padding-left: 13px;
+  padding-bottom: 7px;
+  padding-top: 7px;
+  cursor: pointer;
+  height: 45px;
+  width: 45px;
+  margin: 5px;
+}
+
+.song-card-cont1 {
+  display: flex;
+  align-items: center;
+}
+
+.song-card-list {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-list-header {
+  font-size: x-large;
+  font-weight: 600;
+  max-width: 350px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-card-container {
+  max-width: 380px;
+  display: flex;
+  width: auto;
+  flex-direction: column;
+}
+
