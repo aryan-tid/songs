@@ -130,29 +130,10 @@ audio.addEventListener("timeupdate", function () {
     const progress = (audio.currentTime / audio.duration) * 100;
     progressBar.style.width = progress + "%";
 });
-progressBarContainer.addEventListener("click", function (event) {
-    const rect = progressBarContainer.getBoundingClientRect(); // Get position of progress bar
-    const offsetX = event.clientX - rect.left; // Get click position relative to progress bar
-    const percentage = (offsetX / rect.width) * 100; // Convert to percentage
-    const newTime = (percentage / 100) * audio.duration; // Convert percentage to time
-
-    audio.currentTime = newTime; // Seek audio
-    audio1("play");
-});
 audio.addEventListener("timeupdate", function () {
     const progress = (audio.currentTime / audio.duration) * 100;
     progressBar1.style.width = progress + "%";
 });
-progressBarContainer1.addEventListener("click", function (event) {
-    const rect = progressBarContainer1.getBoundingClientRect(); // Get position of progress bar
-    const offsetX = event.clientX - rect.left; // Get click position relative to progress bar
-    const percentage = (offsetX / rect.width) * 100; // Convert to percentage
-    const newTime = (percentage / 100) * audio.duration; // Convert percentage to time
-
-    audio.currentTime = newTime; // Seek audio
-    audio1("play");
-});
-
 
 
 let isDraggingTimeline1 = false;
