@@ -115,7 +115,7 @@
 .audio-player2 .progress {
   height: 100%;
   background: var(--bs-primary);
-  transition: width 1s linear;
+  transition: width 0.1s linear;
   width: 0%;
   border-radius: 0px;
 }

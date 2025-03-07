@@ -38,18 +38,21 @@ loopElement.addEventListener("click", function () {
 })
 
 
+function firstPlayAudio(name, url, img, artists, id) {
+    addSongToQueue(url, img, name, id, artists);
+    playAudio(name, url, img, artists);
+}
 
-function playAudio(name,url,img,artists) {
+function playAudio(name, url, img, artists) {
     audio.src = url; // Assign the actual URL, not the string "url"
-    callMediaSession(img,name);
-    img1.src=img;
-    img2.src=img;
-    songName1.textContent=name;
-    songName21.textContent=name;
-    songArtists1.textContent=artists;
-    songArtists2.textContent=artists;
+    callMediaSession(img, name, artists);
+    img1.src = img;
+    img2.src = img;
+    songName1.textContent = name;
+    songName21.textContent = name;
+    songArtists1.textContent = artists;
+    songArtists2.textContent = artists;
     audio1("play");
-
 }
 // Function to format time (mm:ss)
 function formatTime(seconds) {
@@ -91,16 +94,22 @@ playPauseBtn22.addEventListener("click", function () {
 function audio1(action) {
     if (action === "play") {  // Compare with string "play"
         audio.play();
-        playPauseBtn.innerHTML = pauseIcon; // Change to pause icon
-        playPauseBtn1.innerHTML = pauseIcon; // Change to pause icon
-        playPauseBtn22.innerHTML = pauseIcon; // Change to pause icon
     } else if (action === "pause") { // Compare with string "pause"
         audio.pause();
-        playPauseBtn.innerHTML = playIcon; // Change to play icon
-        playPauseBtn1.innerHTML = playIcon; // Change to play icon
-        playPauseBtn22.innerHTML = playIcon; // Change to pause icon
     }
 }
+audio.addEventListener("play", () => {
+    playPauseBtn.innerHTML = pauseIcon; // Change to pause icon
+    playPauseBtn1.innerHTML = pauseIcon; // Change to pause icon
+    playPauseBtn22.innerHTML = pauseIcon; // Change to pause icon
+});
+
+audio.addEventListener("pause", () => {
+    playPauseBtn.innerHTML = playIcon; // Change to play icon
+    playPauseBtn1.innerHTML = playIcon; // Change to play icon
+    playPauseBtn22.innerHTML = playIcon; // Change to play icon
+});
+
 
 // Update button when audio ends (so play button resets)
 audio.addEventListener("ended", function () {
@@ -108,9 +117,7 @@ audio.addEventListener("ended", function () {
         audio.currentTime = 0;
         audio.play();
     } else {
-        playPauseBtn1.innerHTML = playIcon; // Reset to play icon when audio ends
-        playPauseBtn.innerHTML = playIcon; // Reset to play icon when audio ends
-        playPauseBtn22.innerHTML = playIcon; // Change to pause icon
+        nextTrack();
     }
 });
 
@@ -130,6 +137,7 @@ progressBarContainer.addEventListener("click", function (event) {
     const newTime = (percentage / 100) * audio.duration; // Convert percentage to time
 
     audio.currentTime = newTime; // Seek audio
+    audio1("play");
 });
 audio.addEventListener("timeupdate", function () {
     const progress = (audio.currentTime / audio.duration) * 100;
@@ -142,6 +150,100 @@ progressBarContainer1.addEventListener("click", function (event) {
     const newTime = (percentage / 100) * audio.duration; // Convert percentage to time
 
     audio.currentTime = newTime; // Seek audio
+    audio1("play");
+});
+
+
+
+let isDraggingTimeline1 = false;
+let isDraggingTimeline2 = false;
+
+// Function to update progress bar 1
+function updateProgressBar1() {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = progress + "%";
+}
+
+// Function to update progress bar 2
+function updateProgressBar2() {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    progressBar1.style.width = progress + "%";
+}
+
+// Function to set timeline position for progressBarContainer
+function setTimeline1(event) {
+    const rect = progressBarContainer.getBoundingClientRect();
+    let offsetX = event.offsetX || event.touches?.[0]?.clientX - rect.left;
+
+    let percentage = Math.max(0, Math.min(1, offsetX / rect.width)); // Ensure range 0-1
+    audio.currentTime = percentage * audio.duration; // Seek audio
+}
+
+// Function to set timeline position for progressBarContainer1
+function setTimeline2(event) {
+    const rect = progressBarContainer1.getBoundingClientRect();
+    let offsetX = event.offsetX || event.touches?.[0]?.clientX - rect.left;
+
+    let percentage = Math.max(0, Math.min(1, offsetX / rect.width)); // Ensure range 0-1
+    audio.currentTime = percentage * audio.duration; // Seek audio
+}
+
+// Click event to seek audio position
+progressBarContainer.addEventListener("click", setTimeline1);
+progressBarContainer1.addEventListener("click", setTimeline2);
+
+// Dragging functionality for progress bar 1
+progressBarContainer.addEventListener("mousedown", (event) => {
+    isDraggingTimeline1 = true;
+    setTimeline1(event);
+});
+document.addEventListener("mousemove", (event) => {
+    if (isDraggingTimeline1) setTimeline1(event);
+});
+document.addEventListener("mouseup", () => {
+    isDraggingTimeline1 = false;
+});
+
+// Dragging functionality for progress bar 2
+progressBarContainer1.addEventListener("mousedown", (event) => {
+    isDraggingTimeline2 = true;
+    setTimeline2(event);
+});
+document.addEventListener("mousemove", (event) => {
+    if (isDraggingTimeline2) setTimeline2(event);
+});
+document.addEventListener("mouseup", () => {
+    isDraggingTimeline2 = false;
+});
+
+// Touch support for mobile dragging for progress bar 1
+progressBarContainer.addEventListener("touchstart", (event) => {
+    isDraggingTimeline1 = true;
+    setTimeline1(event);
+});
+document.addEventListener("touchmove", (event) => {
+    if (isDraggingTimeline1) setTimeline1(event);
+});
+document.addEventListener("touchend", () => {
+    isDraggingTimeline1 = false;
+});
+
+// Touch support for mobile dragging for progress bar 2
+progressBarContainer1.addEventListener("touchstart", (event) => {
+    isDraggingTimeline2 = true;
+    setTimeline2(event);
+});
+document.addEventListener("touchmove", (event) => {
+    if (isDraggingTimeline2) setTimeline2(event);
+});
+document.addEventListener("touchend", () => {
+    isDraggingTimeline2 = false;
+});
+
+// Update progress bars on time update
+audio.addEventListener("timeupdate", () => {
+    updateProgressBar1();
+    updateProgressBar2();
 });
 
 document.addEventListener("keydown", function (event) {
@@ -182,15 +284,17 @@ function seekBackward() {
     audio.currentTime = Math.max(0, audio.currentTime - 10);
 }
 
-async function callMediaSession(urlImage1, SongName) {
+async function callMediaSession(urlImage1, SongName, currentArtist) {
     const defaultImage = 'https://aryantidke.me/songs/logo.png'; // Default image
     const artworkUrl = urlImage1 ? urlImage1 : defaultImage;
 
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: SongName.replace(/&quot;/g, ' '),
+            artist: currentArtist || "Unknown Artist",
             artwork: [{ src: artworkUrl, sizes: '512x512', type: 'image/png' }],
         });
+
 
         // Ensure `audio` is playing before setting action handlers
         if (!audio.src) {
@@ -212,6 +316,31 @@ async function callMediaSession(urlImage1, SongName) {
                 playPauseBtn22.innerHTML = playIcon;
             }
         }
+        // Update playback state when audio is playing
+        audio.addEventListener("play", () => {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = "playing";
+            }
+        });
+
+        // Update playback state when audio is paused
+        audio.addEventListener("pause", () => {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.playbackState = "paused";
+            }
+        });
+
+        // Update timeline in media notification
+        audio.addEventListener("timeupdate", () => {
+            if ('setPositionState' in navigator.mediaSession) {
+                navigator.mediaSession.setPositionState({
+                    duration: audio.duration || 0,
+                    playbackRate: audio.playbackRate,
+                    position: audio.currentTime
+                });
+            }
+        });
+
 
         function seekForward() {
             audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
@@ -240,13 +369,11 @@ async function callMediaSession(urlImage1, SongName) {
         }
 
         function loadTrack(index) {
-            const audioSrc = playlistSongUrl[index];
-            const audioName = playlistSongName[index];
-            const imageUrl = playlistSongImg[index];
-            const artistName = playlistSongArtist[index];
-
-            playInPlayer(audioName, audioSrc, imageUrl, artistName);
-            showSongQueueNew();
+            const name = playlistSongName[index];
+            const urlencoded = playlistSongUrl[index];
+            const Image = playlistSongImg[index];
+            const artist = playlistSongArtist[index];
+            playAudio(name, urlencoded, Image, artist);
         }
 
         // Set Media Session Action Handlers
@@ -264,12 +391,28 @@ async function callMediaSession(urlImage1, SongName) {
     }
 }
 
+const mainContent = document.querySelector(".main-content");
 
 expandPlayer.addEventListener("click", function () {
     audioPlayer1.classList.toggle("hidden");
+    console.log(audioPlayer1.classList.contains("hidden"));
+    if (audioPlayer1.classList.contains("hidden")) {
+        mainContent.classList.remove("hidden");
+    } else {
+        mainContent.classList.add("hidden");
+        populateSongQueue();
+    }
 });
+
 unexpandPlayer.addEventListener("click", function () {
     audioPlayer1.classList.toggle("hidden");
+    console.log(audioPlayer1.classList.contains("hidden"));
+    if (audioPlayer1.classList.contains("hidden")) {
+        mainContent.classList.remove("hidden");
+    } else {
+        mainContent.classList.add("hidden");
+        populateSongQueue();
+    }
 });
 
 // Function to update volume based on click position
@@ -285,51 +428,51 @@ function setVolume(event) {
 // Initialize volume UI on page load
 let isDragging = false;
 
-    // Function to set volume and update UI
-    function updateVolume(event) {
-        const sliderWidth = volumeSlider.clientWidth;
-        let offsetX = event.offsetX || event.touches?.[0]?.clientX - volumeSlider.getBoundingClientRect().left;
+// Function to set volume and update UI
+function updateVolume(event) {
+    const sliderWidth = volumeSlider.clientWidth;
+    let offsetX = event.offsetX || event.touches?.[0]?.clientX - volumeSlider.getBoundingClientRect().left;
 
-        let newVolume = Math.max(0, Math.min(1, offsetX / sliderWidth)); // Ensure value is between 0-1
-        audio.volume = newVolume; // Set volume
-        volumeLevel.style.width = `${newVolume * 100}%`; // Update UI
-    }
+    let newVolume = Math.max(0, Math.min(1, offsetX / sliderWidth)); // Ensure value is between 0-1
+    audio.volume = newVolume; // Set volume
+    volumeLevel.style.width = `${newVolume * 100}%`; // Update UI
+}
 
-    // Event Listeners
-    volumeSlider.addEventListener("mousedown", (event) => {
-        isDragging = true;
-        updateVolume(event);
-    });
+// Event Listeners
+volumeSlider.addEventListener("mousedown", (event) => {
+    isDragging = true;
+    updateVolume(event);
+});
 
-    document.addEventListener("mousemove", (event) => {
-        if (isDragging) updateVolume(event);
-    });
+document.addEventListener("mousemove", (event) => {
+    if (isDragging) updateVolume(event);
+});
 
-    document.addEventListener("mouseup", () => {
-        isDragging = false;
-    });
+document.addEventListener("mouseup", () => {
+    isDragging = false;
+});
 
-    // Touch support for mobile
-    volumeSlider.addEventListener("touchstart", (event) => {
-        isDragging = true;
-        updateVolume(event);
-    });
+// Touch support for mobile
+volumeSlider.addEventListener("touchstart", (event) => {
+    isDragging = true;
+    updateVolume(event);
+});
 
-    document.addEventListener("touchmove", (event) => {
-        if (isDragging) updateVolume(event);
-    });
+document.addEventListener("touchmove", (event) => {
+    if (isDragging) updateVolume(event);
+});
 
-    document.addEventListener("touchend", () => {
-        isDragging = false;
-    });
+document.addEventListener("touchend", () => {
+    isDragging = false;
+});
 
-    // Update UI when volume changes externally
-    audio.addEventListener("volumechange", () => {
-        volumeLevel.style.width = `${audio.volume * 100}%`;
-    });
-
-    // Set initial volume level
+// Update UI when volume changes externally
+audio.addEventListener("volumechange", () => {
     volumeLevel.style.width = `${audio.volume * 100}%`;
+});
+
+// Set initial volume level
+volumeLevel.style.width = `${audio.volume * 100}%`;
 
 // Event Listeners
 volumeSlider.addEventListener("click", setVolume);
@@ -342,31 +485,31 @@ updateVolumeUI();
 function updateVolumeUI() {
     volumeLevel.style.width = `${audio.volume * 100}%`;
 }
- // Block text selection
- document.body.style.userSelect = 'none';
+// Block text selection
+document.body.style.userSelect = 'none';
 
- // Block right-click
- document.addEventListener('contextmenu', function(e) {
-   e.preventDefault();
- });
+// Block right-click
+document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+});
 
 
- let element = document.getElementById('trackTitle');
- let element2 = document.getElementById('timePausePlay');
- 
- let observer = new ResizeObserver(() => {
-     let computedStyle = window.getComputedStyle(element);
-     let width = parseFloat(computedStyle.width); // Convert width from "px" string to number
- 
-     if (width > 150) { // Only update if width > 150px
-         element2.style.width = computedStyle.width;
-        } else {
-            
-            element2.style.width = "150px";
-     }
- });
- 
- // Observe changes in `element`
- observer.observe(element);
- 
- 
+let element = document.getElementById('trackTitle');
+let element2 = document.getElementById('timePausePlay');
+
+let observer = new ResizeObserver(() => {
+    let computedStyle = window.getComputedStyle(element);
+    let width = parseFloat(computedStyle.width); // Convert width from "px" string to number
+
+    if (width > 150) { // Only update if width > 150px
+        element2.style.width = computedStyle.width;
+    } else {
+
+        element2.style.width = "150px";
+    }
+});
+
+// Observe changes in `element`
+observer.observe(element);
+
+

@@ -5,7 +5,7 @@
   margin: 8px;
 }
 
-.song-card {
+.song-card, .song-card-queue2 {
   border-width: 1px;
   border-radius: 10px;
   padding: 0px;
@@ -20,7 +20,7 @@
   min-width: 350px;
 }
 
-.song-card:hover {
+.song-card:hover, .song-card-queue2:hover {
   border: solid;
   border-width: 2px;
   border-radius: 10px;
@@ -116,6 +116,5 @@
   display: flex;
   width: auto;
   flex-direction: column;
-  padding-bottom: 70px;
 }
 
