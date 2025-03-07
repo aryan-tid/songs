@@ -5,7 +5,40 @@ let playlistSongName = [];
 let playlistSongId = [];
 let playlistSongArtist = [];
 let currentIndexPlaylist = 0;
+
+
+// Default value
 let allowDuplicates = false;
+
+// Get elements
+const toggleContainer = document.getElementById("toggleSwitchCont");
+const toggleSwitch = document.getElementById("allowDuplicatesToggle");
+const toggleStatus = document.getElementById("toggleStatus");
+
+// Set initial state
+toggleSwitch.checked = allowDuplicates;
+toggleStatus.textContent = allowDuplicates ? "True" : "False";
+
+// Function to toggle the switch
+function toggleAllowDuplicates() {
+    allowDuplicates = !allowDuplicates;
+    toggleSwitch.checked = allowDuplicates;
+    toggleStatus.textContent = allowDuplicates ? "True" : "False";
+    console.log("Allow Duplicates:", allowDuplicates);
+}
+
+// Event listener for the entire container
+toggleContainer.addEventListener("click", function (event) {
+    // Prevent the event from firing twice if clicking directly on the checkbox
+    if (event.target !== toggleSwitch) {
+        toggleAllowDuplicates();
+    }
+});
+
+// Also toggle when clicking the checkbox directly
+toggleSwitch.addEventListener("change", toggleAllowDuplicates);
+
+
 
 
 function clearQueue() {

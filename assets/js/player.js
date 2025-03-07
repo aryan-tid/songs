@@ -44,6 +44,7 @@ function firstPlayAudio(name, url, img, artists, id) {
 }
 
 function playAudio(name, url, img, artists) {
+    loader("show");
     audio.src = url; // Assign the actual URL, not the string "url"
     callMediaSession(img, name, artists);
     img1.src = img;
@@ -53,7 +54,31 @@ function playAudio(name, url, img, artists) {
     songArtists1.textContent = artists;
     songArtists2.textContent = artists;
     audio1("play");
+    waitForAudioToPlay(audio, () => {
+        loader("hide");
+    });
 }
+
+function waitForAudioToPlay(audioElement, callback) {
+    if (!audioElement) return;
+
+    // Check if audio is already playing
+    if (!audioElement.paused && audioElement.readyState > 2) {
+        callback();
+        return;
+    }
+
+    // Wait for the 'playing' event
+    audioElement.addEventListener("playing", function onPlay() {
+        audioElement.removeEventListener("playing", onPlay); // Remove listener to avoid multiple triggers
+        callback();
+    });
+
+    // Ensure audio starts playing if not already started
+    audioElement.play().catch(() => {}); // Catch potential errors (e.g., user interaction required)
+}
+
+
 // Function to format time (mm:ss)
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);

@@ -1,17 +1,45 @@
 const songListImg = document.querySelector(".song-list");
-const APIbaseURL = "http://192.168.1.6:3000/api/";
+const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
 let currentPageName = "default";
 let currentPageCategory = "default";
+function getSelectedQuality() {
+    const selectedOption = document.querySelector(".custom-dropdown .selected");
+    return selectedOption ? selectedOption.getAttribute("data-value") : null;
+}
 
 function hideAll() {
     document.querySelector(".song-list").style.display = "none";
     document.querySelector("#headingOptions").style.display = "none";
     document.querySelector(".search-container").style.display = "none";
-    console.log("Hiding all");
+    document.querySelector(".main-content").style.display = "none";
+    document.querySelector(".settings").style.display = "none";
+    document.querySelector(".popup-overlay").classList.add("hidden");
 }
 function show(querySelector) {
     document.querySelector(querySelector).style.removeProperty("display");
+}
+function hide(querySelector) {
+    document.querySelector(querySelector).style.display = "none";
+}
+
+async function showBrowse() {
+    const isSettingsHidden = getComputedStyle(document.querySelector(".settings")).display === "none";
+    if (isSettingsHidden) {
+        const target = document.querySelector('.search-container');
+        target.style.display ? target.style.removeProperty('display') : target.style.setProperty('display', 'none');
+    } else {
+        loader("show");
+        await window.history.back();
+        loader("show");
+        await pause(1000);
+        show(".search-container");
+        loader("hide");
+
+    }
+}
+function pause(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
 }
 
 
@@ -46,8 +74,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 async function searchSong(query, page) {
-    show(".song-card-list");
+    loader("show");
     hideAll();
+    show(".song-card-list");
+    show(".main-content");
     scrollToTop();
     if (!query) {
         alert(`Please enter a song's name`);
@@ -114,7 +144,7 @@ async function searchSong(query, page) {
             // Play song when clicking on card (but NOT the button)
             card.addEventListener("click", () => {
                 const songName = card.querySelector(".song-card-name").textContent;
-                const selectedQuality = document.querySelector(".universal-quality").value;
+                const selectedQuality = getSelectedQuality();
                 const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
                     .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || "";
                 const songImage = card.querySelector(".song-card-img").src;
@@ -128,7 +158,7 @@ async function searchSong(query, page) {
                 addSongToQueueBtn.addEventListener("click", (event) => {
                     event.stopPropagation(); // Stop the event from bubbling up to the card click event
 
-                    const selectedQuality = document.querySelector(".universal-quality").value;
+                    const selectedQuality = getSelectedQuality();
                     const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
                         .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || "";
                     const songImage = card.querySelector(".song-card-img").src;
@@ -191,14 +221,17 @@ async function searchSong(query, page) {
         console.error('Fetch error:', error);
         resultDiv.textContent = 'Error fetching data';
     }
+    loader("hide");
 }
 
 
 async function search(query, category, page) {
-    show(".song-card-list");
+    loader("show");
     hideAll();
+    show(".song-card-list");
+    show(".main-content");
     scrollToTop();
-    
+
     if (!query) {
         alert(`Please enter a ${category}'s name`);
         return;
@@ -217,7 +250,7 @@ async function search(query, category, page) {
     const url = `${APIbaseURL}search/${category}?query=${encodeURIComponent(query)}&page=${page}&limit=20`;
     const resultDiv = document.querySelector(".song-card-container");
     const textHeading = document.querySelector(".card-list-header");
-    
+
     textHeading.textContent = `Search: '${query}'`;
 
     try {
@@ -317,10 +350,11 @@ async function search(query, category, page) {
         console.error('Fetch error:', error);
         resultDiv.textContent = 'Error fetching data';
     }
+    loader("hide");
 }
 
 async function listSongs(category, id, page) {
-    show(".song-card-list");
+    loader("show");
     updateHistory("lists", { type: "lists", category, id, page }, `?category=${category}&id=${id}&page=${page}`);
 
     let url;
@@ -399,7 +433,7 @@ async function listSongs(category, id, page) {
             `;
 
             card.addEventListener("click", () => {
-                const selectedQuality = document.querySelector(".universal-quality").value;
+                const selectedQuality = getSelectedQuality();
                 const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
                     .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || item.url;
                 firstPlayAudio(songName, songURL, songImage, songArtists, songId);
@@ -409,7 +443,7 @@ async function listSongs(category, id, page) {
                 addSongToQueueBtn.addEventListener("click", (event) => {
                     event.stopPropagation(); // Stop the event from bubbling up to the card click event
 
-                    const selectedQuality = document.querySelector(".universal-quality").value;
+                    const selectedQuality = getSelectedQuality();
                     const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
                         .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || item.url;
 
@@ -421,6 +455,8 @@ async function listSongs(category, id, page) {
         });
         hideAll();
         show("#headingOptions");
+        show(".main-content");
+        show(".song-card-list");
 
         // Now clear old content and replace it with the new content
         resultDiv.innerHTML = '';
@@ -478,7 +514,7 @@ async function listSongs(category, id, page) {
             clearQueue();
             btnAddListToQueue.disabled = true;
             results.forEach(song => {
-                const selectedQuality = document.querySelector(".universal-quality").value;
+                const selectedQuality = getSelectedQuality();
                 const songPlayUrl = song.downloadUrl ? song.downloadUrl.find(url => url.quality === selectedQuality)?.url : null;
                 addSongToQueue(songPlayUrl, song.image[2].url, song.name, song.id, song.artists.primary.map(artist => artist.name).join(', '));
             });
@@ -491,6 +527,7 @@ async function listSongs(category, id, page) {
         console.error('Fetch error:', error);
         resultDiv.textContent = 'Error fetching data';
     }
+    loader("hide");
 }
 
 
@@ -544,8 +581,38 @@ window.onpopstate = function (event) {
         search(query, category, page);
     } else if (type === "lists") {
         listSongs(category, id, page);
+    } else if (type === "showHide") {
+        hideAll(); // Hide everything first
+
+        for (const selector in elements) {
+            const el = document.querySelector(selector);
+            if (el && elements[selector]) {
+                el.style.display = ""; // Reset to default display (usually block/flex)
+            }
+        }
     }
 };
+function saveVisibilityState() {
+    const elements = [
+        ".song-list",
+        "#headingOptions",
+        ".search-container",
+        ".main-content",
+        ".settings",
+        ".popup-overlay"
+    ];
+
+    const visibilityState = elements.reduce((acc, selector) => {
+        const el = document.querySelector(selector);
+        if (el) {
+            acc[selector] = getComputedStyle(el).display !== "none"; // true if visible
+        }
+        return acc;
+    }, {});
+
+    history.pushState({ type: "showHide", elements: visibilityState }, "");
+}
+
 
 function updateHistory(type, params, url) {
     const currentState = history.state;
@@ -553,4 +620,20 @@ function updateHistory(type, params, url) {
         return; // Prevents adding duplicate history states
     }
     history.pushState(params, "", url);
+}
+
+function goBackAndWait(nextFunction) {
+    return new Promise((resolve) => {
+        const onPopState = () => {
+            window.removeEventListener("popstate", onPopState); // Remove listener to avoid multiple triggers
+            resolve(); // Resolve the promise when the back action completes
+        };
+
+        window.addEventListener("popstate", onPopState);
+        window.history.back();
+    }).then(() => {
+        if (typeof nextFunction === "function") {
+            nextFunction(); // Execute the next function after going back
+        }
+    });
 }
