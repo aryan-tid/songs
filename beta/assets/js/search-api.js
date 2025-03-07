@@ -1,10 +1,8 @@
 const songListImg = document.querySelector(".song-list");
-const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
+const APIbaseURL = "http://192.168.1.6:3000/api/";
 let page = 1;
 let currentPageName = "default";
 let currentPageCategory = "default";
-const nextPageBtn = document.querySelector(".next-page");
-const prevPageBtn = document.querySelector(".prev-page");
 
 function hideAll() {
     document.querySelector(".song-list").style.display = "none";
@@ -48,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 async function searchSong(query, page) {
+    show(".song-card-list");
     hideAll();
     scrollToTop();
     if (!query) {
@@ -128,7 +127,7 @@ async function searchSong(query, page) {
             if (addSongToQueueBtn) { // Ensure button exists before adding event listener
                 addSongToQueueBtn.addEventListener("click", (event) => {
                     event.stopPropagation(); // Stop the event from bubbling up to the card click event
-                    
+
                     const selectedQuality = document.querySelector(".universal-quality").value;
                     const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
                         .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || "";
@@ -136,13 +135,47 @@ async function searchSong(query, page) {
                     const songName = card.querySelector(".song-card-name").textContent;
                     const songId = card.querySelector(".song-card-song-id").textContent;
                     const songArtists = card.querySelector(".song-card-artists").textContent;
-                    
+
                     addSongToQueue(songURL, songImage, songName, songId, songArtists);
                 });
             }
-            
-        });
 
+        });
+        // Create the container div
+        const navButtons = document.createElement("div");
+        navButtons.classList.add("next-prev-btn");
+
+        // Create the Previous Page button
+        const prevButton = document.createElement("button");
+        prevButton.classList.add("btn", "prev-page");
+        prevButton.type = "button";
+        prevButton.style.fontSize = "14px";
+        prevButton.textContent = "Previous Page";
+
+        // Create the Next Page button
+        const nextButton = document.createElement("button");
+        nextButton.classList.add("btn", "next-page");
+        nextButton.type = "button";
+        nextButton.style.fontSize = "14px";
+        nextButton.textContent = "Next Page";
+
+        // Append buttons to the container div
+        navButtons.appendChild(prevButton);
+        navButtons.appendChild(nextButton);
+
+        // Append the div inside .main-content
+        const mainContent = document.querySelector(".page-buttons");
+        if (mainContent) {
+            mainContent.innerHTML = '';
+        }
+        if (mainContent) {
+            mainContent.appendChild(navButtons);
+        } else {
+            console.error("Element with class .main-content not found.");
+        }
+
+        const nextPageBtn = document.querySelector(".next-page");
+        const prevPageBtn = document.querySelector(".prev-page");
 
         nextPageBtn.addEventListener("click", () => {
             page++;
@@ -162,13 +195,17 @@ async function searchSong(query, page) {
 
 
 async function search(query, category, page) {
+    show(".song-card-list");
     hideAll();
     scrollToTop();
+    
     if (!query) {
         alert(`Please enter a ${category}'s name`);
         return;
     }
+
     updateHistory("search", { type: "search", query, category, page }, `?query=${query}&category=${category}&page=${page}`);
+
     if (fromUrlParam) {
         fromUrlParam = false;
     } else if (currentPageName !== "query" && currentPageCategory !== category) {
@@ -180,8 +217,8 @@ async function search(query, category, page) {
     const url = `${APIbaseURL}search/${category}?query=${encodeURIComponent(query)}&page=${page}&limit=20`;
     const resultDiv = document.querySelector(".song-card-container");
     const textHeading = document.querySelector(".card-list-header");
+    
     textHeading.textContent = `Search: '${query}'`;
-    resultDiv.innerHTML = '';
 
     try {
         const response = await fetch(url);
@@ -189,6 +226,9 @@ async function search(query, category, page) {
 
         const data = await response.json();
         const results = data.data.results;
+
+        // ✅ Now clear the existing content AFTER data is successfully fetched
+        resultDiv.innerHTML = '';
 
         results.forEach(item => {
             const songName = item.name;
@@ -226,16 +266,53 @@ async function search(query, category, page) {
             resultDiv.appendChild(card);
         });
 
+        // ✅ Clear and append pagination buttons only after data is loaded
+        const mainContent = document.querySelector(".page-buttons");
+        if (mainContent) {
+            mainContent.innerHTML = ''; // Clear existing buttons
+        }
+
+        // Create and append pagination buttons
+        const navButtons = document.createElement("div");
+        navButtons.classList.add("next-prev-btn");
+
+        const prevButton = document.createElement("button");
+        prevButton.classList.add("btn", "prev-page");
+        prevButton.type = "button";
+        prevButton.style.fontSize = "14px";
+        prevButton.textContent = "Previous Page";
+
+        const nextButton = document.createElement("button");
+        nextButton.classList.add("btn", "next-page");
+        nextButton.type = "button";
+        nextButton.style.fontSize = "14px";
+        nextButton.textContent = "Next Page";
+
+        navButtons.appendChild(prevButton);
+        navButtons.appendChild(nextButton);
+
+        if (mainContent) {
+            mainContent.appendChild(navButtons);
+        } else {
+            console.error("Element with class .page-buttons not found.");
+        }
+
+        // ✅ Pagination event listeners
+        const nextPageBtn = document.querySelector(".next-page");
+        const prevPageBtn = document.querySelector(".prev-page");
+
         nextPageBtn.addEventListener("click", () => {
             page++;
             search(query, category, page);
         });
+
         prevPageBtn.addEventListener("click", () => {
             if (page > 1) {
                 page--;
                 search(query, category, page);
             }
         });
+
     } catch (error) {
         console.error('Fetch error:', error);
         resultDiv.textContent = 'Error fetching data';
@@ -243,6 +320,7 @@ async function search(query, category, page) {
 }
 
 async function listSongs(category, id, page) {
+    show(".song-card-list");
     updateHistory("lists", { type: "lists", category, id, page }, `?category=${category}&id=${id}&page=${page}`);
 
     let url;
@@ -330,11 +408,11 @@ async function listSongs(category, id, page) {
             if (addSongToQueueBtn) { // Ensure button exists before adding event listener
                 addSongToQueueBtn.addEventListener("click", (event) => {
                     event.stopPropagation(); // Stop the event from bubbling up to the card click event
-                    
+
                     const selectedQuality = document.querySelector(".universal-quality").value;
-                const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
-                    .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || item.url;
-                    
+                    const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
+                        .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || item.url;
+
                     addSongToQueue(songURL, songImage, songName, songId, songArtists);
                 });
             }
@@ -349,6 +427,41 @@ async function listSongs(category, id, page) {
         resultDiv.appendChild(newContent);
         document.querySelector(".song-list").style.display = "flex";
 
+        // Create the container div
+        const navButtons = document.createElement("div");
+        navButtons.classList.add("next-prev-btn");
+
+        // Create the Previous Page button
+        const prevButton = document.createElement("button");
+        prevButton.classList.add("btn", "prev-page");
+        prevButton.type = "button";
+        prevButton.style.fontSize = "14px";
+        prevButton.textContent = "Previous Page";
+
+        // Create the Next Page button
+        const nextButton = document.createElement("button");
+        nextButton.classList.add("btn", "next-page");
+        nextButton.type = "button";
+        nextButton.style.fontSize = "14px";
+        nextButton.textContent = "Next Page";
+
+        // Append buttons to the container div
+        navButtons.appendChild(prevButton);
+        navButtons.appendChild(nextButton);
+
+        // Append the div inside .main-content
+        const mainContent = document.querySelector(".page-buttons");
+        if (mainContent) {
+            mainContent.innerHTML = '';
+        }
+        if (mainContent) {
+            mainContent.appendChild(navButtons);
+        } else {
+            console.error("Element with class .main-content not found.");
+        }
+
+        const nextPageBtn = document.querySelector(".next-page");
+        const prevPageBtn = document.querySelector(".prev-page");
         nextPageBtn.addEventListener("click", async () => {
             page++;
             await listSongs(category, id, page);
@@ -413,6 +526,8 @@ if (categoryParam && idParam) {
     fromUrlParam = true;
     searchSong(queryParam, pageP);
     console.log(queryParam, pageP);
+} else {
+    listSongs("artists", "459320", "1");
 }
 
 
