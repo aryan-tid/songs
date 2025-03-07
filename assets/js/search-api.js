@@ -1,5 +1,5 @@
 const songListImg = document.querySelector(".song-list");
-const APIbaseURL = "http://192.168.1.6:3000/api/";
+const APIbaseURL = "https://saavn.dev/api/";
 let page = 1;
 let currentPageName = "default";
 let currentPageCategory = "default";
