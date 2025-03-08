@@ -104,18 +104,18 @@
     <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css?h=03bc88feb8c0ce198a12645fce792b30">
     <link rel="stylesheet" href="assets/css/bs-theme-overrides.css?h=1041d609295e3322662d454aaba9a81e">
     <link rel="stylesheet" href="assets/css/loader.css?h=d81a4aaa23dcaf43c7a2ba10caad63d2">
-    <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=598f8954d6cd64e00ddd0002b7e835fe">
-    <link rel="stylesheet" href="assets/css/Player-1.css?h=eae93a5cdb2b07a2300218071aa7c70e">
-    <link rel="stylesheet" href="assets/css/Player-2.css?h=0876cf6a90ab7e81608efe303d28c220">
+    <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=748be35a0b84e652cee9d810bca7e5c7">
+    <link rel="stylesheet" href="assets/css/Player-1.css?h=aa0b455c2e0171b15c512b6022a072f5">
+    <link rel="stylesheet" href="assets/css/Player-2.css?h=e204140ec45382d568ce877b8209994c">
     <link rel="stylesheet" href="assets/css/song-card.css?h=2146b3269f5aba04fd78eba9c2c78170">
-    <link rel="stylesheet" href="assets/css/styles.css?h=aa24009e17f0e9a04ae41589b7db23b9">
+    <link rel="stylesheet" href="assets/css/styles.css?h=b2d01203a5ed6d138751fd81bb900afa">
 </head>
 
 <body class="bg-secondary" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;">
     <nav class="navbar navbar-expand-md py-3" style="height: 60px;background: rgba(0,0,0,0);backdrop-filter: blur(44px);-webkit-backdrop-filter: blur(44px);">
         <div class="container"><a class="navbar-brand d-flex align-items-center" onclick="goToHome();" style="cursor:pointer;"><span>Melodify</span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2" style="--bs-border-radius: 0rem;"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-2" style="height: 41.1px;">
-                <ul class="navbar-nav ms-auto" style="background: var(--bs-secondary);opacity: 0.81;filter: blur(0px);backdrop-filter: opacity(0) blur(0px);-webkit-backdrop-filter: opacity(0) blur(0px);border-radius: 15px;">
+                <ul class="navbar-nav ms-auto" style="background: var(--bs-secondary);border-radius: 15px;backdrop-filter: opacity(0.82) blur(54px);-webkit-backdrop-filter: opacity(0.82) blur(54px);opacity: 0.97;">
                     <li class="nav-item" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;text-align: center;padding-right: 10px;padding-left: 10px;padding-top: 10px;" onclick="btnClicked(&quot;browse&quot;);"><a class="nav-link active" style="border-radius: 7px;border: 2px solid var(--bs-gray-500);text-align: center;cursor:pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search" style="margin-left: 0px;margin-bottom: 0px;margin-right: 6px;text-align: center;">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
                             </svg>Browse</a></li>
@@ -180,8 +180,8 @@
             <div class="page-buttons"></div>
         </div>
     </div>
-    <div id="popup" class="popup-overlay audio-player11" style="margin-bottom: 80px;height: 100%;margin-top: -20px;">
-        <div id="popupSecondary" style="width: 100vw;height: 100%;background: rgba(0,0,0,0);backdrop-filter: blur(43px);-webkit-backdrop-filter: blur(43px);margin-top: 100px;">
+    <div id="popup" class="popup-overlay audio-player11 hidden" style="margin-bottom: 80px;margin-top: -20px;height: 100vh;backdrop-filter: blur(43px);-webkit-backdrop-filter: blur(43px);">
+        <div id="popupSecondary" style="width: 100vw;height: 100%;background: rgba(0,0,0,0);backdrop-filter: blur(0px);-webkit-backdrop-filter: blur(0px);">
             <div class="text-light text-bg-secondary audio-player1" style="margin: 0px;padding: 15px;padding-right: 20px;padding-left: 20px;margin-top: 5px;width: 99%;border-style: none;border-color: var(--bs-light);border-bottom-style: dotted;background: rgba(0,0,0,0);">
                 <div class="popup-div-song-details">
                     <div id="player1-img" class="album-art"><img class="player1-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f" alt="Album Art" style="width: 100%;height: 100%;object-fit: cover;"></div>
@@ -245,9 +245,10 @@
             <div class="loading-ring"></div>
         </div>
     </div>
-    <div></div>
+    <div><script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+</div>
     <script src="assets/bootstrap/js/bootstrap.min.js?h=374d178d651fa0eaf680a1fa7b40c788"></script>
-    <script src="assets/js/player-queue.js?h=88f3b65cddfc5c47a59b0efb4a4df445"></script>
+    <script src="assets/js/player-queue.js?h=b904d82a3d190ae302a061708c396c68"></script>
     <script src="assets/js/player.js?h=429613a437f01e5a95f967b52902a0fe"></script>
     <script src="assets/js/scripts.js?h=9a6e669f00394a466b89ff5fb054d3c4"></script>
     <script src="assets/js/search-api.js?h=6f9bd49d3e227511553c079fd82ee08e"></script>

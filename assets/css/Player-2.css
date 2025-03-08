@@ -9,6 +9,7 @@
   justify-content: space-between;
   align-items: center;
   align-content: center;
+  z-index: 999;
 }
 
 .audio-player2 .player2-img {

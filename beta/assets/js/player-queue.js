@@ -141,23 +141,26 @@ const queueContainer = document.querySelector(".song-card-container-queue"); // 
 
 function populateSongQueue() {
     queueContainer.innerHTML = ""; // Clear previous items
-
-    // Check if there are upcoming songs
+    
     if (currentIndexPlaylist + 1 >= playlistSongName.length) {
         const message = document.createElement("div");
         message.classList.add("no-songs-message");
         message.innerText = "No upcoming songs in the queue";
         queueContainer.appendChild(message);
-        return; // Stop execution since there's nothing to add
+        return;
     }
-
-    // Start from the next song after the current index
+    
     for (let index = currentIndexPlaylist + 1; index < playlistSongName.length; index++) {
         const songCard = document.createElement("div");
         songCard.classList.add("container", "song-card-queue2");
-
+        songCard.setAttribute("data-index", index - currentIndexPlaylist - 1); // Adjust index for queue position
+        
+        // Add a drag handle element
         songCard.innerHTML = `
             <div class="song-card-cont1">
+                <div class="drag-handle" style="cursor: move; margin-right: 8px; color: #888;">
+                    <i class="icon-menu" style="font-size: 16px;"></i>
+                </div>
                 <img class="song-card-img" src="${playlistSongImg[index]}" />
                 <div class="song-details">
                     <span class="song-card-name">${playlistSongName[index]}</span>
@@ -173,14 +176,141 @@ function populateSongQueue() {
                 </button>
             </div>
         `;
-
-        // Attach click event to load the song
-        songCard.addEventListener("click", () => {
+        
+        // Add tap/click event to the song details area to play the song
+        const songDetails = songCard.querySelector(".song-details");
+        songDetails.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent event bubbling
             loadTrack(index);
         });
-
-        queueContainer.appendChild(songCard); // Append to queue container
+        
+        queueContainer.appendChild(songCard);
     }
+    
+    // Initialize drag and drop after all items are added
+    initializeTouchFriendlySortable();
+}
+
+function initializeTouchFriendlySortable() {
+    const existingInstance = Sortable.get(queueContainer);
+    if (existingInstance) {
+        existingInstance.destroy();
+    }
+
+    new Sortable(queueContainer, {
+        // Key animation settings for smooth movement
+        animation: 300,
+        easing: "cubic-bezier(0.2, 1, 0.2, 1)",
+        
+        // Animation classes
+        ghostClass: "sortable-ghost",
+        chosenClass: "sortable-chosen",
+        dragClass: "sortable-drag",
+        
+        // Core settings
+        handle: ".drag-handle",
+        forceFallback: true,
+        fallbackOnBody: true,
+        fallbackClass: "sortable-fallback",
+        
+        // Improved scroll behavior
+        bubbleScroll: true,
+        scrollSpeed: 40,
+        scrollSensitivity: 120,
+        
+        // Touch settings
+        touchStartThreshold: 5,
+        delay: 150,
+        delayOnTouchOnly: true,
+        
+        // Swap behavior - critical for smooth animations
+        animation: 150,  // ms, animation time when item is moved
+        swapThreshold: 0.65, // Percentage of the item that has to overlap to trigger swap
+        invertSwap: false, // Set to true if you want to invert swap direction
+        direction: 'vertical', // Direction of sorting
+        
+        // Enable these important options for smooth movement
+        setData: function (dataTransfer, dragEl) {
+            dataTransfer.setData('Text', dragEl.textContent);
+        },
+        
+        onChoose: function (evt) {
+            evt.item.classList.add('being-dragged');
+        },
+        
+        onChange: function (evt) {
+            // This fires when the order changes during dragging
+            // A perfect place to add custom animation for the other elements
+            const items = Array.from(queueContainer.children);
+            items.forEach(item => {
+                if (!item.classList.contains('being-dragged') && !item.classList.contains('sortable-ghost')) {
+                    item.style.transition = "transform 0.2s ease-out, opacity 0.2s ease-out";
+                }
+            });
+        },
+        
+        onStart: function (evt) {
+            document.body.classList.add("disable-scrolling");
+            
+            // Add data-index to track original positions
+            Array.from(queueContainer.children).forEach((el, i) => {
+                el.setAttribute('data-original-index', i);
+            });
+            
+            // Remove extra clones that might appear
+            setTimeout(() => {
+                const clones = document.querySelectorAll(".sortable-fallback:not(:first-child)");
+                clones.forEach(clone => clone.remove());
+            }, 10);
+        },
+        
+        onEnd: function (evt) {
+            document.body.classList.remove("disable-scrolling");
+            evt.item.classList.remove('being-dragged');
+            
+            // Process the reordering if positions changed
+            if (evt.oldIndex !== evt.newIndex) {
+                const realOldIndex = evt.oldIndex + currentIndexPlaylist + 1;
+                const realNewIndex = evt.newIndex + currentIndexPlaylist + 1;
+                processQueueReorder(realOldIndex, realNewIndex);
+            }
+        }
+    });
+}
+
+// Add this helper function to enhance the animation behavior
+function processQueueReorder(oldIndex, newIndex) {
+    console.log(`Reordering from ${oldIndex} to ${newIndex}`);
+    
+    // Create temporary copies of arrays
+    const tempSongNames = [...playlistSongName];
+    const tempSongImgs = [...playlistSongImg];
+    const tempSongArtists = [...playlistSongArtist];
+    const tempSongIds = [...playlistSongId];
+    
+    // Remove from old position and insert at new position
+    const movedName = tempSongNames.splice(oldIndex, 1)[0];
+    tempSongNames.splice(newIndex, 0, movedName);
+    
+    const movedImg = tempSongImgs.splice(oldIndex, 1)[0];
+    tempSongImgs.splice(newIndex, 0, movedImg);
+    
+    const movedArtist = tempSongArtists.splice(oldIndex, 1)[0];
+    tempSongArtists.splice(newIndex, 0, movedArtist);
+    
+    const movedId = tempSongIds.splice(oldIndex, 1)[0];
+    tempSongIds.splice(newIndex, 0, movedId);
+    
+    // Update the original arrays
+    playlistSongName = tempSongNames;
+    playlistSongImg = tempSongImgs;
+    playlistSongArtist = tempSongArtists;
+    playlistSongId = tempSongIds;
+    
+    // Refresh the queue UI with a slight delay to allow animations to complete
+    setTimeout(() => {
+        populateSongQueue();
+    }, 300);
 }
 
 
@@ -208,7 +338,8 @@ async function addRecomendationsToQueue(id) {
 
         data.data.forEach(song => {
             playlistSongUrl.push(getSelectedQuality(song.downloadUrl));
-            playlistSongImg.push(song.image?.[0]?.url || "");
+            playlistSongImg.push(song.image?.[2]?.url || "");
+            console.log("song.image", song.image?.[2]?.url);
             playlistSongName.push(song.name || "");
             playlistSongId.push(song.id || "");
 

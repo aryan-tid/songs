@@ -142,7 +142,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 0;
+  z-index: 2;
   overflow: auto;
 }
 
@@ -160,13 +160,15 @@
 }
 
 #popupSecondary {
-  padding: 20px;
+  position: fixed;
+  top: 15px;
+  padding: 10px;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
   min-width: 300px;
-  margin-bottom: 70px;
+  margin-bottom: 0px;
+  margin-top: 0px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -190,8 +192,116 @@
   align-items: center;
 }
 
-.song-card-container-queue {
+.song-card-container-queue .song-card-queue2 {
   margin-top: 10px;
+  margin-left: -20px;
+  will-change: transform, opacity;
+  position: relative;
+  z-index: 1;
+  transition: none;
+}
+
+/* Class for elements being dragged */
+
+.song-card-container-queue .being-dragged {
+  z-index: 100;
+  opacity: 0.9;
+  transform: scale(1.02);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced drag appearance */
+
+.sortable-drag {
+  opacity: 0.9 !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+  z-index: 100 !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  transition: none !important;
+}
+
+/* Ghost element (placeholder where item was) */
+
+.sortable-ghost {
+  opacity: 0.35 !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  transform: scale(0.98) !important;
+  box-shadow: none !important;
+  border: 1px dashed rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.2s ease-out !important;
+}
+
+/* Element being moved/chosen */
+
+.sortable-chosen {
+  z-index: 10;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Fallback (clone) element that follows cursor/touch */
+
+.sortable-fallback {
+  opacity: 0.9 !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
+  pointer-events: none !important;
+  z-index: 1000 !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.disable-scrolling {
+  touch-action: none;
+  overflow: hidden;
+  height: 100%;
+  position: fixed;
+  width: 100%;
+}
+
+.drag-handle {
+  cursor: grab;
+  padding: 15px 10px;
+  padding-left: 15px;
+  display: flex;
+  align-items: center;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Add these animation-specific classes */
+
+@keyframes moveUp {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes moveDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Apply to specific elements during sorting based on data-attributes */
+
+.song-card-queue2[data-moving="up"] {
+  animation: moveUp 0.3s ease-out forwards;
+}
+
+.song-card-queue2[data-moving="down"] {
+  animation: moveDown 0.3s ease-out forwards;
 }
 
 #trackInfoPopup {
