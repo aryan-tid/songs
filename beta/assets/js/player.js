@@ -1,3 +1,4 @@
+let autoplay = true;
 const audio = document.querySelector(".audio-file audio");
 const playPauseBtn = document.querySelector(".play-pause-btn");
 const playPauseBtn1 = document.querySelector(".play-pause-btn1");
@@ -341,7 +342,17 @@ async function callMediaSession(urlImage1, SongName, currentArtist) {
         }
 
         function loadNextTrack() {
-            if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+            if (autoplay) {
+                if (currentIndexPlaylist === playlistSongUrl.length - 2) {
+                    currentIndexPlaylist++;
+                    const songID = playlistSongId[currentIndexPlaylist];
+                    loadTrack(currentIndexPlaylist);
+                    addRecomendationsToQueue(songID);
+                }else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+                    currentIndexPlaylist++;
+                    loadTrack(currentIndexPlaylist);
+                }
+            } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
                 currentIndexPlaylist++;
                 loadTrack(currentIndexPlaylist);
             } else {

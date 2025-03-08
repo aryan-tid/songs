@@ -38,9 +38,6 @@ toggleContainer.addEventListener("click", function (event) {
 // Also toggle when clicking the checkbox directly
 toggleSwitch.addEventListener("change", toggleAllowDuplicates);
 
-
-
-
 function clearQueue() {
     playlistSongUrl = [];
     playlistSongArtist = [];
@@ -51,31 +48,8 @@ function clearQueue() {
     audio1("pause");
     audio1("src", "");
     showMessage("Queue Cleared", "positive");
+    populateSongQueue();
 }
-
-
-// Next aim is to adjust currentIndexPlaylist to the index of the song that is currently playing
-// This will allow the user to skip to the next song in the queue
-// This will also allow the user to skip to the previous song in the queue
-// This will also allow the user to remove a song from the queue
-// This will also allow the user to shuffle the queue
-// This will also allow the user to repeat the queue
-// This will also allow the user to repeat a song
-// This will also allow the user to play a song from the queue
-// This will also allow the user to play a song from the search results
-// This will also allow the user to play a song from the playlist
-// This will also allow the user to play a song from the album
-// This will also allow the user to play a song from the artist
-// This will also allow the user to play a song from the genre
-
-
-
-
-
-
-
-
-
 
 function findSongIndex(songID) {
     const index = playlistSongId.indexOf(songID);
@@ -94,6 +68,7 @@ function addSongToQueue(songURL, songIMG, songNAME, songID, songArtist) {
     } else {
         forceAddSongToQueue(songURL, songIMG, songNAME, songID, songArtist);
     }
+    populateSongQueue();
 }
 
 function forceAddSongToQueue(songURL, songIMG, songNAME, songID, songArtist) {
@@ -117,18 +92,40 @@ function loadTrack(index) {
     const artist = playlistSongArtist[index];
     playAudio(name, urlencoded, Image, artist);
     currentIndexPlaylist = index;
+    audio1("play");
     populateSongQueue();
 }
-function nextTrack() {
-    index = currentIndexPlaylist;
-    if (playlistSongName.length - 1 === index) {
-        showMessage("End of Queue", "negative");
-        audio1("pause");
-    } else {
-        currentIndexPlaylist = index + 1;
+async function nextTrack() {
+    if (autoplay) {
+        if (currentIndexPlaylist === playlistSongUrl.length - 2) {
+            currentIndexPlaylist++;
+            const songID = playlistSongId[currentIndexPlaylist];
+            loadTrack(currentIndexPlaylist);
+            await addRecomendationsToQueue(songID); // Wait for recommendations to be added
+        } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+            currentIndexPlaylist++;
+            loadTrack(currentIndexPlaylist);
+        } else {
+            audio1("pause");
+            console.log("current index", currentIndexPlaylist);
+            
+            await addRecomendationsToQueue(playlistSongId[currentIndexPlaylist]); // Ensure queue is updated before playing
+            
+            currentIndexPlaylist++;
+            loadTrack(currentIndexPlaylist);
+            populateSongQueue();
+        }
+    } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+        currentIndexPlaylist++;
         loadTrack(currentIndexPlaylist);
+    } else {
+        showMessage('End of Queue', "negative");
+        audio1("pause");
     }
+    
+    populateSongQueue();
 }
+
 function previousTrack() {
     index = currentIndexPlaylist;
     if (index === 0) {
@@ -137,6 +134,7 @@ function previousTrack() {
         currentIndexPlaylist = index - 1;
         loadTrack(currentIndexPlaylist);
     }
+    populateSongQueue();
 }
 
 const queueContainer = document.querySelector(".song-card-container-queue"); // Parent container for song cards
@@ -185,3 +183,43 @@ function populateSongQueue() {
     }
 }
 
+
+async function addRecomendationsToQueue(id) {
+    try {
+        const response = await fetch(`https://jiosavan-api-tawny.vercel.app/api/songs/${id}/suggestions`);
+        const data = await response.json();
+
+        if (!data.success || !data.data.length) {
+            console.error("No suggestions found");
+            return;
+        }
+
+        // Function to get selected quality URL
+        function getSelectedQuality(downloadUrls) {
+            // Define your preferred quality order
+            const preferredQualities = ["320kbps", "160kbps", "96kbps"];
+
+            for (let quality of preferredQualities) {
+                const match = downloadUrls.find(urlObj => urlObj.quality === quality);
+                if (match) return match.url;
+            }
+            return downloadUrls[0]?.url || ""; // Fallback
+        }
+
+        data.data.forEach(song => {
+            playlistSongUrl.push(getSelectedQuality(song.downloadUrl));
+            playlistSongImg.push(song.image?.[0]?.url || "");
+            playlistSongName.push(song.name || "");
+            playlistSongId.push(song.id || "");
+
+            const primaryArtist = song.artists?.primary?.[0]?.name || "Unknown Artist";
+            playlistSongArtist.push(primaryArtist);
+        });
+
+        console.log("All suggested songs added to queue");
+    } catch (error) {
+        console.error("Error adding songs to queue:", error);
+    }
+    populateSongQueue();
+    showMessage('Recommendations Added to Queue', "positive");
+}
