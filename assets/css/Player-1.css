@@ -161,12 +161,14 @@
 
 #popupSecondary {
   position: fixed;
-  top: 15px;
+  top: 0px;
   padding: 10px;
   border-radius: 10px;
-  max-height: 85vh;
+  max-height: 100vh;
   overflow-y: auto;
   min-width: 300px;
+  padding-top: 40px;
+  padding-bottom: 80px;
   margin-bottom: 0px;
   margin-top: 0px;
   display: flex;

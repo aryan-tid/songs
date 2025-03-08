@@ -287,6 +287,7 @@ function processQueueReorder(oldIndex, newIndex) {
     const tempSongImgs = [...playlistSongImg];
     const tempSongArtists = [...playlistSongArtist];
     const tempSongIds = [...playlistSongId];
+    const tempSongUrls = [...playlistSongUrl];
     
     // Remove from old position and insert at new position
     const movedName = tempSongNames.splice(oldIndex, 1)[0];
@@ -300,12 +301,16 @@ function processQueueReorder(oldIndex, newIndex) {
     
     const movedId = tempSongIds.splice(oldIndex, 1)[0];
     tempSongIds.splice(newIndex, 0, movedId);
+
+    const movedUrl = tempSongUrls.splice(oldIndex, 1)[0];
+    tempSongUrls.splice(newIndex, 0, movedUrl);
     
     // Update the original arrays
     playlistSongName = tempSongNames;
     playlistSongImg = tempSongImgs;
     playlistSongArtist = tempSongArtists;
     playlistSongId = tempSongIds;
+    playlistSongUrl = tempSongUrls;
     
     // Refresh the queue UI with a slight delay to allow animations to complete
     setTimeout(() => {
