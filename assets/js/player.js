@@ -75,7 +75,7 @@ function waitForAudioToPlay(audioElement, callback) {
     });
 
     // Ensure audio starts playing if not already started
-    audioElement.play().catch(() => {}); // Catch potential errors (e.g., user interaction required)
+    audioElement.play().catch(() => { }); // Catch potential errors (e.g., user interaction required)
 }
 
 
@@ -322,30 +322,6 @@ async function callMediaSession(urlImage1, SongName, currentArtist) {
                 playPauseBtn22.innerHTML = playIcon;
             }
         }
-        // Update playback state when audio is playing
-        audio.addEventListener("play", () => {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.playbackState = "playing";
-            }
-        });
-
-        // Update playback state when audio is paused
-        audio.addEventListener("pause", () => {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.playbackState = "paused";
-            }
-        });
-
-        // Update timeline in media notification
-        audio.addEventListener("timeupdate", () => {
-            if ('setPositionState' in navigator.mediaSession) {
-                navigator.mediaSession.setPositionState({
-                    duration: audio.duration || 0,
-                    playbackRate: audio.playbackRate,
-                    position: audio.currentTime
-                });
-            }
-        });
 
 
         function seekForward() {
@@ -388,6 +364,7 @@ async function callMediaSession(urlImage1, SongName, currentArtist) {
             navigator.mediaSession.setActionHandler('pause', togglePlayPause);
             navigator.mediaSession.setActionHandler('seekbackward', seekBackward);
             navigator.mediaSession.setActionHandler('seekforward', seekForward);
+            navigator.mediaSession.setActionHandler('seekforward', seekForward);
             navigator.mediaSession.setActionHandler('previoustrack', loadPreviousTrack);
             navigator.mediaSession.setActionHandler('nexttrack', loadNextTrack);
             navigator.mediaSession.setActionHandler('stop', togglePlayPause);
@@ -405,7 +382,9 @@ expandPlayer.addEventListener("click", function () {
     if (audioPlayer1.classList.contains("hidden")) {
         mainContent.classList.remove("hidden");
     } else {
-        mainContent.classList.add("hidden");
+        saveVisibilityState();
+        hideAll();
+        audioPlayer1.classList.remove("hidden");
         populateSongQueue();
     }
 });
@@ -416,7 +395,9 @@ unexpandPlayer.addEventListener("click", function () {
     if (audioPlayer1.classList.contains("hidden")) {
         mainContent.classList.remove("hidden");
     } else {
-        mainContent.classList.add("hidden");
+        saveVisibilityState();
+        hideAll();
+        audioPlayer1.classList.remove("hidden");
         populateSongQueue();
     }
 });

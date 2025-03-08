@@ -573,7 +573,7 @@ window.onpopstate = function (event) {
 
     console.log("Navigating back:", event.state);
 
-    const { type, query, category, id, page } = event.state;
+    const { type, query, category, id, page, elements } = event.state; // Retrieve elements
 
     if (type === "searchSongs") {
         searchSong(query, page);
@@ -584,14 +584,17 @@ window.onpopstate = function (event) {
     } else if (type === "showHide") {
         hideAll(); // Hide everything first
 
-        for (const selector in elements) {
-            const el = document.querySelector(selector);
-            if (el && elements[selector]) {
-                el.style.display = ""; // Reset to default display (usually block/flex)
+        if (elements) {
+            for (const selector in elements) {
+                const el = document.querySelector(selector);
+                if (el && elements[selector]) {
+                    el.style.display = ""; // Reset to default display (usually block/flex)
+                }
             }
         }
     }
 };
+
 function saveVisibilityState() {
     const elements = [
         ".song-list",
@@ -599,7 +602,8 @@ function saveVisibilityState() {
         ".search-container",
         ".main-content",
         ".settings",
-        ".popup-overlay"
+        ".popup-overlay",
+        ".audio-palyer11"
     ];
 
     const visibilityState = elements.reduce((acc, selector) => {
