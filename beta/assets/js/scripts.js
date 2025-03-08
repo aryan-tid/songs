@@ -1,3 +1,11 @@
+function goToHome() {
+    // Replace the current state with a clean one (removes all parameters)
+    history.replaceState(null, "", window.location.origin + window.location.pathname);
+    console.log("Navigated to Home");
+    urlParameterDataLoad("default");
+}
+
+
 function showMessage(messageText, messageType) {
     const message = document.getElementById("message");
     message.textContent = messageText;
@@ -19,6 +27,8 @@ function showMessage(messageText, messageType) {
         message.style.display = "none";
     }, 5000);
 }
+
+
 // Close message immediately on tap
 document.getElementById("message").addEventListener("click", () => {
     document.getElementById("message").style.display = "none";
@@ -37,105 +47,94 @@ function btnClicked(btn) {
         showBrowse();
     }
 }
+// Function to handle dropdown toggling using `.show` class
+function setupDropdown(dropdownBtnSelector, dropdownContentSelector) {
+    const dropdownBtns = document.querySelectorAll(dropdownBtnSelector);
+    const dropdownContents = document.querySelectorAll(dropdownContentSelector);
 
-const dropdownBtn = document.querySelector(".dropdown-btn");
-const dropdownContent = document.querySelector(".dropdown-content");
-const selectElement = document.querySelector(".universal-quality");
+    dropdownBtns.forEach((btn, index) => {
+        const content = dropdownContents[index];
 
-dropdownBtn.addEventListener("click", () => {
-    dropdownContent.classList.toggle("hidden");
+        btn.addEventListener("click", () => {
+            const isHidden = content.classList.toggle("show");
 
-    if (!dropdownContent.classList.contains("hidden")) {
-        dropdownContent.style.opacity = "1";
-        dropdownContent.style.transform = "translateY(0)";
-    } else {
-        dropdownContent.style.opacity = "0";
-        dropdownContent.style.transform = "translateY(-10px)";
-    }
-});
+            if (!isHidden) {
+                content.classList.remove("hidden");
+            } else {
+                content.classList.add("hidden");
+            }
+        });
 
-// Handle selection
-document.querySelectorAll(".dropdown-content div").forEach(item => {
-    item.addEventListener("click", () => {
-        dropdownBtn.textContent = item.textContent + " ▾";
-        selectElement.value = item.getAttribute("data-value"); // Update hidden select
-        dropdownContent.classList.add("hidden");
-        dropdownContent.style.opacity = "0";
-        dropdownContent.style.transform = "translateY(-10px)";
+        // Handle selection inside the dropdown
+        content.querySelectorAll("div").forEach(item => {
+            item.addEventListener("click", () => {
+                btn.textContent = item.textContent + " ▾";
+
+                // If it's the quality dropdown, update hidden select value and manage `.selected` class
+                if (content.classList.contains("universal-quality")) {
+                    document.querySelector(".universal-quality").value = item.getAttribute("data-value");
+
+                    // Remove previous `selected` class
+                    content.querySelectorAll(".selected").forEach(selectedItem => {
+                        selectedItem.classList.remove("selected");
+                    });
+
+                    // Add `selected` class to the new selection
+                    item.classList.add("selected");
+                } else {
+                    document.documentElement.setAttribute("data-bs-theme", item.getAttribute("data-bs-theme-value"));
+                }
+
+                // Close dropdown after selection
+                content.classList.remove("show");
+                content.classList.add("hidden");
+            });
+        });
     });
-});
 
-// Close dropdown when clicking outside
-document.addEventListener("click", (event) => {
-    if (!dropdownBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
-        dropdownContent.classList.add("hidden");
-        dropdownContent.style.opacity = "0";
-        dropdownContent.style.transform = "translateY(-10px)";
-    }
-});
+    // Close dropdowns when clicking outside
+    document.addEventListener("click", (event) => {
+        dropdownBtns.forEach((btn, index) => {
+            const content = dropdownContents[index];
 
-
-const themeDropdownBtn = document.querySelector(".theme-dropdown-btn");
-const themeDropdownContent = document.querySelector(".theme-dropdown-content");
-
-themeDropdownBtn.addEventListener("click", () => {
-    themeDropdownContent.classList.toggle("hidden");
-
-    if (!themeDropdownContent.classList.contains("hidden")) {
-        themeDropdownContent.style.opacity = "1";
-        themeDropdownContent.style.transform = "translateY(0)";
-    } else {
-        themeDropdownContent.style.opacity = "0";
-        themeDropdownContent.style.transform = "translateY(-10px)";
-    }
-});
-
-// Handle selection
-document.querySelectorAll(".theme-dropdown-content div").forEach(item => {
-    item.addEventListener("click", () => {
-        themeDropdownBtn.textContent = "Theme: " + item.textContent + " ▾";
-        document.documentElement.setAttribute("data-bs-theme", item.getAttribute("data-bs-theme-value"));
-        themeDropdownContent.classList.add("hidden");
-        themeDropdownContent.style.opacity = "0";
-        themeDropdownContent.style.transform = "translateY(-10px)";
+            if (!btn.contains(event.target) && !content.contains(event.target)) {
+                content.classList.remove("show");
+                content.classList.add("hidden");
+            }
+        });
     });
-});
+}
 
-// Close dropdown when clicking outside
-document.addEventListener("click", (event) => {
-    if (!themeDropdownBtn.contains(event.target) && !themeDropdownContent.contains(event.target)) {
-        themeDropdownContent.classList.add("hidden");
-        themeDropdownContent.style.opacity = "0";
-        themeDropdownContent.style.transform = "translateY(-10px)";
-    }
-});
+// Initialize dropdowns
+setupDropdown(".theme-dropdown-btn", ".theme-dropdown-content");
+setupDropdown(".dropdown-btn", ".dropdown-content");
 
-document.querySelectorAll(".theme-dropdown-btn, .dropdown-btn").forEach(btn => {
-    btn.addEventListener("click", function () {
-        let dropdownContent = this.nextElementSibling;
-        dropdownContent.classList.toggle("show");
-    });
-});
 
-// Close dropdown when clicking outside
-document.addEventListener("click", (event) => {
-    document.querySelectorAll(".theme-dropdown-content, .dropdown-content").forEach(dropdown => {
-        if (!dropdown.previousElementSibling.contains(event.target) && !dropdown.contains(event.target)) {
-            dropdown.classList.remove("show");
-        }
-    });
-});
+let settingsStatePushed = false;
 
 function showSettings() {
+    const isSearchBoxHidden = getComputedStyle(document.querySelector(".search-container")).display === "none"
     const settingsDiv = document.querySelector(".settings");
-    if (settingsDiv) {
+    if (!settingsDiv) return;
+    if (isSearchBoxHidden) {
         if (settingsDiv.style.display === "none" || settingsDiv.style.display === "") {
-            saveVisibilityState();
-            hideAll();
             settingsDiv.style.display = "flex"; // Show settings
+
+            if (!settingsStatePushed) {
+                history.pushState({ type: "hideSettings" }, ""); // Push hideSettings state
+                history.pushState({ type: "previousState" }, ""); // Push dummy state
+                console.log("Pushed state for hideSettings");
+                settingsStatePushed = true;
+            }
+        } else {
+            window.history.back(); // Go back
+            settingsStatePushed = false;
         }
+    } else {
+        hide(".search-container");
     }
 }
+
 
 function loader(action) {
     const loader = document.querySelector(".loading-container");
@@ -143,7 +142,7 @@ function loader(action) {
         loader.style.display = "flex";
     } else if (action === "hide") {
         loader.style.display = "none";
-    }  else {
+    } else {
         console.error("Invalid action");
         loader.style.display = "none";
     }

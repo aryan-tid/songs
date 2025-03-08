@@ -105,15 +105,15 @@
     <link rel="stylesheet" href="assets/css/bs-theme-overrides.css?h=1041d609295e3322662d454aaba9a81e">
     <link rel="stylesheet" href="assets/css/loader.css?h=d81a4aaa23dcaf43c7a2ba10caad63d2">
     <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=598f8954d6cd64e00ddd0002b7e835fe">
-    <link rel="stylesheet" href="assets/css/Player-1.css?h=7ba3a98cb31d334a0bca04e7a6755945">
+    <link rel="stylesheet" href="assets/css/Player-1.css?h=eae93a5cdb2b07a2300218071aa7c70e">
     <link rel="stylesheet" href="assets/css/Player-2.css?h=0876cf6a90ab7e81608efe303d28c220">
     <link rel="stylesheet" href="assets/css/song-card.css?h=2146b3269f5aba04fd78eba9c2c78170">
-    <link rel="stylesheet" href="assets/css/styles.css?h=ec2e44bc59af438901798494b6bc6b65">
+    <link rel="stylesheet" href="assets/css/styles.css?h=aa24009e17f0e9a04ae41589b7db23b9">
 </head>
 
 <body class="bg-secondary" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;">
-    <nav class="navbar navbar-expand-md py-3" style="height: 60px;background: var(--bs-secondary);">
-        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span>Melodify</span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2" style="--bs-border-radius: 0rem;"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+    <nav class="navbar navbar-expand-md py-3" style="height: 60px;background: rgba(0,0,0,0);backdrop-filter: blur(44px);-webkit-backdrop-filter: blur(44px);">
+        <div class="container"><a class="navbar-brand d-flex align-items-center" onclick="goToHome();" style="cursor:pointer;"><span>Melodify</span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2" style="--bs-border-radius: 0rem;"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-2" style="height: 41.1px;">
                 <ul class="navbar-nav ms-auto" style="background: var(--bs-secondary);opacity: 0.81;filter: blur(0px);backdrop-filter: opacity(0) blur(0px);-webkit-backdrop-filter: opacity(0) blur(0px);border-radius: 15px;">
                     <li class="nav-item" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;text-align: center;padding-right: 10px;padding-left: 10px;padding-top: 10px;" onclick="btnClicked(&quot;browse&quot;);"><a class="nav-link active" style="border-radius: 7px;border: 2px solid var(--bs-gray-500);text-align: center;cursor:pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-search" style="margin-left: 0px;margin-bottom: 0px;margin-right: 6px;text-align: center;">
@@ -127,9 +127,10 @@
             </div>
         </div>
     </nav>
-    <div class="settings" style="display:none;"><span id="settingsText">Settings</span>
-        <div>
-            <div class="settings-options"><span class="settings-option-text">Theme</span><div class="theme-dropdown">
+    <div class="all-content">
+        <div class="settings" style="display:none;"><span id="settingsText">Settings</span>
+            <div>
+                <div class="settings-options"><span class="settings-option-text">Theme</span><div class="theme-dropdown">
         <button class="theme-dropdown-btn">Theme ▾</button>
         <div class="theme-dropdown-content hidden">
             <div data-bs-theme-value="light">Light</div>
@@ -137,53 +138,51 @@
             <div data-bs-theme-value="auto" class="selected">Auto</div>
         </div>
     </div></div>
-            <div class="settings-options"><span class="settings-option-text">Quality</span>
-                <div class="custom-dropdown"><button class="dropdown-btn">320 kbps ▾</button>
-                    <div class="dropdown-content universal-quality hidden">
-                        <div data-value="12kbps"><span>12 kbps</span></div>
-                        <div data-value="48kbps"><span>48 kbps</span></div>
-                        <div data-value="96kbps"><span>96 kbps</span></div>
-                        <div data-value="160kbps"><span>160 kbps</span></div>
-                        <div class="selected" data-value="320kbps"><span>320 kbps</span></div>
+                <div class="settings-options"><span class="settings-option-text">Quality</span>
+                    <div class="custom-dropdown"><button class="dropdown-btn">320 kbps ▾</button>
+                        <div class="dropdown-content universal-quality hidden">
+                            <div data-value="12kbps"><span>12 kbps</span></div>
+                            <div data-value="48kbps"><span>48 kbps</span></div>
+                            <div data-value="96kbps"><span>96 kbps</span></div>
+                            <div data-value="160kbps"><span>160 kbps</span></div>
+                            <div class="selected" data-value="320kbps"><span>320 kbps</span></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="settings-options"><span class="settings-option-text">Allow same song multiple times in Queue</span>
-                <div id="toggleSwitchCont" class="toggle-switch"><span id="toggleStatus">False</span><input type="checkbox" data-toggle="toggle" id="allowDuplicatesToggle"></div>
-            </div>
-        </div>
-    </div>
-    <div class="search-container w-full flex flex-col items-center" style="display:none;">
-        <div class="tab-container"><button class="active-tab tab-btn" data-category="songs">Songs</button><button class="tab-btn" data-category="playlists">Playlists</button><button class="tab-btn" data-category="albums">Albums</button><button class="tab-btn" data-category="artists">Artists</button></div>
-        <form class="search-form"><input type="search" id="search-box" class="search-box" placeholder="Search for Songs..."><button class="search-btn" type="submit"><i class="fa fa-search text-lg"></i></button></form>
-    </div>
-    <div class="main-content">
-        <div class="song-card-list" style="display:none;"><img id="songList" class="song-list" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f">
-            <div id="headingContent"><span class="card-list-header">With ❤️ by Aryan</span>
-                <div id="headingOptions"><button class="btn btn-primary add-list-to-queue" type="button"><i class="fas fa-play"></i></button><button class="btn btn-primary list-menu" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-menu-deep">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M4 6h16"></path>
-                            <path d="M7 12h13"></path>
-                            <path d="M10 18h10"></path>
-                        </svg></button></div>
-            </div>
-            <div class="song-card-container">
-                <div class="container song-card hidden">
-                    <div class="song-card-cont1 song-card-cont1-details"><img class="song-card-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f">
-                        <div class="song-details"><span class="song-card-name">Melodify</span><span class="song-card-artists">With ❤️ by Aryan</span><span class="song-card-song-id hidden">With ❤️ by Aryan</span><span class="song-card-song-url0 hidden">With ❤️ by Aryan</span><span class="song-card-song-url1 hidden">With ❤️ by Aryan</span><span class="song-card-song-url2 hidden">With ❤️ by Aryan</span><span class="song-card-song-url3 hidden">With ❤️ by Aryan</span><span class="song-card-song-url4 hidden">With ❤️ by Aryan</span><span class="song-card-song-imgHD hidden">With ❤️ by Aryan</span></div>
-                    </div>
-                    <div class="song-card-cont1"><button class="btn btn-primary song-card-btn song-card-btn-queue" id="addToQueueBtn" type="button"><i class="icon ion-android-add"></i></button><button class="btn btn-primary song-card-btn" type="button"><i class="icon-options-vertical" style="font-size: 16px;"></i></button></div>
+                <div class="settings-options"><span class="settings-option-text">Allow same song multiple times in Queue</span>
+                    <div id="toggleSwitchCont" class="toggle-switch"><span id="toggleStatus">False</span><input type="checkbox" data-toggle="toggle" id="allowDuplicatesToggle"></div>
                 </div>
             </div>
         </div>
-        <div class="page-buttons"></div>
+        <div class="search-container w-full flex flex-col items-center" style="display:none;">
+            <div class="tab-container"><button class="active-tab tab-btn" data-category="songs">Songs</button><button class="tab-btn" data-category="playlists">Playlists</button><button class="tab-btn" data-category="albums">Albums</button><button class="tab-btn" data-category="artists">Artists</button></div>
+            <form class="search-form"><input type="search" id="search-box" class="search-box" placeholder="Search for Songs..."><button class="search-btn" type="submit"><i class="fa fa-search text-lg"></i></button></form>
+        </div>
+        <div class="main-content">
+            <div class="song-card-list" style="display:none;"><img id="songList" class="song-list" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f">
+                <div id="headingContent"><span class="card-list-header">With ❤️ by Aryan</span>
+                    <div id="headingOptions"><button class="btn btn-primary add-list-to-queue" type="button"><i class="fas fa-play"></i></button><button class="btn btn-primary list-menu" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icon-tabler-menu-deep">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M4 6h16"></path>
+                                <path d="M7 12h13"></path>
+                                <path d="M10 18h10"></path>
+                            </svg></button></div>
+                </div>
+                <div class="song-card-container">
+                    <div class="container song-card hidden">
+                        <div class="song-card-cont1 song-card-cont1-details"><img class="song-card-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f">
+                            <div class="song-details"><span class="song-card-name">Melodify</span><span class="song-card-artists">With ❤️ by Aryan</span><span class="song-card-song-id hidden">With ❤️ by Aryan</span><span class="song-card-song-url0 hidden">With ❤️ by Aryan</span><span class="song-card-song-url1 hidden">With ❤️ by Aryan</span><span class="song-card-song-url2 hidden">With ❤️ by Aryan</span><span class="song-card-song-url3 hidden">With ❤️ by Aryan</span><span class="song-card-song-url4 hidden">With ❤️ by Aryan</span><span class="song-card-song-imgHD hidden">With ❤️ by Aryan</span></div>
+                        </div>
+                        <div class="song-card-cont1"><button class="btn btn-primary song-card-btn song-card-btn-queue" id="addToQueueBtn" type="button"><i class="icon ion-android-add"></i></button><button class="btn btn-primary song-card-btn" type="button"><i class="icon-options-vertical" style="font-size: 16px;"></i></button></div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-buttons"></div>
+        </div>
     </div>
-    <div id="popup" class="popup-overlay audio-player11 hidden" style="margin-bottom: 80px;">
-        <div id="popupSecondary" style="width: 100vw;height: 100%;background: var(--bs-secondary);">
-            <div class="text-light text-bg-secondary audio-player1" style="margin: 0px;padding: 15px;padding-right: 20px;padding-left: 20px;margin-top: 5px;width: 99%;border-style: none;border-color: var(--bs-light);border-bottom-style: dotted;"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" class="unexpand-player" style="font-size: 30px;margin-top: 4px;margin-left: 6px;">
-                    <path d="M16.3394 9.32245C16.7434 8.94589 16.7657 8.31312 16.3891 7.90911C16.0126 7.50509 15.3798 7.48283 14.9758 7.85938L12.0497 10.5866L9.32245 7.66048C8.94589 7.25647 8.31312 7.23421 7.90911 7.61076C7.50509 7.98731 7.48283 8.62008 7.85938 9.0241L10.5866 11.9502L7.66048 14.6775C7.25647 15.054 7.23421 15.6868 7.61076 16.0908C7.98731 16.4948 8.62008 16.5171 9.0241 16.1405L11.9502 13.4133L14.6775 16.3394C15.054 16.7434 15.6868 16.7657 16.0908 16.3891C16.4948 16.0126 16.5171 15.3798 16.1405 14.9758L13.4133 12.0497L16.3394 9.32245Z" fill="currentColor"></path>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12ZM12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21Z" fill="currentColor"></path>
-                </svg>
+    <div id="popup" class="popup-overlay audio-player11" style="margin-bottom: 80px;height: 100%;margin-top: -20px;">
+        <div id="popupSecondary" style="width: 100vw;height: 100%;background: rgba(0,0,0,0);backdrop-filter: blur(43px);-webkit-backdrop-filter: blur(43px);margin-top: 100px;">
+            <div class="text-light text-bg-secondary audio-player1" style="margin: 0px;padding: 15px;padding-right: 20px;padding-left: 20px;margin-top: 5px;width: 99%;border-style: none;border-color: var(--bs-light);border-bottom-style: dotted;background: rgba(0,0,0,0);">
                 <div class="popup-div-song-details">
                     <div id="player1-img" class="album-art"><img class="player1-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f" alt="Album Art" style="width: 100%;height: 100%;object-fit: cover;"></div>
                     <div id="trackInfoPopup" class="track-info">
@@ -246,11 +245,12 @@
             <div class="loading-ring"></div>
         </div>
     </div>
+    <div></div>
     <script src="assets/bootstrap/js/bootstrap.min.js?h=374d178d651fa0eaf680a1fa7b40c788"></script>
-    <script src="assets/js/player-queue.js?h=403933cee8fe27d5f79141b324de67d9"></script>
-    <script src="assets/js/player.js?h=8deecbf126dafdd885a4b2a53298c2f8"></script>
-    <script src="assets/js/scripts.js?h=ab50641ee818000ced346efa3e07efe4"></script>
-    <script src="assets/js/search-api.js?h=7f044e462bfa9c9027c1b228d000d477"></script>
+    <script src="assets/js/player-queue.js?h=169cb957811c6d877210c22a937d0f9b"></script>
+    <script src="assets/js/player.js?h=04e233979a42085ecab1d70c538ada41"></script>
+    <script src="assets/js/scripts.js?h=9a6e669f00394a466b89ff5fb054d3c4"></script>
+    <script src="assets/js/search-api.js?h=6f9bd49d3e227511553c079fd82ee08e"></script>
 </body>
 
 </html>

@@ -144,6 +144,15 @@ const queueContainer = document.querySelector(".song-card-container-queue"); // 
 function populateSongQueue() {
     queueContainer.innerHTML = ""; // Clear previous items
 
+    // Check if there are upcoming songs
+    if (currentIndexPlaylist + 1 >= playlistSongName.length) {
+        const message = document.createElement("div");
+        message.classList.add("no-songs-message");
+        message.innerText = "No upcoming songs in the queue";
+        queueContainer.appendChild(message);
+        return; // Stop execution since there's nothing to add
+    }
+
     // Start from the next song after the current index
     for (let index = currentIndexPlaylist + 1; index < playlistSongName.length; index++) {
         const songCard = document.createElement("div");
@@ -175,3 +184,4 @@ function populateSongQueue() {
         queueContainer.appendChild(songCard); // Append to queue container
     }
 }
+

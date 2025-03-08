@@ -1,11 +1,17 @@
 const songListImg = document.querySelector(".song-list");
+// const APIbaseURL = "http://192.168.1.8:3000/api/";
 const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
 let currentPageName = "default";
+let currentPage;
 let currentPageCategory = "default";
 function getSelectedQuality() {
     const selectedOption = document.querySelector(".custom-dropdown .selected");
     return selectedOption ? selectedOption.getAttribute("data-value") : null;
+}
+
+function getq(){
+    console.log(getSelectedQuality());
 }
 
 function hideAll() {
@@ -30,12 +36,9 @@ async function showBrowse() {
         target.style.display ? target.style.removeProperty('display') : target.style.setProperty('display', 'none');
     } else {
         loader("show");
-        await window.history.back();
-        loader("show");
-        await pause(1000);
+        window.history.back();
         show(".search-container");
         loader("hide");
-
     }
 }
 function pause(time) {
@@ -63,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!query) return alert("Please enter a search term");
 
         // Redirect or call function based on selected category
-        console.log(`Searching for "${query}" in category: ${selectedCategory}`);
         if (selectedCategory === "songs") {
             searchSong(query, 1); // Call your search function
         } else {
@@ -78,6 +80,7 @@ async function searchSong(query, page) {
     hideAll();
     show(".song-card-list");
     show(".main-content");
+    show(".search-container");
     scrollToTop();
     if (!query) {
         alert(`Please enter a song's name`);
@@ -86,9 +89,13 @@ async function searchSong(query, page) {
     updateHistory("searchSongs", { type: "searchSongs", query, page }, `?query=${query}&page=${page}`);
     if (fromUrlParam) {
         fromUrlParam = false;
+        currentPage = page;
     } else if (currentPageName !== "query") {
         page = 1;
         currentPageName = "query";
+        currentPage = page;
+    } else {
+        currentPage = page;
     }
 
     const url = `${APIbaseURL}search/songs?query=${encodeURIComponent(query)}&page=${page}&limit=20`;
@@ -230,6 +237,7 @@ async function search(query, category, page) {
     hideAll();
     show(".song-card-list");
     show(".main-content");
+    show(".search-container");
     scrollToTop();
 
     if (!query) {
@@ -241,10 +249,14 @@ async function search(query, category, page) {
 
     if (fromUrlParam) {
         fromUrlParam = false;
+        currentPage = page;
     } else if (currentPageName !== "query" && currentPageCategory !== category) {
         page = 1;
         currentPageName = "query";
         currentPageCategory = category;
+        currentPage = page;
+    } else {
+        currentPage = page;
     }
 
     const url = `${APIbaseURL}search/${category}?query=${encodeURIComponent(query)}&page=${page}&limit=20`;
@@ -358,14 +370,23 @@ async function listSongs(category, id, page) {
     updateHistory("lists", { type: "lists", category, id, page }, `?category=${category}&id=${id}&page=${page}`);
 
     let url;
+
     scrollToTop();
     if (fromUrlParam) {
         fromUrlParam = false;
+        currentPageName = "id";
+        currentPageCategory = category;
+        currentPage = page;
     } else if (currentPageName !== "id" && currentPageCategory !== category) {
         page = 1;
         currentPageName = "id";
         currentPageCategory = category;
+        currentPage = page;
+
+    } else {
+        currentPage = page;
     }
+
     if (category === "artists") {
         url = `${APIbaseURL}${category}/${id}/songs?page=${page}&limit=10`;
     } else {
@@ -550,73 +571,60 @@ const queryParam = getUrlParameter('query');
 const pageP = pageParam ? parseInt(pageParam, 10) || 1 : 1;
 let fromUrlParam = false;
 
-// Check conditions and execute functions accordingly
-if (categoryParam && idParam) {
-    fromUrlParam = true;
-    listSongs(categoryParam, idParam, pageP);
-    console.log(categoryParam, idParam, pageP);
-} else if (queryParam && categoryParam) {
-    fromUrlParam = true;
-    search(queryParam, categoryParam, pageP);
-    console.log(queryParam, categoryParam, pageP);
-} else if (queryParam) {
-    fromUrlParam = true;
-    searchSong(queryParam, pageP);
-    console.log(queryParam, pageP);
-} else {
-    listSongs("artists", "459320", "1");
+let allowUrlParameters = true; // Allow URL parameters to be used for once only
+urlParameterDataLoad();
+function urlParameterDataLoad(type) {
+    if (type === "default") {
+        listSongs("artists", "459320", "1");
+    } else if (allowUrlParameters) {
+        allowUrlParameters = false; // Prevent further use of URL parameters
+        // Check conditions and execute functions accordingly
+        if (categoryParam && idParam) {
+            fromUrlParam = true;
+            listSongs(categoryParam, idParam, pageP);
+        } else if (queryParam && categoryParam) {
+            fromUrlParam = true;
+            search(queryParam, categoryParam, pageP);
+        } else if (queryParam) {
+            fromUrlParam = true;
+            searchSong(queryParam, pageP);
+        } else {
+            listSongs("artists", "459320", "1");
+        }
+    }
 }
 
-
+// Handle back button correctly
 window.onpopstate = function (event) {
-    if (!event.state) return;
-
     console.log("Navigating back:", event.state);
 
-    const { type, query, category, id, page, elements } = event.state; // Retrieve elements
+    if (event.state?.type === "previousState") {
+        // This means we need to go back once more to reach "hidePlayer"
+        history.back(); // Automatically go back again
+        console.log("Going back again");
+    } else if (event.state?.type === "hidePlayer") {
+        // Hide the player when we reach hidePlayer state
+        audioPlayer1.classList.add("hidden");
+        playerStatePushed = false;
+        console.log("Player hidden");
+    } else if (event.state?.type === "hideSettings") {
+        const settingsDiv = document.querySelector(".settings");
+        if (settingsDiv) settingsDiv.style.display = "none"; // Hide settings
+        settingsStatePushed = false;
+        console.log("Settings hidden");
+    } else {
+        // Handle other cases normally
+        const { type, query, category, id, page, elements } = event.state || {};
 
-    if (type === "searchSongs") {
-        searchSong(query, page);
-    } else if (type === "search") {
-        search(query, category, page);
-    } else if (type === "lists") {
-        listSongs(category, id, page);
-    } else if (type === "showHide") {
-        hideAll(); // Hide everything first
-
-        if (elements) {
-            for (const selector in elements) {
-                const el = document.querySelector(selector);
-                if (el && elements[selector]) {
-                    el.style.display = ""; // Reset to default display (usually block/flex)
-                }
-            }
+        if (type === "searchSongs") {
+            searchSong(query, page);
+        } else if (type === "search") {
+            search(query, category, page);
+        } else if (type === "lists") {
+            listSongs(category, id, page);
         }
     }
 };
-
-function saveVisibilityState() {
-    const elements = [
-        ".song-list",
-        "#headingOptions",
-        ".search-container",
-        ".main-content",
-        ".settings",
-        ".popup-overlay",
-        ".audio-palyer11"
-    ];
-
-    const visibilityState = elements.reduce((acc, selector) => {
-        const el = document.querySelector(selector);
-        if (el) {
-            acc[selector] = getComputedStyle(el).display !== "none"; // true if visible
-        }
-        return acc;
-    }, {});
-
-    history.pushState({ type: "showHide", elements: visibilityState }, "");
-}
-
 
 function updateHistory(type, params, url) {
     const currentState = history.state;
@@ -624,20 +632,4 @@ function updateHistory(type, params, url) {
         return; // Prevents adding duplicate history states
     }
     history.pushState(params, "", url);
-}
-
-function goBackAndWait(nextFunction) {
-    return new Promise((resolve) => {
-        const onPopState = () => {
-            window.removeEventListener("popstate", onPopState); // Remove listener to avoid multiple triggers
-            resolve(); // Resolve the promise when the back action completes
-        };
-
-        window.addEventListener("popstate", onPopState);
-        window.history.back();
-    }).then(() => {
-        if (typeof nextFunction === "function") {
-            nextFunction(); // Execute the next function after going back
-        }
-    });
 }

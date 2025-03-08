@@ -11,7 +11,6 @@ const progressBarContainer = document.querySelector(".progress-bar12");
 const progressBar1 = document.querySelector(".progress123");
 const progressBarContainer1 = document.querySelector(".progress-bar123");
 const expandPlayer = document.querySelector(".expand-player");
-const unexpandPlayer = document.querySelector(".unexpand-player");
 const audioPlayer1 = document.querySelector(".audio-player11");
 const playIcon = '<i class="fas fa-play"></i>';  // Play icon
 const pauseIcon = '<i class="fas fa-pause"></i>'; // Pause icon
@@ -375,32 +374,34 @@ async function callMediaSession(urlImage1, SongName, currentArtist) {
 }
 
 const mainContent = document.querySelector(".main-content");
+let playerStatePushed = false;
 
-expandPlayer.addEventListener("click", function () {
-    audioPlayer1.classList.toggle("hidden");
-    console.log(audioPlayer1.classList.contains("hidden"));
-    if (audioPlayer1.classList.contains("hidden")) {
-        mainContent.classList.remove("hidden");
-    } else {
-        saveVisibilityState();
-        hideAll();
-        audioPlayer1.classList.remove("hidden");
+expandPlayer.addEventListener("click", () => {
+    const isHidden = audioPlayer1.classList.toggle("hidden");
+
+    if (!isHidden) {
         populateSongQueue();
+
+        if (!playerStatePushed) {
+            history.pushState({ type: "hidePlayer" }, ""); // First push hidePlayer
+            history.pushState({ type: "previousState" }, ""); // Push a dummy state
+            console.log("Pushed state for hidePlayer");
+            playerStatePushed = true;
+        }
+    } else {
+        playerStatePushed = false;
     }
 });
 
-unexpandPlayer.addEventListener("click", function () {
-    audioPlayer1.classList.toggle("hidden");
-    console.log(audioPlayer1.classList.contains("hidden"));
-    if (audioPlayer1.classList.contains("hidden")) {
-        mainContent.classList.remove("hidden");
-    } else {
-        saveVisibilityState();
-        hideAll();
-        audioPlayer1.classList.remove("hidden");
-        populateSongQueue();
-    }
-});
+
+
+
+
+
+
+
+
+
 
 // Function to update volume based on click position
 function setVolume(event) {

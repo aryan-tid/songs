@@ -1,5 +1,5 @@
 .audio-player1 {
-  background: var(--bs-secondary);
+  background: #ff0000;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -134,13 +134,16 @@
 }
 
 .popup-overlay {
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 0;
+  overflow: auto;
 }
 
 .tooltip {
@@ -157,8 +160,14 @@
 }
 
 #popupSecondary {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-height: 80vh;
+  overflow-y: auto;
+  min-width: 300px;
+  margin-bottom: 70px;
   display: flex;
-  justify-content: center;
   flex-direction: column;
   align-items: center;
 }
@@ -173,6 +182,12 @@
   flex-direction: row;
   justify-content: flex-start;
   align-content: center;
+}
+
+.song-card-queue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .song-card-container-queue {
