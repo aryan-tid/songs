@@ -220,7 +220,7 @@ function initializeTouchFriendlySortable() {
         
         // Touch settings
         touchStartThreshold: 5,
-        delay: 150,
+        delay: 10,
         delayOnTouchOnly: true,
         
         // Swap behavior - critical for smooth animations
