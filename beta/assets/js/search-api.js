@@ -131,9 +131,29 @@ async function searchSong(query, page) {
                         <button class="btn btn-primary song-card-btn song-card-btn-queue" type="button">
                             <i class="icon ion-android-add"></i>
                         </button>
-                        <button class="btn btn-primary song-card-btn" type="button">
-                            <i class="icon-options-vertical" style="font-size: 16px;"></i>
-                        </button>
+                        <button class="btn btn-primary song-card-btn-menu" type="button">
+                        <i class="icon-options-vertical" style="font-size: 16px;"></i>
+                    </button>
+
+                        <!-- Dropdown menu structure (initially hidden) -->
+                        <div class="dropdown-menu" style="display: none;">
+                            <div class="dropdown-menu-item" data-action="download">
+                                <i class="icon ion-android-download"></i>
+                                <span>Download</span>
+                            </div>
+                            <div class="dropdown-menu-item" style="display: none; data-action="add-playlist">
+                                <i class="icon ion-android-list"></i>
+                                <span>Add to Playlist</span>
+                            </div>
+                            <div class="dropdown-menu-item" style="display: none; data-action="share">
+                                <i class="icon ion-android-share-alt"></i>
+                                <span>Share</span>
+                            </div>
+                            <div class="dropdown-menu-item" style="display: none; data-action="info">
+                                <i class="icon ion-information-circled"></i>
+                                <span>Song Info</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -171,6 +191,94 @@ async function searchSong(query, page) {
 
                     addSongToQueue(songURL, songImage, songName, songId, songArtists);
                 });
+            }
+            // Get the menu button in this card
+            const songName = card.querySelector(".song-card-name").textContent;
+            const selectedQuality = getSelectedQuality();
+            const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
+                .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || "";
+            const songImage = card.querySelector(".song-card-img").src;
+            const songArtists = card.querySelector(".song-card-artists").textContent;
+            const songId = card.querySelector(".song-card-song-id").textContent;
+            const menuBtn = card.querySelector(".song-card-btn-menu");
+            if (menuBtn) {
+
+                // Find the dropdown that's a sibling of this button
+                const dropdown = menuBtn.nextElementSibling;
+
+                if (dropdown && dropdown.classList.contains("dropdown-menu")) {
+                    // Toggle dropdown on button click
+                    menuBtn.addEventListener("click", (event) => {
+                        event.stopPropagation(); // Prevent card click
+
+                        // Hide all other dropdowns
+                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                            if (menu !== dropdown) {
+                                menu.style.display = 'none';
+                            }
+                        });
+
+                        // Toggle current dropdown
+                        const isVisible = dropdown.style.display === 'block';
+                        dropdown.style.display = isVisible ? 'none' : 'block';
+
+                        if (!isVisible) {
+                            // Position the dropdown
+                            const buttonRect = menuBtn.getBoundingClientRect();
+                            dropdown.style.position = 'absolute';
+                            dropdown.style.top = `${buttonRect.bottom + window.scrollY + 5}px`;
+                            dropdown.style.left = `${buttonRect.left + window.scrollX - 120}px`;
+                        }
+                    });
+
+                    // Add click handlers for dropdown items
+                    dropdown.querySelectorAll('.dropdown-menu-item').forEach(item => {
+                        item.addEventListener("click", (event) => {
+                            event.stopPropagation(); // Prevent event bubbling
+                            const action = item.getAttribute('data-action');
+
+                            // Handle different actions
+                            switch (action) {
+                                case 'download':
+                                    event.stopPropagation(); // Stop the event from bubbling up to the card click event
+
+                                    const selectedQuality = getSelectedQuality();
+                                    const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
+                                        .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || item.url;
+
+                                    downloadSong(songId, songName, songArtists, songURL, songImage);
+                                    break;
+                                case 'add-playlist':
+                                    console.log(`Add to playlist: ${songName}`);
+                                    // Add to playlist logic here
+                                    break;
+                                case 'share':
+                                    console.log(`Share song: ${songName}`);
+                                    // Share logic
+                                    if (navigator.share) {
+                                        navigator.share({
+                                            title: songName,
+                                            text: `Check out ${songName} by ${songArtists}`,
+                                            url: `${window.location.origin}`
+                                        }).catch(err => console.error('Share failed:', err));
+                                    } else {
+                                        // Fallback - copy to clipboard
+                                        const shareUrl = `${window.location.origin}`;
+                                        navigator.clipboard.writeText(shareUrl)
+                                            .then(() => alert('Link copied to clipboard!'))
+                                            .catch(err => console.error('Failed to copy:', err));
+                                    }
+                                    break;
+                                case 'info':
+                                    console.log(`Info for: ${songName}`);
+                                    // Show info logic
+                                    break;
+                            }
+
+                            dropdown.style.display = 'none';
+                        });
+                    });
+                }
             }
 
         });
@@ -446,9 +554,29 @@ async function listSongs(category, id, page) {
                     <button class="btn btn-primary song-card-btn-queue song-card-btn" type="button">
                         <i class="icon ion-android-add"></i>
                     </button>
-                    <button class="btn btn-primary song-card-btn" type="button">
+                    <button class="btn btn-primary song-card-btn-menu" type="button">
                         <i class="icon-options-vertical" style="font-size: 16px;"></i>
                     </button>
+
+                    <!-- Dropdown menu structure (initially hidden) -->
+                    <div class="dropdown-menu" style="display: none;">
+                        <div class="dropdown-menu-item" data-action="download">
+                            <i class="icon ion-android-download"></i>
+                            <span>Download</span>
+                        </div>
+                        <div class="dropdown-menu-item" style="display: none; data-action="add-playlist">
+                            <i class="icon ion-android-list"></i>
+                            <span>Add to Playlist</span>
+                        </div>
+                        <div class="dropdown-menu-item" style="display: none; data-action="share">
+                            <i class="icon ion-android-share-alt"></i>
+                            <span>Share</span>
+                        </div>
+                        <div class="dropdown-menu-item" style="display: none; data-action="info">
+                            <i class="icon ion-information-circled"></i>
+                            <span>Song Info</span>
+                        </div>
+                    </div>
                 </div>
             `;
 
@@ -470,6 +598,87 @@ async function listSongs(category, id, page) {
                     addSongToQueue(songURL, songImage, songName, songId, songArtists);
                 });
             }
+            // Get the menu button in this card
+            const menuBtn = card.querySelector(".song-card-btn-menu");
+            if (menuBtn) {
+                // Find the dropdown that's a sibling of this button
+                const dropdown = menuBtn.nextElementSibling;
+
+                if (dropdown && dropdown.classList.contains("dropdown-menu")) {
+                    // Toggle dropdown on button click
+                    menuBtn.addEventListener("click", (event) => {
+                        event.stopPropagation(); // Prevent card click
+
+                        // Hide all other dropdowns
+                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                            if (menu !== dropdown) {
+                                menu.style.display = 'none';
+                            }
+                        });
+
+                        // Toggle current dropdown
+                        const isVisible = dropdown.style.display === 'block';
+                        dropdown.style.display = isVisible ? 'none' : 'block';
+
+                        if (!isVisible) {
+                            // Position the dropdown
+                            const buttonRect = menuBtn.getBoundingClientRect();
+                            dropdown.style.position = 'absolute';
+                            dropdown.style.top = `${buttonRect.bottom + window.scrollY + 5}px`;
+                            dropdown.style.left = `${buttonRect.left + window.scrollX - 120}px`;
+                        }
+                    });
+
+                    // Add click handlers for dropdown items
+                    dropdown.querySelectorAll('.dropdown-menu-item').forEach(item => {
+                        item.addEventListener("click", (event) => {
+                            event.stopPropagation(); // Prevent event bubbling
+                            const action = item.getAttribute('data-action');
+
+                            // Handle different actions
+                            switch (action) {
+                                case 'download':
+                                    event.stopPropagation(); // Stop the event from bubbling up to the card click event
+
+                                    const selectedQuality = getSelectedQuality();
+                                    const songURL = Array.from(card.querySelectorAll(".song-card-song-url"))
+                                        .find(el => el.getAttribute("data-quality") === selectedQuality)?.textContent || item.url;
+
+                                    downloadSong(songId, songName, songArtists, songURL, songImage);
+                                    break;
+                                case 'add-playlist':
+                                    console.log(`Add to playlist: ${songName}`);
+                                    // Add to playlist logic here
+                                    break;
+                                case 'share':
+                                    console.log(`Share song: ${songName}`);
+                                    // Share logic
+                                    if (navigator.share) {
+                                        navigator.share({
+                                            title: songName,
+                                            text: `Check out ${songName} by ${songArtists}`,
+                                            url: `${window.location.origin}`
+                                        }).catch(err => console.error('Share failed:', err));
+                                    } else {
+                                        // Fallback - copy to clipboard
+                                        const shareUrl = `${window.location.origin}`;
+                                        navigator.clipboard.writeText(shareUrl)
+                                            .then(() => alert('Link copied to clipboard!'))
+                                            .catch(err => console.error('Failed to copy:', err));
+                                    }
+                                    break;
+                                case 'info':
+                                    console.log(`Info for: ${songName}`);
+                                    // Show info logic
+                                    break;
+                            }
+
+                            dropdown.style.display = 'none';
+                        });
+                    });
+                }
+            }
+
 
             newContent.appendChild(card);
         });
@@ -548,11 +757,9 @@ async function listSongs(category, id, page) {
         resultDiv.textContent = 'Error fetching data';
     }
     loader("hide");
+    setupOutsideClickListener();
+
 }
-
-
-
-
 
 // Function to get URL parameter by name
 function getUrlParameter(name) {
@@ -565,6 +772,7 @@ const categoryParam = getUrlParameter('category');
 const idParam = getUrlParameter('id');
 const pageParam = getUrlParameter('page');
 const queryParam = getUrlParameter('query');
+const downloadsParam = getUrlParameter('downloads');
 
 // Convert pageParam to a number and use 1 as default if missing or invalid
 const pageP = pageParam ? parseInt(pageParam, 10) || 1 : 1;
@@ -573,22 +781,33 @@ let fromUrlParam = false;
 let allowUrlParameters = true; // Allow URL parameters to be used for once only
 urlParameterDataLoad();
 function urlParameterDataLoad(type) {
-    if (type === "default") {
-        listSongs("artists", "459320", "1");
-    } else if (allowUrlParameters) {
-        allowUrlParameters = false; // Prevent further use of URL parameters
-        // Check conditions and execute functions accordingly
-        if (categoryParam && idParam) {
-            fromUrlParam = true;
-            listSongs(categoryParam, idParam, pageP);
-        } else if (queryParam && categoryParam) {
-            fromUrlParam = true;
-            search(queryParam, categoryParam, pageP);
-        } else if (queryParam) {
-            fromUrlParam = true;
-            searchSong(queryParam, pageP);
-        } else {
+    if (navigator.onLine) {
+        if (type === "default") {
             listSongs("artists", "459320", "1");
+        } else if (allowUrlParameters) {
+            allowUrlParameters = false; // Prevent further use of URL parameters
+            // Check conditions and execute functions accordingly
+            if (categoryParam && idParam) {
+                fromUrlParam = true;
+                listSongs(categoryParam, idParam, pageP);
+            } else if (queryParam && categoryParam) {
+                fromUrlParam = true;
+                search(queryParam, categoryParam, pageP);
+            } else if (queryParam) {
+                fromUrlParam = true;
+                searchSong(queryParam, pageP);
+            } else if (downloadsParam) {
+                if (downloadsParam === "songs") {
+                    getAllDownloadedSongs();
+                    console.log("Getting all downloaded songs");
+                } else {
+                    listSongs("artists", "459320", "1");
+                    console.log("Invalid downloads parameter");
+                }
+            } else {
+                listSongs("artists", "459320", "1");
+                console.log("Invalid URL parameters");
+            }
         }
     }
 }
@@ -606,6 +825,8 @@ window.onpopstate = function (event) {
         audioPlayer1.classList.add("hidden");
         playerStatePushed = false;
         console.log("Player hidden");
+    } else if (event.state?.page === "downloadedSongs") {
+        getAllDownloadedSongs();
     } else {
         // Handle other cases normally
         const { type, query, category, id, page, elements } = event.state || {};
@@ -626,4 +847,19 @@ function updateHistory(type, params, url) {
         return; // Prevents adding duplicate history states
     }
     history.pushState(params, "", url);
+}
+
+function setupOutsideClickListener() {
+    document.addEventListener('click', function (event) {
+        // Check if the click is outside any dropdown or menu button
+        const isDropdown = event.target.closest('.dropdown-menu');
+        const isMenuButton = event.target.closest('.song-card-btn-menu');
+
+        // If clicked outside both dropdown and menu button, close all dropdowns
+        if (!isDropdown && !isMenuButton) {
+            document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                dropdown.style.display = 'none';
+            });
+        }
+    });
 }

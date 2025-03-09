@@ -39,6 +39,7 @@ loopElement.addEventListener("click", function () {
 
 
 function firstPlayAudio(name, url, img, artists, id) {
+    clearQueue();
     addSongToQueue(url, img, name, id, artists);
     playAudio(name, url, img, artists);
 }
