@@ -1,6 +1,6 @@
 const songListImg = document.querySelector(".song-list");
-const APIbaseURL = "http://192.168.1.4:3000/api/";
-// const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
+// const APIbaseURL = "http://192.168.1.4:3000/api/";
+const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
 let currentPageName = "default";
 let currentPage;
