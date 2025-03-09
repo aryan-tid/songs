@@ -1,6 +1,6 @@
 const songListImg = document.querySelector(".song-list");
-// const APIbaseURL = "http://192.168.1.8:3000/api/";
-const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
+const APIbaseURL = "http://192.168.1.4:3000/api/";
+// const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
 let currentPageName = "default";
 let currentPage;
@@ -10,7 +10,7 @@ function getSelectedQuality() {
     return selectedOption ? selectedOption.getAttribute("data-value") : null;
 }
 
-function getq(){
+function getq() {
     console.log(getSelectedQuality());
 }
 
@@ -29,18 +29,13 @@ function hide(querySelector) {
     document.querySelector(querySelector).style.display = "none";
 }
 
+
 async function showBrowse() {
-    const isSettingsHidden = getComputedStyle(document.querySelector(".settings")).display === "none";
-    if (isSettingsHidden) {
-        const target = document.querySelector('.search-container');
-        target.style.display ? target.style.removeProperty('display') : target.style.setProperty('display', 'none');
-    } else {
-        loader("show");
-        window.history.back();
-        show(".search-container");
-        loader("hide");
-    }
+    const target = document.querySelector('.search-container');
+    target.style.display ? target.style.removeProperty('display') : target.style.setProperty('display', 'none');
 }
+
+
 function pause(time) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
@@ -87,6 +82,7 @@ async function searchSong(query, page) {
         return;
     }
     updateHistory("searchSongs", { type: "searchSongs", query, page }, `?query=${query}&page=${page}`);
+    console.log("history state", history.state);
     if (fromUrlParam) {
         fromUrlParam = false;
         currentPage = page;
@@ -246,6 +242,7 @@ async function search(query, category, page) {
     }
 
     updateHistory("search", { type: "search", query, category, page }, `?query=${query}&category=${category}&page=${page}`);
+    console.log("history state", history.state);
 
     if (fromUrlParam) {
         fromUrlParam = false;
@@ -368,6 +365,8 @@ async function search(query, category, page) {
 async function listSongs(category, id, page) {
     loader("show");
     updateHistory("lists", { type: "lists", category, id, page }, `?category=${category}&id=${id}&page=${page}`);
+    console.log("history state", history.state);
+
 
     let url;
 
@@ -607,11 +606,6 @@ window.onpopstate = function (event) {
         audioPlayer1.classList.add("hidden");
         playerStatePushed = false;
         console.log("Player hidden");
-    } else if (event.state?.type === "hideSettings") {
-        const settingsDiv = document.querySelector(".settings");
-        if (settingsDiv) settingsDiv.style.display = "none"; // Hide settings
-        settingsStatePushed = false;
-        console.log("Settings hidden");
     } else {
         // Handle other cases normally
         const { type, query, category, id, page, elements } = event.state || {};

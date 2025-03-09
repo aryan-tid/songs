@@ -211,6 +211,11 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  max-width: 380px;
+  margin: 0 auto;
+  margin-top: 10px;
+  background-color: var(--bs-secondary);
+  margin-bottom: 10px;
 }
 
 #settingsText {

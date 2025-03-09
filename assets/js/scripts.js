@@ -1,3 +1,5 @@
+const e = require("express");
+
 function goToHome() {
     // Replace the current state with a clean one (removes all parameters)
     history.replaceState(null, "", window.location.origin + window.location.pathname);
@@ -110,31 +112,15 @@ setupDropdown(".theme-dropdown-btn", ".theme-dropdown-content");
 setupDropdown(".dropdown-btn", ".dropdown-content");
 
 
-let settingsStatePushed = false;
 
-function showSettings() {
-    const isSearchBoxHidden = getComputedStyle(document.querySelector(".search-container")).display === "none"
+async function showSettings() {
     const settingsDiv = document.querySelector(".settings");
-    if (!settingsDiv) return;
-    if (isSearchBoxHidden) {
-        if (settingsDiv.style.display === "none" || settingsDiv.style.display === "") {
-            settingsDiv.style.display = "flex"; // Show settings
-
-            if (!settingsStatePushed) {
-                history.pushState({ type: "hideSettings" }, ""); // Push hideSettings state
-                history.pushState({ type: "previousState" }, ""); // Push dummy state
-                console.log("Pushed state for hideSettings");
-                settingsStatePushed = true;
-            }
-        } else {
-            window.history.back(); // Go back
-            settingsStatePushed = false;
-        }
+    if (settingsDiv.style.display === "none" || settingsDiv.style.display === "") {
+        settingsDiv.style.display = "flex";
     } else {
-        hide(".search-container");
+        settingsDiv.style.display = "none";
     }
 }
-
 
 function loader(action) {
     const loader = document.querySelector(".loading-container");
@@ -147,3 +133,8 @@ function loader(action) {
         loader.style.display = "none";
     }
 }
+
+window.addEventListener("beforeunload", (event) => {
+    event.preventDefault();
+    event.returnValue = ""; // Necessary for showing the prompt in modern browsers
+});
