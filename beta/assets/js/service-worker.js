@@ -29,6 +29,7 @@ const urlsToCache = [
   '/assets/js/player.js',
   '/assets/js/scripts.js',
   '/assets/js/search-api.js',
+  '/assets/js/service-worker.js',
   '/version.json'
 ];
 

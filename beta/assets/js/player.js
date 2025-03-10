@@ -498,18 +498,22 @@ let element = document.getElementById('trackTitle');
 let element2 = document.getElementById('timePausePlay');
 
 let observer = new ResizeObserver(() => {
-    let computedStyle = window.getComputedStyle(element);
-    let width = parseFloat(computedStyle.width); // Convert width from "px" string to number
+    let bodyWidth = document.body.clientWidth; // Get current width of the body
 
-    if (width > 150) { // Only update if width > 150px
-        element2.style.width = computedStyle.width;
+    if (bodyWidth > 800) { // Only run the observer logic if body width > 800px
+        let computedStyle = window.getComputedStyle(element);
+        let width = parseFloat(computedStyle.width); // Convert width from "px" string to number
+
+        if (width > 150) { 
+            element2.style.width = computedStyle.width;
+        } else {
+            element2.style.width = "150px";
+        }
     } else {
-
-        element2.style.width = "150px";
+        element2.style.width = ""; // Reset the width when body width <= 800px
     }
 });
 
-// Observe changes in `element`
+// Start observing
 observer.observe(element);
-
 

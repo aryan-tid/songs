@@ -1,5 +1,6 @@
 const songListImg = document.querySelector(".song-list");
 // const APIbaseURL = "http://192.168.1.4:3000/api/";
+// const APIbaseURL = "https://saavn.dev/api/";
 const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
 let currentPageName = "default";
@@ -20,6 +21,7 @@ function hideAll() {
     document.querySelector(".search-container").style.display = "none";
     document.querySelector(".main-content").style.display = "none";
     document.querySelector(".settings").style.display = "none";
+    document.querySelector(".home").style.display = "none";
     document.querySelector(".popup-overlay").classList.add("hidden");
 }
 function show(querySelector) {
@@ -484,20 +486,23 @@ async function listSongs(category, id, page) {
         currentPageName = "id";
         currentPageCategory = category;
         currentPage = page;
+        console.log("fromUrlParam", currentPage);
     } else if (currentPageName !== "id" && currentPageCategory !== category) {
         page = 1;
         currentPageName = "id";
         currentPageCategory = category;
         currentPage = page;
-
+        console.log("currentPageName !== id", currentPage);
     } else {
         currentPage = page;
+        console.log("currentPage", currentPage);
     }
+    console.log(page, currentPage);
 
     if (category === "artists") {
         url = `${APIbaseURL}${category}/${id}/songs?page=${page}&limit=10`;
     } else {
-        url = `${APIbaseURL}${category}?id=${id}&page=0&limit=100`;
+        url = `${APIbaseURL}${category}?id=${id}&page=0&limit=500`;
     }
 
     const resultDiv = document.querySelector(".song-card-container");
@@ -692,51 +697,74 @@ async function listSongs(category, id, page) {
         resultDiv.appendChild(newContent);
         document.querySelector(".song-list").style.display = "flex";
 
-        // Create the container div
-        const navButtons = document.createElement("div");
-        navButtons.classList.add("next-prev-btn");
+        // Only create and append the navigation buttons if category is "artists"
+        if (category === "artists") {
+            // Create the container div
+            const navButtons = document.createElement("div");
+            navButtons.classList.add("next-prev-btn");
 
-        // Create the Previous Page button
-        const prevButton = document.createElement("button");
-        prevButton.classList.add("btn", "prev-page");
-        prevButton.type = "button";
-        prevButton.style.fontSize = "14px";
-        prevButton.textContent = "Previous Page";
+            // Create the Previous Page button
+            const prevButton = document.createElement("button");
+            prevButton.classList.add("btn", "prev-page");
+            prevButton.type = "button";
+            prevButton.style.fontSize = "14px";
+            prevButton.textContent = "Previous Page";
 
-        // Create the Next Page button
-        const nextButton = document.createElement("button");
-        nextButton.classList.add("btn", "next-page");
-        nextButton.type = "button";
-        nextButton.style.fontSize = "14px";
-        nextButton.textContent = "Next Page";
+            // Create the Next Page button
+            const nextButton = document.createElement("button");
+            nextButton.classList.add("btn", "next-page");
+            nextButton.type = "button";
+            nextButton.style.fontSize = "14px";
+            nextButton.textContent = "Next Page";
 
-        // Append buttons to the container div
-        navButtons.appendChild(prevButton);
-        navButtons.appendChild(nextButton);
+            // Append buttons to the container div
+            navButtons.appendChild(prevButton);
+            navButtons.appendChild(nextButton);
 
-        // Append the div inside .main-content
-        const mainContent = document.querySelector(".page-buttons");
-        if (mainContent) {
-            mainContent.innerHTML = '';
-        }
-        if (mainContent) {
-            mainContent.appendChild(navButtons);
-        } else {
-            console.error("Element with class .main-content not found.");
-        }
+            // Append the div inside .page-buttons
+            const mainContent = document.querySelector(".page-buttons");
+            if (mainContent) {
+                mainContent.innerHTML = '';
+                mainContent.appendChild(navButtons);
 
-        const nextPageBtn = document.querySelector(".next-page");
-        const prevPageBtn = document.querySelector(".prev-page");
-        nextPageBtn.addEventListener("click", async () => {
-            page++;
-            await listSongs(category, id, page);
-        });
-        prevPageBtn.addEventListener("click", async () => {
-            if (page > 1) {
-                page--;
-                await listSongs(category, id, page);
+                // Now that we've added the buttons, set up their event listeners
+                const nextPageBtn = document.querySelector(".next-page");
+                const prevPageBtn = document.querySelector(".prev-page");
+
+                nextPageBtn.addEventListener("click", async () => {
+                    page++;
+                    await listSongs(category, id, page);
+                });
+
+                prevPageBtn.addEventListener("click", async () => {
+                    if (page > 1) {
+                        page--;
+                        await listSongs(category, id, page);
+                    }
+                });
+            } else {
+                console.error("Element with class .page-buttons not found.");
             }
-        });
+            const nextPageBtn = document.querySelector(".next-page");
+            const prevPageBtn = document.querySelector(".prev-page");
+            nextPageBtn.addEventListener("click", async () => {
+                page++;
+                await listSongs(category, id, page);
+            });
+            prevPageBtn.addEventListener("click", async () => {
+                if (page > 1) {
+                    page--;
+                    await listSongs(category, id, page);
+                }
+            });
+        } else {
+            // For albums and playlists, clear the page buttons area
+            const mainContent = document.querySelector(".page-buttons");
+            if (mainContent) {
+                mainContent.innerHTML = '';
+            }
+        }
+
 
         const btnAddListToQueue = document.querySelector('.add-list-to-queue');
         btnAddListToQueue.onclick = () => {
@@ -783,7 +811,8 @@ urlParameterDataLoad();
 function urlParameterDataLoad(type) {
     if (navigator.onLine) {
         if (type === "default") {
-            listSongs("artists", "459320", "1");
+            hideAll();
+            show("#home");
         } else if (allowUrlParameters) {
             allowUrlParameters = false; // Prevent further use of URL parameters
             // Check conditions and execute functions accordingly
@@ -801,12 +830,11 @@ function urlParameterDataLoad(type) {
                     getAllDownloadedSongs();
                     console.log("Getting all downloaded songs");
                 } else {
-                    listSongs("artists", "459320", "1");
+                    home();
                     console.log("Invalid downloads parameter");
                 }
             } else {
-                listSongs("artists", "459320", "1");
-                console.log("Invalid URL parameters");
+                home();
             }
         }
     }
@@ -827,7 +855,10 @@ window.onpopstate = function (event) {
         console.log("Player hidden");
     } else if (event.state?.page === "downloadedSongs") {
         getAllDownloadedSongs();
-    } else {
+    } else if (event.state?.type === "home") {
+        hideAll();
+        show(".home");
+    }else {
         // Handle other cases normally
         const { type, query, category, id, page, elements } = event.state || {};
 
@@ -837,6 +868,9 @@ window.onpopstate = function (event) {
             search(query, category, page);
         } else if (type === "lists") {
             listSongs(category, id, page);
+        } else {
+            hideAll();
+            show(".home");
         }
     }
 };

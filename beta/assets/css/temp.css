@@ -1,0 +1,96 @@
+.home #trending, .home #playlists, .home #albums, .home #topCharts, .home #artists {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #222;
+  scroll-behavior: smooth;
+}
+
+.home #trending::-webkit-scrollbar, .home #playlists::-webkit-scrollbar, .home #albums::-webkit-scrollbar {
+  height: 8px;
+}
+
+.home #trending::-webkit-scrollbar-thumb, .home #playlists::-webkit-scrollbar-thumb, .home #albums::-webkit-scrollbar-thumb {
+  background: #ffffff00;
+  border-radius: 4px;
+}
+
+.home .card {
+  background: var(--bs-secondary);
+  border-radius: 10px;
+  padding: 10px;
+  min-width: 180px;
+  max-width: 200px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.home .card:hover {
+  box-shadow: 0 8px 12px rgba(255, 255, 255, 0.2);
+}
+
+.home .image-container {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.home .image-container img {
+  width: 100%;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.home .card:hover .image-container img {
+  transform: scale(1.1);
+}
+
+.home .play-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: var(--bs-secondary);
+  border-radius: 50%;
+  padding: 8px 13px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.home .card:hover .play-button {
+  background: var(--bs-primary);
+  transform: scale(1.1);
+  color: white;
+}
+
+.home h3 {
+  font-size: 16px;
+  margin: 8px 0 4px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease-in-out;
+}
+
+.home .card:hover h3 {
+  font-weight: 900;
+}
+
+.home p {
+  font-size: 14px;
+  color: var(--bs-light);
+  margin: 2px 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home .heading {
+  font-size: x-large;
+}
+

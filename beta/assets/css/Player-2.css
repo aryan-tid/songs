@@ -215,13 +215,26 @@
   width: 70%;
 }
 
-.time-pause-play {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  height: 58px;
-  flex-direction: row;
-  width: 150px;
+@media (max-width: 380px) {
+  .time-pause-play {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 58px;
+    flex-direction: row;
+    width: 115px;
+  }
+}
+
+@media (min-width: 380px) {
+  .time-pause-play {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 58px;
+    flex-direction: row;
+    width: 150px;
+  }
 }
 
 .div-details {
