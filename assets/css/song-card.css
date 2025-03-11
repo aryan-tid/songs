@@ -122,7 +122,7 @@
   position: absolute;
   z-index: 1000;
   min-width: 160px;
-  background-color: #ffffff;
+  background-color: var(--bs-secondary);
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   overflow: hidden;
@@ -149,10 +149,6 @@
   transition: background-color 0.2s;
 }
 
-.dropdown-menu-item:hover {
-  background-color: #f5f7fa;
-}
-
 .dropdown-menu-item i {
   margin-right: 12px;
   font-size: 18px;
@@ -160,7 +156,7 @@
 }
 
 .dropdown-menu-item span {
-  color: #333;
+  color: var(--bs-light);
   font-size: 14px;
 }
 

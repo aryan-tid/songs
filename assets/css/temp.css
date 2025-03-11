@@ -1,0 +1,143 @@
+.home #trending, .home #playlists, .home #albums, .home #artists, .additional-details #trendingData, .additional-details #related {
+  display: flex;
+  overflow-x: auto;
+  gap: 05px;
+  padding: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #222;
+  scroll-behavior: smooth;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.home #topCharts {
+  display: flex;
+  overflow-x: auto;
+  gap: 0px;
+  padding: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #222;
+  scroll-behavior: smooth;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+
+.home #trending::-webkit-scrollbar, .home #playlists::-webkit-scrollbar, .home #albums::-webkit-scrollbar, .home #topCharts::-webkit-scrollbar, .home #artists::-webkit-scrollbar, .additional-details #trendingData::-webkit-scrollbar, .additional-details #related::-webkit-scrollbar {
+  display: none;
+}
+
+.home #trending::-webkit-scrollbar-thumb, .home #playlists::-webkit-scrollbar-thumb, .home #albums::-webkit-scrollbar-thumb {
+  background: #ffffff00;
+  border-radius: 4px;
+}
+
+.home .card, .additional-details .card {
+  background: var(--bs-secondary);
+  border-radius: 10px;
+  padding: 10px;
+  min-width: 140px;
+  max-width: 180px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  border: none;
+}
+
+#topCharts .card {
+  background: var(--bs-secondary);
+  border-radius: 10px;
+  padding: 10px;
+  min-width: 110px;
+  max-width: 110px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  border: none;
+}
+
+#topCharts {
+  margin-left: 5px;
+}
+
+.home .card:hover, .additional-details .card:hover {
+  box-shadow: 0 8px 12px rgba(255, 255, 255, 0.2);
+}
+
+.home .image-container, .additional-details .image-container {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.home .image-container img, .additional-details .image-container img {
+  width: 100%;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+#artists .image-container img {
+  width: 100%;
+  border-radius: 50%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.home .card:hover .image-container img, .additional-details .card:hover .image-container img {
+  transform: scale(1.1);
+}
+
+.home .play-button, .additional-details .play-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: var(--bs-secondary);
+  border-radius: 50%;
+  padding: 8px 13px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+#topCharts .play-button, #artists .play-button {
+  display: none;
+}
+
+.home .card:hover .play-button, .additional-details .card:hover .play-button {
+  background: var(--bs-primary);
+  transform: scale(1.1);
+  color: white;
+}
+
+.home h3, .additional-details h3 {
+  font-size: 15px;
+  margin: 8px 0 4px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease-in-out;
+}
+
+.home .card:hover h3, .additional-details .card:hover h3 {
+  font-weight: 900;
+}
+
+.home p, .additional-details p {
+  font-size: 12px;
+  color: var(--bs-light);
+  margin: 2px 0;
+  color: #a7a7a7;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home .heading, .additional-details .heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+

@@ -23,7 +23,7 @@
 body {
   margin: 0px;
   padding: 0px;
-  padding-top: 50px;
+  padding-top: 75px;
 }
 
 .universal-quality {
@@ -46,7 +46,7 @@ body {
   align-content: center;
   align-items: center;
   flex-direction: row;
-  margin-bottom: 70px;
+  margin-bottom: 0px;
 }
 
 .prev-page, .next-page {
@@ -92,6 +92,8 @@ body {
 
 #headingContent {
   display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .fa.fa-search.search-btn {

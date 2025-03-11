@@ -1,5 +1,8 @@
 const songListImg = document.querySelector(".song-list");
 // const APIbaseURL = "http://192.168.1.4:3000/api/";
+// const APIbaseURL2 = "http://192.168.1.4:3000/api/";
+const APIbaseURL2 = "https://home-omega-one.vercel.app/api/";
+// const APIbaseURL = "https://saavn.dev/api/";
 const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
 let currentPageName = "default";
@@ -20,6 +23,7 @@ function hideAll() {
     document.querySelector(".search-container").style.display = "none";
     document.querySelector(".main-content").style.display = "none";
     document.querySelector(".settings").style.display = "none";
+    document.querySelector(".home").style.display = "none";
     document.querySelector(".popup-overlay").classList.add("hidden");
 }
 function show(querySelector) {
@@ -138,7 +142,7 @@ async function searchSong(query, page) {
                         <!-- Dropdown menu structure (initially hidden) -->
                         <div class="dropdown-menu" style="display: none;">
                             <div class="dropdown-menu-item" data-action="download">
-                                <i class="icon ion-android-download"></i>
+                                <i class="la la-cloud-download"></i>
                                 <span>Download</span>
                             </div>
                             <div class="dropdown-menu-item" style="display: none; data-action="add-playlist">
@@ -484,20 +488,23 @@ async function listSongs(category, id, page) {
         currentPageName = "id";
         currentPageCategory = category;
         currentPage = page;
+        console.log("fromUrlParam", currentPage);
     } else if (currentPageName !== "id" && currentPageCategory !== category) {
         page = 1;
         currentPageName = "id";
         currentPageCategory = category;
         currentPage = page;
-
+        console.log("currentPageName !== id", currentPage);
     } else {
         currentPage = page;
+        console.log("currentPage", currentPage);
     }
+    console.log(page, currentPage);
 
     if (category === "artists") {
         url = `${APIbaseURL}${category}/${id}/songs?page=${page}&limit=10`;
     } else {
-        url = `${APIbaseURL}${category}?id=${id}&page=0&limit=100`;
+        url = `${APIbaseURL}${category}?id=${id}&page=0&limit=500`;
     }
 
     const resultDiv = document.querySelector(".song-card-container");
@@ -528,9 +535,11 @@ async function listSongs(category, id, page) {
         }
         // Wait until new data is fetched before clearing the old content
         const newContent = document.createDocumentFragment(); // Use fragment for better performance
+        let lang;
 
         results.forEach(item => {
             const songName = item.name;
+            lang = item.language;
             const songArtists = item.artists.primary.map(artist => artist.name).join(", ");
             const songId = item.id;
             const songUrls = item.downloadUrl?.map(urlObj => ({ quality: urlObj.quality, url: urlObj.url })) || [];
@@ -561,7 +570,7 @@ async function listSongs(category, id, page) {
                     <!-- Dropdown menu structure (initially hidden) -->
                     <div class="dropdown-menu" style="display: none;">
                         <div class="dropdown-menu-item" data-action="download">
-                            <i class="icon ion-android-download"></i>
+                            <i class="la la-cloud-download"></i>
                             <span>Download</span>
                         </div>
                         <div class="dropdown-menu-item" style="display: none; data-action="add-playlist">
@@ -686,57 +695,210 @@ async function listSongs(category, id, page) {
         show("#headingOptions");
         show(".main-content");
         show(".song-card-list");
+        if (lang == "english") {
+            console.log("english");
+        } else {
+            showTrending();
+            showRelated(category, id, lang);
+        }
+
+        async function showRelated(category, id, lang) {
+            if (category === "artists") {
+                return;
+            } else if (category === "albums") {
+                category = "album";
+            } else if (category === "playlists") {
+                category = "playlist";
+            }
+
+            const apiUrl = `${APIbaseURL2}related?lang=${lang}&id=${id}&category=${category}`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                console.log(data);
+
+                // Display songs and playlists
+                const trendingContainer = document.getElementById("related");
+                if (!trendingContainer) return; // Avoid errors if the element is missing
+                show("#relatedSpan");
+
+                trendingContainer.innerHTML = "";
+
+                Object.values(data).forEach(song => {
+                    const songCard = document.createElement("div");
+                    songCard.classList.add("card");
+                    songCard.innerHTML = `
+                            <div class="image-container">
+                                <img src="${song.image}" alt="${song.title}">
+                                <div class="play-button">▶</div>
+                            </div>
+                            <h3 class="card-title">${song.title}</h3>
+                            <p class="card-subtitle">${song.subtitle}</p>
+                        `;
+
+                    // Fix: Access `song.type` instead of `response.type`
+                    // Fix: Access `song.type` instead of `response.type`
+                    if (song.type === "playlist" || song.type === "album") {
+                        const id = song.id;
+                        let category = "";
+
+                        if (song.type === "playlist") {
+                            category = "playlists";
+                        } else if (song.type === "album") {
+                            category = "albums";
+                        }
+
+                        if (category) {
+                            songCard.addEventListener("click", () => {
+                                listSongs(category, id, "1");
+                            });
+                        }
+                    } else if (song.type === "song") {
+                        songCard.addEventListener("click", () => {
+                            const selectedQuality = getSelectedQuality();
+                            const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
+                            const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
+                            firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
+                            console.log(mediaUrl);
+
+                        });
+                    }
+
+
+                    trendingContainer.appendChild(songCard);
+                });
+
+
+                // loadNewAlbums(data.new_albums);
+                // loadTopCharts(data.charts);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        async function showTrending() {
+            const apiUrl = `${APIbaseURL2}trending?lang=${lang}`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                console.log(data);
+
+                // Display songs and playlists
+                const trendingContainer = document.getElementById("trendingData");
+                if (!trendingContainer) return; // Avoid errors if the element is missing
+                show("#trendingDataSpan");
+
+                trendingContainer.innerHTML = "";
+
+                Object.values(data).forEach(song => {
+                    const songCard = document.createElement("div");
+                    songCard.classList.add("card");
+                    songCard.innerHTML = `
+                            <div class="image-container">
+                                <img src="${song.image}" alt="${song.title}">
+                                <div class="play-button">▶</div>
+                            </div>
+                            <h3 class="card-title">${song.title}</h3>
+                            <p class="card-subtitle">${song.subtitle}</p>
+                        `;
+
+                    // Fix: Access `song.type` instead of `response.type`
+                    songCard.addEventListener("click", () => {
+                        const selectedQuality = getSelectedQuality();
+                        const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
+                        const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
+                        firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
+                        console.log(mediaUrl);
+
+                    });
+
+
+                    trendingContainer.appendChild(songCard);
+                });
+
+
+                // loadNewAlbums(data.new_albums);
+                // loadTopCharts(data.charts);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
 
         // Now clear old content and replace it with the new content
         resultDiv.innerHTML = '';
         resultDiv.appendChild(newContent);
         document.querySelector(".song-list").style.display = "flex";
 
-        // Create the container div
-        const navButtons = document.createElement("div");
-        navButtons.classList.add("next-prev-btn");
+        // Only create and append the navigation buttons if category is "artists"
+        if (category === "artists") {
+            // Create the container div
+            const navButtons = document.createElement("div");
+            navButtons.classList.add("next-prev-btn");
 
-        // Create the Previous Page button
-        const prevButton = document.createElement("button");
-        prevButton.classList.add("btn", "prev-page");
-        prevButton.type = "button";
-        prevButton.style.fontSize = "14px";
-        prevButton.textContent = "Previous Page";
+            // Create the Previous Page button
+            const prevButton = document.createElement("button");
+            prevButton.classList.add("btn", "prev-page");
+            prevButton.type = "button";
+            prevButton.style.fontSize = "14px";
+            prevButton.textContent = "Previous Page";
 
-        // Create the Next Page button
-        const nextButton = document.createElement("button");
-        nextButton.classList.add("btn", "next-page");
-        nextButton.type = "button";
-        nextButton.style.fontSize = "14px";
-        nextButton.textContent = "Next Page";
+            // Create the Next Page button
+            const nextButton = document.createElement("button");
+            nextButton.classList.add("btn", "next-page");
+            nextButton.type = "button";
+            nextButton.style.fontSize = "14px";
+            nextButton.textContent = "Next Page";
 
-        // Append buttons to the container div
-        navButtons.appendChild(prevButton);
-        navButtons.appendChild(nextButton);
+            // Append buttons to the container div
+            navButtons.appendChild(prevButton);
+            navButtons.appendChild(nextButton);
 
-        // Append the div inside .main-content
-        const mainContent = document.querySelector(".page-buttons");
-        if (mainContent) {
-            mainContent.innerHTML = '';
-        }
-        if (mainContent) {
-            mainContent.appendChild(navButtons);
-        } else {
-            console.error("Element with class .main-content not found.");
-        }
+            // Append the div inside .page-buttons
+            const mainContent = document.querySelector(".page-buttons");
+            if (mainContent) {
+                mainContent.innerHTML = '';
+                mainContent.appendChild(navButtons);
 
-        const nextPageBtn = document.querySelector(".next-page");
-        const prevPageBtn = document.querySelector(".prev-page");
-        nextPageBtn.addEventListener("click", async () => {
-            page++;
-            await listSongs(category, id, page);
-        });
-        prevPageBtn.addEventListener("click", async () => {
-            if (page > 1) {
-                page--;
-                await listSongs(category, id, page);
+                // Now that we've added the buttons, set up their event listeners
+                const nextPageBtn = document.querySelector(".next-page");
+                const prevPageBtn = document.querySelector(".prev-page");
+
+                nextPageBtn.addEventListener("click", async () => {
+                    page++;
+                    await listSongs(category, id, page);
+                });
+
+                prevPageBtn.addEventListener("click", async () => {
+                    if (page > 1) {
+                        page--;
+                        await listSongs(category, id, page);
+                    }
+                });
+            } else {
+                console.error("Element with class .page-buttons not found.");
             }
-        });
+            const nextPageBtn = document.querySelector(".next-page");
+            const prevPageBtn = document.querySelector(".prev-page");
+            nextPageBtn.addEventListener("click", async () => {
+                page++;
+                await listSongs(category, id, page);
+            });
+            prevPageBtn.addEventListener("click", async () => {
+                if (page > 1) {
+                    page--;
+                    await listSongs(category, id, page);
+                }
+            });
+        } else {
+            // For albums and playlists, clear the page buttons area
+            const mainContent = document.querySelector(".page-buttons");
+            if (mainContent) {
+                mainContent.innerHTML = '';
+            }
+        }
+
 
         const btnAddListToQueue = document.querySelector('.add-list-to-queue');
         btnAddListToQueue.onclick = () => {
@@ -783,7 +945,7 @@ urlParameterDataLoad();
 function urlParameterDataLoad(type) {
     if (navigator.onLine) {
         if (type === "default") {
-            listSongs("artists", "459320", "1");
+            home();
         } else if (allowUrlParameters) {
             allowUrlParameters = false; // Prevent further use of URL parameters
             // Check conditions and execute functions accordingly
@@ -801,12 +963,11 @@ function urlParameterDataLoad(type) {
                     getAllDownloadedSongs();
                     console.log("Getting all downloaded songs");
                 } else {
-                    listSongs("artists", "459320", "1");
+                    home();
                     console.log("Invalid downloads parameter");
                 }
             } else {
-                listSongs("artists", "459320", "1");
-                console.log("Invalid URL parameters");
+                home();
             }
         }
     }
@@ -827,6 +988,8 @@ window.onpopstate = function (event) {
         console.log("Player hidden");
     } else if (event.state?.page === "downloadedSongs") {
         getAllDownloadedSongs();
+    } else if (event.state?.type === "home") {
+        home();
     } else {
         // Handle other cases normally
         const { type, query, category, id, page, elements } = event.state || {};
@@ -837,6 +1000,9 @@ window.onpopstate = function (event) {
             search(query, category, page);
         } else if (type === "lists") {
             listSongs(category, id, page);
+        } else {
+            hideAll();
+            show(".home");
         }
     }
 };
