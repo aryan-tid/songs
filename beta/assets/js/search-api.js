@@ -1,5 +1,7 @@
 const songListImg = document.querySelector(".song-list");
 // const APIbaseURL = "http://192.168.1.4:3000/api/";
+// const APIbaseURL2 = "http://192.168.1.4:3000/api/";
+const APIbaseURL2 = "https://home-omega-one.vercel.app/api/";
 // const APIbaseURL = "https://saavn.dev/api/";
 const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
@@ -140,7 +142,7 @@ async function searchSong(query, page) {
                         <!-- Dropdown menu structure (initially hidden) -->
                         <div class="dropdown-menu" style="display: none;">
                             <div class="dropdown-menu-item" data-action="download">
-                                <i class="icon ion-android-download"></i>
+                                <i class="la la-cloud-download"></i>
                                 <span>Download</span>
                             </div>
                             <div class="dropdown-menu-item" style="display: none; data-action="add-playlist">
@@ -533,9 +535,11 @@ async function listSongs(category, id, page) {
         }
         // Wait until new data is fetched before clearing the old content
         const newContent = document.createDocumentFragment(); // Use fragment for better performance
+        let lang;
 
         results.forEach(item => {
             const songName = item.name;
+            lang = item.language;
             const songArtists = item.artists.primary.map(artist => artist.name).join(", ");
             const songId = item.id;
             const songUrls = item.downloadUrl?.map(urlObj => ({ quality: urlObj.quality, url: urlObj.url })) || [];
@@ -566,7 +570,7 @@ async function listSongs(category, id, page) {
                     <!-- Dropdown menu structure (initially hidden) -->
                     <div class="dropdown-menu" style="display: none;">
                         <div class="dropdown-menu-item" data-action="download">
-                            <i class="icon ion-android-download"></i>
+                            <i class="la la-cloud-download"></i>
                             <span>Download</span>
                         </div>
                         <div class="dropdown-menu-item" style="display: none; data-action="add-playlist">
@@ -691,6 +695,136 @@ async function listSongs(category, id, page) {
         show("#headingOptions");
         show(".main-content");
         show(".song-card-list");
+        if (lang == "english") {
+            console.log("english");
+        } else {
+            showTrending();
+            showRelated(category, id, lang);
+        }
+
+        async function showRelated(category, id, lang) {
+            if (category === "artists") {
+                return;
+            } else if (category === "albums") {
+                category = "album";
+            } else if (category === "playlists") {
+                category = "playlist";
+            }
+
+            const apiUrl = `${APIbaseURL2}related?lang=${lang}&id=${id}&category=${category}`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                console.log(data);
+
+                // Display songs and playlists
+                const trendingContainer = document.getElementById("related");
+                if (!trendingContainer) return; // Avoid errors if the element is missing
+                show("#relatedSpan");
+
+                trendingContainer.innerHTML = "";
+
+                Object.values(data).forEach(song => {
+                    const songCard = document.createElement("div");
+                    songCard.classList.add("card");
+                    songCard.innerHTML = `
+                            <div class="image-container">
+                                <img src="${song.image}" alt="${song.title}">
+                                <div class="play-button">▶</div>
+                            </div>
+                            <h3 class="card-title">${song.title}</h3>
+                            <p class="card-subtitle">${song.subtitle}</p>
+                        `;
+
+                    // Fix: Access `song.type` instead of `response.type`
+                    // Fix: Access `song.type` instead of `response.type`
+                    if (song.type === "playlist" || song.type === "album") {
+                        const id = song.id;
+                        let category = "";
+
+                        if (song.type === "playlist") {
+                            category = "playlists";
+                        } else if (song.type === "album") {
+                            category = "albums";
+                        }
+
+                        if (category) {
+                            songCard.addEventListener("click", () => {
+                                listSongs(category, id, "1");
+                            });
+                        }
+                    } else if (song.type === "song") {
+                        songCard.addEventListener("click", () => {
+                            const selectedQuality = getSelectedQuality();
+                            const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
+                            const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
+                            firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
+                            console.log(mediaUrl);
+
+                        });
+                    }
+
+
+                    trendingContainer.appendChild(songCard);
+                });
+
+
+                // loadNewAlbums(data.new_albums);
+                // loadTopCharts(data.charts);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        async function showTrending() {
+            const apiUrl = `${APIbaseURL2}trending?lang=${lang}`;
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                console.log(data);
+
+                // Display songs and playlists
+                const trendingContainer = document.getElementById("trendingData");
+                if (!trendingContainer) return; // Avoid errors if the element is missing
+                show("#trendingDataSpan");
+
+                trendingContainer.innerHTML = "";
+
+                Object.values(data).forEach(song => {
+                    const songCard = document.createElement("div");
+                    songCard.classList.add("card");
+                    songCard.innerHTML = `
+                            <div class="image-container">
+                                <img src="${song.image}" alt="${song.title}">
+                                <div class="play-button">▶</div>
+                            </div>
+                            <h3 class="card-title">${song.title}</h3>
+                            <p class="card-subtitle">${song.subtitle}</p>
+                        `;
+
+                    // Fix: Access `song.type` instead of `response.type`
+                    songCard.addEventListener("click", () => {
+                        const selectedQuality = getSelectedQuality();
+                        const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
+                        const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
+                        firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
+                        console.log(mediaUrl);
+
+                    });
+
+
+                    trendingContainer.appendChild(songCard);
+                });
+
+
+                // loadNewAlbums(data.new_albums);
+                // loadTopCharts(data.charts);
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
 
         // Now clear old content and replace it with the new content
         resultDiv.innerHTML = '';
@@ -811,8 +945,7 @@ urlParameterDataLoad();
 function urlParameterDataLoad(type) {
     if (navigator.onLine) {
         if (type === "default") {
-            hideAll();
-            show("#home");
+            home();
         } else if (allowUrlParameters) {
             allowUrlParameters = false; // Prevent further use of URL parameters
             // Check conditions and execute functions accordingly
@@ -856,9 +989,8 @@ window.onpopstate = function (event) {
     } else if (event.state?.page === "downloadedSongs") {
         getAllDownloadedSongs();
     } else if (event.state?.type === "home") {
-        hideAll();
-        show(".home");
-    }else {
+        home();
+    } else {
         // Handle other cases normally
         const { type, query, category, id, page, elements } = event.state || {};
 

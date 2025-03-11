@@ -1,54 +1,57 @@
 let modules = [];
 
 async function home() {
-    history.pushState({ type: "home" }, "", "/?type=home");
-    loader("show");
-    const apiUrl = "https://home-omega-one.vercel.app/api/jiosaavn";
-    // const apiUrl = "http://192.168.1.4:3000/api/jiosaavn";
-    try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        console.log(data);
+    history.pushState({ type: "home" }, "", "?type=home");
+    if (modules.length === 0) {
+        loader("show");
+        const apiUrl = "https://home-omega-one.vercel.app/api/jiosaavn";
+        // const apiUrl = "http://192.168.1.4:3000/api/jiosaavn";
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            console.log(data);
 
-        // Display songs and playlists
-        getModules(data);
-        if (isModulePresent("new_trending")) {
-            loadTrending(data.new_trending);
-        } else {
-            document.getElementById("trendingSpan").style.display = "none";
-        }
-        if (isModulePresent("top_playlists")) {
-            displayPlaylists(data.top_playlists);
-        } else {
-            document.getElementById("playlistsSpan").style.display = "none";
-        }
-        if (isModulePresent("new_albums")) {
-            loadNewAlbums(data.new_albums);
-        } else {
-            document.getElementById("albumsSpan").style.display = "none";
-        }
-        if (isModulePresent("charts")) {
-            loadTopCharts(data.charts);
-        } else {
-            document.getElementById("topChartsSpan").style.display = "none";
-        }
-        if (isModulePresent("artist_recos")) {
-            loadArtists(data.artist_recos);
-        } else {
-            document.getElementById("artistsSpan").style.display = "none";
+            // Display songs and playlists
+            getModules(data);
+            if (isModulePresent("new_trending")) {
+                loadTrending(data.new_trending);
+            } else {
+                document.getElementById("trendingSpan").style.display = "none";
+            }
+            if (isModulePresent("top_playlists")) {
+                displayPlaylists(data.top_playlists);
+            } else {
+                document.getElementById("playlistsSpan").style.display = "none";
+            }
+            if (isModulePresent("new_albums")) {
+                loadNewAlbums(data.new_albums);
+            } else {
+                document.getElementById("albumsSpan").style.display = "none";
+            }
+            if (isModulePresent("charts")) {
+                loadTopCharts(data.charts);
+            } else {
+                document.getElementById("topChartsSpan").style.display = "none";
+            }
+            if (isModulePresent("artist_recos")) {
+                loadArtists(data.artist_recos);
+            } else {
+                document.getElementById("artistsSpan").style.display = "none";
 
+            }
+
+            // loadNewAlbums(data.new_albums);
+            // loadTopCharts(data.charts);
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
         }
-
-        // loadNewAlbums(data.new_albums);
-        // loadTopCharts(data.charts);
-
-    } catch (error) {
-        console.error("Error fetching data:", error);
     }
     hideAll();
     show("#home");
     loader("hide");
 }
+
 function getModules(data) {
     modules = Object.keys(data);
 }
@@ -71,7 +74,6 @@ function loadTrending(response) {
                     <div class="play-button">▶</div>
                 </div>
                 <h3 class="card-title">${song.title}</h3>
-                <p class="card-subtitle">${song.subtitle}</p>
             `;
 
         // Fix: Access `song.type` instead of `response.type`
@@ -122,7 +124,6 @@ function displayPlaylists(playlists) {
                 </div>
                 <h3 class="card-title">${playlist.title}</h3>
                 <p class="card-subtitle">${playlist.subtitle}</p>
-                <p>${playlist.more_info.song_count} songs</p>
             `;
 
         // Add click event to the card
@@ -200,8 +201,6 @@ function loadTopCharts(playlists) {
                     <div class="play-button">▶</div>
                 </div>
                 <h3 class="card-title">${playlist.title}</h3>
-                <p class="card-subtitle">${playlist.subtitle}</p>
-                <p>${playlist.more_info.song_count} songs</p>
             `;
 
         // Add click event to the card
@@ -228,7 +227,6 @@ function loadArtists(artists) {
                 </div>
                 <h3 class="card-title">${artists.title}</h3>
                 <p class="card-subtitle">${artists.subtitle}</p>
-                <p>${artists.more_info.song_count} songs</p>
             `;
 
         // Add click event to the card

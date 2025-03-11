@@ -105,16 +105,16 @@
     <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css?h=03bc88feb8c0ce198a12645fce792b30">
     <link rel="stylesheet" href="assets/css/bs-theme-overrides.css?h=1041d609295e3322662d454aaba9a81e">
     <link rel="stylesheet" href="assets/css/loader.css?h=d81a4aaa23dcaf43c7a2ba10caad63d2">
-    <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=748be35a0b84e652cee9d810bca7e5c7">
+    <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=d77112f1c3813b6c2223c60459485b70">
     <link rel="stylesheet" href="assets/css/Player-1.css?h=7001292b7719a1037f8bda4c74460210">
     <link rel="stylesheet" href="assets/css/Player-2.css?h=39498c3b54d5e05333c355451fc3c7da">
-    <link rel="stylesheet" href="assets/css/song-card.css?h=84dd32103109f84647dfe3064068de05">
-    <link rel="stylesheet" href="assets/css/styles.css?h=b68f61905afd29918fee00d1fea7dba6">
-    <link rel="stylesheet" href="assets/css/temp.css?h=c2f9c6056ae8c8b79431bcef0944c071">
+    <link rel="stylesheet" href="assets/css/song-card.css?h=827833e02d80a89c4e14f6b26b6a762c">
+    <link rel="stylesheet" href="assets/css/styles.css?h=6e569f73c126a04971d485b0c1290267">
+    <link rel="stylesheet" href="assets/css/temp.css?h=874f7298d0055d2084e1be873635f9f2">
 </head>
 
 <body class="bg-secondary" style="margin-left: 7px;margin-bottom: 5px;margin-right: 7px;margin-top: 5px;">
-    <nav class="navbar navbar-expand-md py-3" style="height: 60px;background: rgba(0,0,0,0);backdrop-filter: blur(44px);-webkit-backdrop-filter: blur(44px);">
+    <nav class="navbar navbar-expand-md" style="height: 60px;background: rgba(0,0,0,0);backdrop-filter: blur(44px);-webkit-backdrop-filter: blur(44px);border-bottom-style: dotted;padding-bottom: 29px;">
         <div class="container"><a class="navbar-brand d-flex align-items-center" onclick="goToHome();" style="cursor:pointer;"><span>Melodify</span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2" style="--bs-border-radius: 0rem;"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-2" style="height: 41.1px;">
                 <ul class="navbar-nav ms-auto" style="background: var(--bs-secondary);border-radius: 15px;backdrop-filter: opacity(0.82) blur(54px);-webkit-backdrop-filter: opacity(0.82) blur(54px);opacity: 0.97;">
@@ -175,7 +175,7 @@
                             </svg></button></div>
                 </div>
                 <div class="song-card-container">
-                    <div class="container song-card hidden">
+                    <div class="container song-card">
                         <div class="song-card-cont1 song-card-cont1-details"><img class="song-card-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f">
                             <div class="song-details"><span class="song-card-name">Melodify</span><span class="song-card-artists">With ❤️ by Aryan</span><span class="song-card-song-id hidden">With ❤️ by Aryan</span><span class="song-card-song-url0 hidden">With ❤️ by Aryan</span><span class="song-card-song-url1 hidden">With ❤️ by Aryan</span><span class="song-card-song-url2 hidden">With ❤️ by Aryan</span><span class="song-card-song-url3 hidden">With ❤️ by Aryan</span><span class="song-card-song-url4 hidden">With ❤️ by Aryan</span><span class="song-card-song-imgHD hidden">With ❤️ by Aryan</span></div>
                         </div>
@@ -184,13 +184,18 @@
                 </div>
             </div>
             <div class="page-buttons"></div>
+            <div class="additional-details"><span id="relatedSpan" class="heading" style="display:none;">You May Like</span>
+                <div id="related" class="related"></div><span id="trendingDataSpan" class="heading" style="display:none;">Trending Now</span>
+                <div id="trendingData" class="trending"></div><span id="moreFromArtistSpan" class="heading" style="display:none;">More From Artists</span>
+                <div id="moreFromArtist" class="more-from-artist"></div>
+            </div>
         </div>
     </div>
-    <div class="container home" id="home"><span id="trendingSpan" class="heading">New Trending</span>
+    <div class="container home" id="home"><span id="topChartsSpan" class="heading">Top Charts</span>
+        <div id="topCharts"></div><span id="trendingSpan" class="heading">New Trending</span>
         <div id="trending"></div><span id="playlistsSpan" class="heading">Top Playlists</span>
         <div id="playlists"></div><span id="albumsSpan" class="heading">New Albums</span>
-        <div id="albums"></div><span id="topChartsSpan" class="heading">Top Charts</span>
-        <div id="topCharts"></div><span id="artistsSpan" class="heading">Artists</span>
+        <div id="albums"></div><span id="artistsSpan" class="heading">Artists</span>
         <div id="artists"></div>
     </div>
     <div id="popup" class="popup-overlay audio-player11 hidden" style="margin-bottom: 80px;margin-top: -20px;height: 100vh;backdrop-filter: blur(43px);-webkit-backdrop-filter: blur(43px);">
@@ -265,11 +270,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/decrypt_media_url.js?h=1bbe237796b8afae598e8a10f68d8ce3"></script>
     <script src="assets/js/downloads.js?h=c34ffc13b4a04dd57f7fc372c3bbcc60"></script>
-    <script src="assets/js/home.js?h=51c0aab4e7ff075e7fda54729d5db5a7"></script>
+    <script src="assets/js/home.js?h=9de513ec72e53462192d0a0b62b995d1"></script>
     <script src="assets/js/player-queue.js?h=f118031f47f2fe952d9387bbcdeb7ae7"></script>
     <script src="assets/js/player.js?h=474e642f785c52e2c831a2f370ebe102"></script>
     <script src="assets/js/scripts.js?h=e0d93dcf4bcb00204d82c9f30a9c58b6"></script>
-    <script src="assets/js/search-api.js?h=58dd097812521f6de5b08324327c790e"></script>
+    <script src="assets/js/search-api.js?h=80b8087835f6694c06ab5dd0ccf3edd8"></script>
     <script src="assets/js/service-worker.js?h=33c4549fc84160a495144974be4434f3"></script>
 </body>
 
