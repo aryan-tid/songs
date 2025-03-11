@@ -99,6 +99,10 @@ function loadTrack(index) {
     const urlencoded = playlistSongUrl[index];
     const Image = playlistSongImg[index];
     const artist = playlistSongArtist[index];
+    console.log("Song Name: ", name);
+    console.log("Song URL: ", urlencoded);
+    console.log("Song Image: ", Image);
+    console.log("Song Artist: ", artist);
     playAudio(name, urlencoded, Image, artist);
     currentIndexPlaylist = index;
     audio1("play");
@@ -321,11 +325,11 @@ function processQueueReorder(oldIndex, newIndex) {
 }
 
 
-function autoplaySongs() {
+async function autoplaySongs() {
     if (autoplay) {
         if (currentIndexPlaylist === playlistSongUrl.length - 1) {
             const id = playlistSongId[currentIndexPlaylist];
-            addRecomendationsToQueue(id);
+            await addRecomendationsToQueue(id);
         } else {
             return;
         }
