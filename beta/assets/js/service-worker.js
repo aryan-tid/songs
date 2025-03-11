@@ -6,7 +6,7 @@ Optionally update the APP_VERSION in your scripts if needed
 */
 
 // service-worker.js
-const CACHE_VERSION = '1.0.0'; // Update this whenever you deploy a new version
+const CACHE_VERSION = '1.0.4'; // Update this whenever you deploy a new version
 const CACHE_NAME = `melodify-cache-v${CACHE_VERSION}`;
 
 // List all your static assets to cache
@@ -30,7 +30,8 @@ const urlsToCache = [
   '/assets/js/scripts.js',
   '/assets/js/search-api.js',
   '/assets/js/service-worker.js',
-  '/version.json'
+  '/version.json',
+  '/logo.png'
 ];
 
 // Install event - cache all static assets
@@ -62,60 +63,47 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch event - serve from cache or network
 self.addEventListener('fetch', event => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
   
   // Skip cross-origin requests
   if (!event.request.url.startsWith(self.location.origin)) return;
-  
-  // Handle version.json specially - never cache it
+
+  // Special case: Always fetch version.json from the network
   if (event.request.url.includes('version.json')) {
     event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.match('/version.json');
-      })
+      fetch(event.request).catch(() => caches.match('/version.json'))
     );
     return;
   }
 
-  // Handle normal requests
+  // Check if the request is for a navigation (e.g., opening the PWA)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match('/index.html'))
+    );
+    return;
+  }
+
+  // Handle other requests normally (cache first, then network)
   event.respondWith(
     caches.match(event.request)
       .then(cachedResponse => {
-        // Return cached response if available
-        if (cachedResponse) {
-          return cachedResponse;
-        }
+        if (cachedResponse) return cachedResponse;
 
-        // Otherwise fetch from network
         return fetch(event.request)
           .then(response => {
-            // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
+            // Only cache successful responses
+            if (!response || response.status !== 200 || response.type !== 'basic') return response;
 
-            // Clone the response so we can cache it and return it
             const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
             return response;
           })
-          .catch(error => {
-            // If both cache and network fail, show a fallback
-            if (event.request.url.indexOf('.html') > -1) {
-              return caches.match('/index.html');
-            }
-            
-            console.error('Fetch failed:', error);
-            // Return a default fallback for other resources
-            return new Response('Network error happened', {
+          .catch(() => {
+            // If both cache and network fail, return a default fallback for other resources
+            return new Response('Network error', {
               status: 408,
               headers: { 'Content-Type': 'text/plain' }
             });

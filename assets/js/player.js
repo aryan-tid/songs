@@ -1,4 +1,4 @@
-let autoplay = true;
+let autoplay = false;
 const audio = document.querySelector(".audio-file audio");
 const playPauseBtn = document.querySelector(".play-pause-btn");
 const playPauseBtn1 = document.querySelector(".play-pause-btn1");
@@ -341,24 +341,27 @@ async function callMediaSession(urlImage1, SongName, currentArtist) {
                 loadTrack(currentIndexPlaylist);
             }
         }
-
-        function loadNextTrack() {
+        async function loadNextTrack() {
             if (autoplay) {
-                if (currentIndexPlaylist === playlistSongUrl.length - 2) {
-                    currentIndexPlaylist++;
-                    const songID = playlistSongId[currentIndexPlaylist];
-                    loadTrack(currentIndexPlaylist);
-                    addRecomendationsToQueue(songID);
-                }else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+                if (currentIndexPlaylist === playlistSongUrl.length - 1) {
+                    await autoplaySongs();
                     currentIndexPlaylist++;
                     loadTrack(currentIndexPlaylist);
+                } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+                    currentIndexPlaylist++;
+                    loadTrack(currentIndexPlaylist);
+                } else {
+                    autoplaySongs();
                 }
-            } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+            } else if (currentIndexPlaylist === playlistSongUrl.length - 1) {
+                showMessage("End of Queue", "negative");
+                audio1("pause");
+            } else {
                 currentIndexPlaylist++;
                 loadTrack(currentIndexPlaylist);
-            } else {
-                showMessage('Last song in Queue', "negative");
             }
+        
+            populateSongQueue();
         }
 
         function loadTrack(index) {

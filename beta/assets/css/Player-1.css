@@ -326,3 +326,19 @@
   white-space: nowrap;
 }
 
+#upNextDiv {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  min-width: 350px;
+}
+
+#autoPlay {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: row;
+  gap: 10px;
+  cursor: pointer;
+}
+

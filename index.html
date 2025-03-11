@@ -106,7 +106,7 @@
     <link rel="stylesheet" href="assets/css/bs-theme-overrides.css?h=1041d609295e3322662d454aaba9a81e">
     <link rel="stylesheet" href="assets/css/loader.css?h=d81a4aaa23dcaf43c7a2ba10caad63d2">
     <link rel="stylesheet" href="assets/css/Navbar-Right-Links-icons.css?h=d77112f1c3813b6c2223c60459485b70">
-    <link rel="stylesheet" href="assets/css/Player-1.css?h=7001292b7719a1037f8bda4c74460210">
+    <link rel="stylesheet" href="assets/css/Player-1.css?h=2fafe5e7713e4e7f0eb4fe7e57cfac0d">
     <link rel="stylesheet" href="assets/css/Player-2.css?h=39498c3b54d5e05333c355451fc3c7da">
     <link rel="stylesheet" href="assets/css/song-card.css?h=827833e02d80a89c4e14f6b26b6a762c">
     <link rel="stylesheet" href="assets/css/styles.css?h=6e569f73c126a04971d485b0c1290267">
@@ -221,7 +221,13 @@
                     </div>
                 </div>
             </div>
-            <div class="song-card-queue" style="margin-top: 11px;"><span style="font-size: 20px;font-weight: bold;margin-left: 10px;">Up Next</span>
+            <div class="song-card-queue" style="margin-top: 11px;">
+                <div id="upNextDiv">
+                    <div><span style="font-size: 20px;font-weight: bold;margin-left: 10px;">Up Next</span></div>
+                    <div>
+                        <div id="autoPlay" class="auto-play" onclick="toggleAutoplay();"><span style="font-size: 20px;font-weight: bold;margin-left: 10px;">AutoPlay</span><input type="checkbox" id="autoPlaySwitch" data-toggle="toggle"></div>
+                    </div>
+                </div>
                 <div class="song-card-container-queue">
                     <div class="container song-card-queue2">
                         <div class="song-card-cont1"><img class="song-card-img" src="assets/img/logo.png?h=44988d185d7b6c26c8c58d084f8b0e1f">
@@ -271,11 +277,11 @@
     <script src="assets/js/decrypt_media_url.js?h=1bbe237796b8afae598e8a10f68d8ce3"></script>
     <script src="assets/js/downloads.js?h=c34ffc13b4a04dd57f7fc372c3bbcc60"></script>
     <script src="assets/js/home.js?h=9de513ec72e53462192d0a0b62b995d1"></script>
-    <script src="assets/js/player-queue.js?h=f118031f47f2fe952d9387bbcdeb7ae7"></script>
-    <script src="assets/js/player.js?h=474e642f785c52e2c831a2f370ebe102"></script>
-    <script src="assets/js/scripts.js?h=44d1bd51f536455fa00b06c998aab71c"></script>
+    <script src="assets/js/player-queue.js?h=8d2429fa21c4397e97a631f61f59a5c5"></script>
+    <script src="assets/js/player.js?h=4b1bc0d1964e94cf42554fd1790571f1"></script>
+    <script src="assets/js/scripts.js?h=6856d618ffb47afd0769927943b8ff3f"></script>
     <script src="assets/js/search-api.js?h=80b8087835f6694c06ab5dd0ccf3edd8"></script>
-    <script src="assets/js/service-worker.js?h=4c95087c68a7e5b46055da4b2f021691"></script>
+    <script src="assets/js/service-worker.js?h=f8a3d0b52f431f6676642896ab4775eb"></script>
 </body>
 
 </html>

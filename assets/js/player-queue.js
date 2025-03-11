@@ -38,6 +38,15 @@ toggleContainer.addEventListener("click", function (event) {
 // Also toggle when clicking the checkbox directly
 toggleSwitch.addEventListener("change", toggleAllowDuplicates);
 
+function toggleAutoplay() {
+    const autoPlayCheck = document.getElementById("autoPlaySwitch"); // Corrected ID
+    autoplay = !autoplay;
+    autoPlayCheck.checked = autoplay; // Reflect change in checkbox state
+    if (autoplay) {
+        autoplaySongs();
+    }
+}
+
 function clearQueue() {
     playlistSongUrl = [];
     playlistSongArtist = [];
@@ -95,34 +104,27 @@ function loadTrack(index) {
     audio1("play");
     populateSongQueue();
 }
+
 async function nextTrack() {
     if (autoplay) {
-        if (currentIndexPlaylist === playlistSongUrl.length - 2) {
+        if (currentIndexPlaylist === playlistSongUrl.length - 1) {
+            await autoplaySongs();
             currentIndexPlaylist++;
-            const songID = playlistSongId[currentIndexPlaylist];
             loadTrack(currentIndexPlaylist);
-            await addRecomendationsToQueue(songID); // Wait for recommendations to be added
         } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
             currentIndexPlaylist++;
             loadTrack(currentIndexPlaylist);
         } else {
-            audio1("pause");
-            console.log("current index", currentIndexPlaylist);
-            
-            await addRecomendationsToQueue(playlistSongId[currentIndexPlaylist]); // Ensure queue is updated before playing
-            
-            currentIndexPlaylist++;
-            loadTrack(currentIndexPlaylist);
-            populateSongQueue();
+            autoplaySongs();
         }
-    } else if (currentIndexPlaylist < playlistSongUrl.length - 1) {
+    } else if (currentIndexPlaylist === playlistSongUrl.length - 1) {
+        showMessage("End of Queue", "negative");
+        audio1("pause");
+    } else {
         currentIndexPlaylist++;
         loadTrack(currentIndexPlaylist);
-    } else {
-        showMessage('End of Queue', "negative");
-        audio1("pause");
     }
-    
+
     populateSongQueue();
 }
 
@@ -141,7 +143,7 @@ const queueContainer = document.querySelector(".song-card-container-queue"); // 
 
 function populateSongQueue() {
     queueContainer.innerHTML = ""; // Clear previous items
-    
+
     if (currentIndexPlaylist + 1 >= playlistSongName.length) {
         const message = document.createElement("div");
         message.classList.add("no-songs-message");
@@ -149,12 +151,12 @@ function populateSongQueue() {
         queueContainer.appendChild(message);
         return;
     }
-    
+
     for (let index = currentIndexPlaylist + 1; index < playlistSongName.length; index++) {
         const songCard = document.createElement("div");
         songCard.classList.add("container", "song-card-queue2");
         songCard.setAttribute("data-index", index - currentIndexPlaylist - 1); // Adjust index for queue position
-        
+
         // Add a drag handle element
         songCard.innerHTML = `
             <div class="song-card-cont1">
@@ -176,17 +178,17 @@ function populateSongQueue() {
                 </button>
             </div>
         `;
-        
+
         // Add tap/click event to the song details area to play the song
         const songDetails = songCard.querySelector(".song-details");
         songDetails.addEventListener("click", (e) => {
             e.stopPropagation(); // Prevent event bubbling
             loadTrack(index);
         });
-        
+
         queueContainer.appendChild(songCard);
     }
-    
+
     // Initialize drag and drop after all items are added
     initializeTouchFriendlySortable();
 }
@@ -201,43 +203,43 @@ function initializeTouchFriendlySortable() {
         // Key animation settings for smooth movement
         animation: 300,
         easing: "cubic-bezier(0.2, 1, 0.2, 1)",
-        
+
         // Animation classes
         ghostClass: "sortable-ghost",
         chosenClass: "sortable-chosen",
         dragClass: "sortable-drag",
-        
+
         // Core settings
         handle: ".drag-handle",
         forceFallback: true,
         fallbackOnBody: true,
         fallbackClass: "sortable-fallback",
-        
+
         // Improved scroll behavior
         bubbleScroll: true,
         scrollSpeed: 40,
         scrollSensitivity: 120,
-        
+
         // Touch settings
         touchStartThreshold: 5,
         delay: 0,
         delayOnTouchOnly: true,
-        
+
         // Swap behavior - critical for smooth animations
         animation: 150,  // ms, animation time when item is moved
         swapThreshold: 0.65, // Percentage of the item that has to overlap to trigger swap
         invertSwap: false, // Set to true if you want to invert swap direction
         direction: 'vertical', // Direction of sorting
-        
+
         // Enable these important options for smooth movement
         setData: function (dataTransfer, dragEl) {
             dataTransfer.setData('Text', dragEl.textContent);
         },
-        
+
         onChoose: function (evt) {
             evt.item.classList.add('being-dragged');
         },
-        
+
         onChange: function (evt) {
             // This fires when the order changes during dragging
             // A perfect place to add custom animation for the other elements
@@ -248,26 +250,26 @@ function initializeTouchFriendlySortable() {
                 }
             });
         },
-        
+
         onStart: function (evt) {
             document.body.classList.add("disable-scrolling");
-            
+
             // Add data-index to track original positions
             Array.from(queueContainer.children).forEach((el, i) => {
                 el.setAttribute('data-original-index', i);
             });
-            
+
             // Remove extra clones that might appear
             setTimeout(() => {
                 const clones = document.querySelectorAll(".sortable-fallback:not(:first-child)");
                 clones.forEach(clone => clone.remove());
             }, 10);
         },
-        
+
         onEnd: function (evt) {
             document.body.classList.remove("disable-scrolling");
             evt.item.classList.remove('being-dragged');
-            
+
             // Process the reordering if positions changed
             if (evt.oldIndex !== evt.newIndex) {
                 const realOldIndex = evt.oldIndex + currentIndexPlaylist + 1;
@@ -281,43 +283,56 @@ function initializeTouchFriendlySortable() {
 // Add this helper function to enhance the animation behavior
 function processQueueReorder(oldIndex, newIndex) {
     console.log(`Reordering from ${oldIndex} to ${newIndex}`);
-    
+
     // Create temporary copies of arrays
     const tempSongNames = [...playlistSongName];
     const tempSongImgs = [...playlistSongImg];
     const tempSongArtists = [...playlistSongArtist];
     const tempSongIds = [...playlistSongId];
     const tempSongUrls = [...playlistSongUrl];
-    
+
     // Remove from old position and insert at new position
     const movedName = tempSongNames.splice(oldIndex, 1)[0];
     tempSongNames.splice(newIndex, 0, movedName);
-    
+
     const movedImg = tempSongImgs.splice(oldIndex, 1)[0];
     tempSongImgs.splice(newIndex, 0, movedImg);
-    
+
     const movedArtist = tempSongArtists.splice(oldIndex, 1)[0];
     tempSongArtists.splice(newIndex, 0, movedArtist);
-    
+
     const movedId = tempSongIds.splice(oldIndex, 1)[0];
     tempSongIds.splice(newIndex, 0, movedId);
 
     const movedUrl = tempSongUrls.splice(oldIndex, 1)[0];
     tempSongUrls.splice(newIndex, 0, movedUrl);
-    
+
     // Update the original arrays
     playlistSongName = tempSongNames;
     playlistSongImg = tempSongImgs;
     playlistSongArtist = tempSongArtists;
     playlistSongId = tempSongIds;
     playlistSongUrl = tempSongUrls;
-    
+
     // Refresh the queue UI with a slight delay to allow animations to complete
     setTimeout(() => {
         populateSongQueue();
     }, 300);
 }
 
+
+function autoplaySongs() {
+    if (autoplay) {
+        if (currentIndexPlaylist === playlistSongUrl.length - 1) {
+            const id = playlistSongId[currentIndexPlaylist];
+            addRecomendationsToQueue(id);
+        } else {
+            return;
+        }
+    } else {
+        showMessage("Autoplay is disabled", "negative");
+    }
+}
 
 async function addRecomendationsToQueue(id) {
     try {

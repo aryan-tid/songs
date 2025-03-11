@@ -141,7 +141,7 @@ window.addEventListener("beforeunload", (event) => {
 // Add this to your scripts.js or create a new file called app.js
 
 // Current app version - must match the service worker version
-const APP_VERSION = '1.0.2';
+const APP_VERSION = '1.0.4';
 
 // Register service worker
 function registerServiceWorker() {
