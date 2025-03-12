@@ -42,11 +42,16 @@ function scrollToTop() {
 }
 
 function btnClicked(btn) {
-    document.querySelector('.navbar-collapse').classList.remove('show');
     if (btn === 'browse') {
         showBrowse();
     }
 }
+async function showBrowse() {
+  const target = document.querySelector('.search-container');
+  target.style.display ? target.style.removeProperty('display') : target.style.setProperty('display', 'none');
+  scrollToTop();
+}
+
 // Function to handle dropdown toggling using `.show` class
 function setupDropdown(dropdownBtnSelector, dropdownContentSelector) {
     const dropdownBtns = document.querySelectorAll(dropdownBtnSelector);
@@ -141,7 +146,7 @@ window.addEventListener("beforeunload", (event) => {
 // Add this to your scripts.js or create a new file called app.js
 
 // Current app version - must match the service worker version
-const APP_VERSION = '1.1.4';
+const APP_VERSION = '1.1.5';
 
 // Register service worker
 function registerServiceWorker() {

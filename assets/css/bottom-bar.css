@@ -1,0 +1,37 @@
+#bottomBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 100%;
+  gap: 10px;
+  padding: 3px 10px;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.bottom-bar-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 22px;
+  height: 44px;
+  background-color: var(--bs-secondary);
+  width: 12%;
+  justify-content: center;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  transition: width 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.bottom-bar-btn:hover {
+  color: var(--bs-primary);
+}
+
+.bottom-bar-btn.selected {
+  width: 20%;
+  background-color: var(--bs-primary);
+  color: white;
+}
+

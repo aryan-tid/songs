@@ -8,7 +8,6 @@
   scroll-behavior: smooth;
   margin-bottom: 10px;
   scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
 .home #topCharts {
@@ -94,11 +93,13 @@
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: var(--bs-secondary);
+  background: rgba(102,102,102,0.29);
   border-radius: 50%;
-  padding: 8px 13px;
+  padding: 8px 11px;
   cursor: pointer;
-  transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transition: 0.3s ease-in-out, transform 0.3s ease-in-out;
+  font-size: 10px;
+  color: white;
 }
 
 #topCharts .play-button, #artists .play-button {
@@ -122,7 +123,7 @@
 }
 
 .home .card:hover h3, .additional-details .card:hover h3 {
-  font-weight: 900;
+  font-weight: 800;
 }
 
 .home p, .additional-details p {
@@ -139,5 +140,9 @@
 .home .heading, .additional-details .heading {
   font-size: 1.2rem;
   font-weight: bold;
+}
+
+#home {
+  padding: 0px;
 }
 

@@ -1,6 +1,6 @@
 const songListImg = document.querySelector(".song-list");
 // const APIbaseURL = "http://192.168.1.4:3000/api/";
-// const APIbaseURL2 = "http://192.168.1.4:3000/api/";
+// const APIbaseURL2 = "http://192.168.1.5:3000/api/";
 const APIbaseURL2 = "https://home-omega-one.vercel.app/api/";
 // const APIbaseURL = "https://saavn.dev/api/";
 const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
@@ -32,13 +32,6 @@ function show(querySelector) {
 function hide(querySelector) {
     document.querySelector(querySelector).style.display = "none";
 }
-
-
-async function showBrowse() {
-    const target = document.querySelector('.search-container');
-    target.style.display ? target.style.removeProperty('display') : target.style.setProperty('display', 'none');
-}
-
 
 function pause(time) {
     return new Promise(resolve => setTimeout(resolve, time));
@@ -730,7 +723,7 @@ async function listSongs(category, id, page) {
                     songCard.innerHTML = `
                             <div class="image-container">
                                 <img src="${song.image}" alt="${song.title}">
-                                <div class="play-button">▶</div>
+                                <div class="play-button"><i class="fas fa-play"></i></div>
                             </div>
                             <h3 class="card-title">${song.title}</h3>
                             <p class="card-subtitle">${song.subtitle}</p>
@@ -797,7 +790,7 @@ async function listSongs(category, id, page) {
                     songCard.innerHTML = `
                             <div class="image-container">
                                 <img src="${song.image}" alt="${song.title}">
-                                <div class="play-button">▶</div>
+                                <div class="play-button"><i class="fas fa-play"></i></div>
                             </div>
                             <h3 class="card-title">${song.title}</h3>
                             <p class="card-subtitle">${song.subtitle}</p>
@@ -942,7 +935,12 @@ let fromUrlParam = false;
 
 let allowUrlParameters = true; // Allow URL parameters to be used for once only
 urlParameterDataLoad();
-function urlParameterDataLoad(type) {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function urlParameterDataLoad(type) {
+    await sleep(300);
     if (navigator.onLine) {
         if (type === "default") {
             home();
@@ -985,6 +983,8 @@ window.onpopstate = function (event) {
         // Hide the player when we reach hidePlayer state
         audioPlayer1.classList.add("hidden");
         playerStatePushed = false;
+        expandPlayerAction("hide");
+        bottomBarAction("show");
         console.log("Player hidden");
     } else if (event.state?.page === "downloadedSongs") {
         getAllDownloadedSongs();

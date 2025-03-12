@@ -185,6 +185,7 @@ async function playSong(songID) {
 }
 
 async function getAllDownloadedSongs() {
+    refreshBottomBar("downloads");
     loader("show");
     scrollToTop();
     history.pushState("", "", "?downloads=songs");

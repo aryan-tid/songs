@@ -15,14 +15,14 @@
   cursor: pointer;
   width: inherit;
   justify-content: space-between;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-top: 10px;
+  margin-bottom: 5px;
   min-width: 350px;
 }
 
 .song-card:hover, .song-card-queue2:hover {
   outline: solid;
-  outline-width: 2px;
+  outline-width: 1px;
   border-radius: 10px;
   padding: 0px;
   display: flex;
@@ -31,7 +31,7 @@
   cursor: pointer;
   width: auto;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: 10px;
   margin-bottom: 5px;
 }
 

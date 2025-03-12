@@ -32,8 +32,8 @@ loopElement.addEventListener("click", function () {
         loopElement.style.backgroundColor = "#2d8f7a";
         loopElement.style.color = "#f8f9fa";
     } else {
-        loopElement.style.backgroundColor = "#f8f9fa";
-        loopElement.style.color = "#000000";
+        loopElement.style.backgroundColor = "rgba(0,0,0,0)";
+        loopElement.style.color = "white";
     }
 })
 
@@ -48,6 +48,8 @@ function playAudio(name, url, img, artists) {
     loader("show");
     audio.src = url; // Assign the actual URL, not the string "url"
     callMediaSession(img, name, artists);
+    const playerIMG = document.querySelector("#audioPlayer1");
+    if (img) playerIMG.style.backgroundImage = `url(${img})`;
     img1.src = img;
     img2.src = img;
     songName1.textContent = name;
@@ -360,7 +362,7 @@ async function callMediaSession(urlImage1, SongName, currentArtist) {
                 currentIndexPlaylist++;
                 loadTrack(currentIndexPlaylist);
             }
-        
+
             populateSongQueue();
         }
 
@@ -392,24 +394,70 @@ const mainContent = document.querySelector(".main-content");
 let playerStatePushed = false;
 
 expandPlayer.addEventListener("click", () => {
-    const isHidden = audioPlayer1.classList.toggle("hidden");
-
-    if (!isHidden) {
-        populateSongQueue();
-
-        if (!playerStatePushed) {
-            history.pushState({ type: "hidePlayer" }, ""); // First push hidePlayer
-            history.pushState({ type: "previousState" }, ""); // Push a dummy state
+    aslkjdnhflask();
+    async function aslkjdnhflask() {
+        
+        const isHidden = audioPlayer1.classList.toggle("hidden");
+        
+        if (!isHidden) {
+            await expandPlayerAction("show");
+            populateSongQueue();
+            history.pushState({ type: "hidePlayer" }, "");
+            history.pushState({ type: "previousState" }, "");
             console.log("Pushed state for hidePlayer");
             playerStatePushed = true;
+            await bottomBarAction("hide");
+        } else {
+            playerStatePushed = false;
+            await expandPlayerAction("hide");
+            await bottomBarAction("show");
         }
-    } else {
-        playerStatePushed = false;
     }
 });
 
 
+async function bottomBarAction(action) {
+    const bottomBar = document.querySelector("#bottomBar");
+    if (action === "hide") {
+        bottomBar.style.opacity = "0";
+        bottomBar.style.transform = "translateY(100%)";
 
+        setTimeout(() => {
+            bottomBar.style.display = "none";
+        }, 300); // Match transition duration
+    } else if (action === "show") {
+        // Show with animation
+        bottomBar.style.display = "flex"; // Set display first
+        bottomBar.style.opacity = "0"; // Start from hidden state
+        bottomBar.style.transform = "translateY(100%)";
+
+        setTimeout(() => {
+            bottomBar.style.opacity = "1";
+            bottomBar.style.transform = "translateY(0)";
+        }, 10); // Small delay to ensure animation triggers
+    }
+}
+async function expandPlayerAction(action) {
+    const player = document.querySelector(".popup-overlay");
+    if (action === "hide") {
+        player.style.opacity = "0";
+        player.style.transform = "translateY(100%)";
+
+        setTimeout(() => {
+            player.style.display = "none";
+        }, 400); // Match transition duration
+    } else if (action === "show") {
+        // Show with animation
+        player.style.display = "flex"; // Set display first
+        player.style.opacity = "0"; // Start from hidden state
+        player.style.transform = "translateY(100%)";
+
+        setTimeout(() => {
+            player.style.opacity = "1";
+            player.style.transform = "translateY(0)";
+        }, 10); // Small delay to ensure animation triggers
+    }
+}
 
 
 
@@ -507,7 +555,7 @@ let observer = new ResizeObserver(() => {
         let computedStyle = window.getComputedStyle(element);
         let width = parseFloat(computedStyle.width); // Convert width from "px" string to number
 
-        if (width > 150) { 
+        if (width > 150) {
             element2.style.width = computedStyle.width;
         } else {
             element2.style.width = "150px";
