@@ -120,6 +120,7 @@ async function showSettings() {
     const settingsDiv = document.querySelector(".settings");
     if (settingsDiv.style.display === "none" || settingsDiv.style.display === "") {
         settingsDiv.style.display = "flex";
+        scrollToTop();
     } else {
         settingsDiv.style.display = "none";
     }
@@ -146,7 +147,7 @@ window.addEventListener("beforeunload", (event) => {
 // Add this to your scripts.js or create a new file called app.js
 
 // Current app version - must match the service worker version
-const APP_VERSION = '1.1.5';
+const APP_VERSION = '1.1.9';
 
 // Register service worker
 function registerServiceWorker() {

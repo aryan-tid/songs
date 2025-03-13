@@ -338,3 +338,45 @@ input[type="checkbox"][data-toggle="toggle"]:checked::before {
   font-size: larger;
 }
 
+#countdownDisplay {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+#timer {
+  width: inherit;
+}
+
+#setTimer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#countdownDisplay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#setTimerBtn {
+  color: white;
+}
+
+#cancelTimerBtn {
+  background: var(--bs-red);
+  color: white;
+}
+
+.time-input {
+  width: 50px;
+  margin: 5px;
+  border-radius: 6px;
+}
+
+.label-time-input {
+  margin-right: 5px;
+}
+

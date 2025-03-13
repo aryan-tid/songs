@@ -108,7 +108,7 @@
     <link rel="stylesheet" href="assets/css/Player-1.css?h=29e4e280d2299b8a59bf12d373d0fa94">
     <link rel="stylesheet" href="assets/css/Player-2.css?h=bfe059466d9f68af265be6e9138b7f03">
     <link rel="stylesheet" href="assets/css/song-card.css?h=4c41c1ea5f68863164ed12188873c132">
-    <link rel="stylesheet" href="assets/css/styles.css?h=d18963148626147d9e4a0e25cc7805fa">
+    <link rel="stylesheet" href="assets/css/styles.css?h=6ddd9824f5741bf0886262ec174a34e1">
     <link rel="stylesheet" href="assets/css/temp.css?h=638cd4996648200bedd018813158b6c2">
     <link rel="stylesheet" href="assets/css/bottom-bar.css?h=4ceb2234289f31038496d9ed384afb59">
 </head>
@@ -138,6 +138,16 @@
                 </div>
                 <div class="settings-options"><span class="settings-option-text">Allow same song multiple times in Queue</span>
                     <div id="toggleSwitchCont" class="toggle-switch"><span id="toggleStatus">False</span><input type="checkbox" data-toggle="toggle" id="allowDuplicatesToggle"></div>
+                </div>
+                <div class="settings-options">
+                    <div id="timer">
+                        <h5>Sleep Timer</h5>
+                        <div id="setTimer">
+                            <div><label class="label-time-input" for="timeInput">Time:&nbsp;</label><input type="number" id="inputHours" class="time-input" min="0" max="23" placeholder="HH"><span>:</span><input type="number" id="inputMinutes" class="time-input" min="0" max="59" placeholder="MM"></div><button class="btn btn-primary" id="setTimerBtn" type="button">Set Timer</button>
+                        </div>
+                        <div id="countdownDisplay"><span id="countdownDisplaySpan">No Timer Set</span><button class="btn" id="cancelTimerBtn" type="button">Cancel Timer</button></div>
+                        <div></div>
+                    </div>
                 </div>
             </div><button class="btn btn-primary" type="button" style="width: 80px;color: white;font-weight: bold;background: var(--bs-primary);margin: 16px;" onclick="showSettings();">Save</button>
         </div>
@@ -279,10 +289,11 @@
     <script src="assets/js/home.js?h=0a16f8b5ff9d15ee96875c6c79374bcd"></script>
     <script src="assets/js/player.js?h=fa19cade7990bf86c3a470b7b4003973"></script>
     <script src="assets/js/player-queue.js?h=7ce8afbb39434e7a2e9e7cc7e056cc08"></script>
-    <script src="assets/js/scripts.js?h=a55c1ab910ae904c7df3b0f93b835979"></script>
+    <script src="assets/js/scripts.js?h=488bfb41ce831e331ab49a325ef2f8c8"></script>
     <script src="assets/js/search-api.js?h=b9c2bbe6b3c441995f0b80c21836c960"></script>
-    <script src="assets/js/service-worker.js?h=5cf2f6ea5f3ccf5117b4c4dde76d50ac"></script>
+    <script src="assets/js/service-worker.js?h=ef630e751d4401989dec53659ef80447"></script>
     <script src="assets/js/bottom-bar.js?h=808e907a214e6443c3271dc280724424"></script>
+    <script src="assets/js/timer.js?h=a0d256b206a6f968ab1279083834d9dc"></script>
 </body>
 
 </html>

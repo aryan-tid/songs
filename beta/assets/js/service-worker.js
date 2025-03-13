@@ -6,7 +6,7 @@ Optionally update the APP_VERSION in your scripts if needed
 */
 
 // service-worker.js
-const CACHE_VERSION = '1.1.6'; // Update this whenever you deploy a new version
+const CACHE_VERSION = '1.1.9'; // Update this whenever you deploy a new version
 const CACHE_NAME = `melodify-cache-v${CACHE_VERSION}`;
 
 // List all your static assets to cache
