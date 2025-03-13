@@ -1,6 +1,7 @@
 let modules = [];
 
 async function home() {
+    refreshBottomBar("home");
     history.pushState({ type: "home" }, "", "?type=home");
     if (modules.length === 0) {
         loader("show");
@@ -65,15 +66,22 @@ function loadTrending(response) {
 
     trendingContainer.innerHTML = "";
 
+    let subtitle;
     Object.values(response).forEach(song => {
         const songCard = document.createElement("div");
         songCard.classList.add("card");
+        if (song.type === "song" || song.type === "playlist") {
+            subtitle = song.subtitle;
+        } else {
+            subtitle = "Album";
+        }
         songCard.innerHTML = `
                 <div class="image-container">
                     <img src="${song.image}" alt="${song.title}">
-                    <div class="play-button">▶</div>
+                    <div class="play-button"><i class="fas fa-play"></i></div>
                 </div>
                 <h3 class="card-title">${song.title}</h3>
+                <p class="card-subtitle">${subtitle}</p>
             `;
 
         // Fix: Access `song.type` instead of `response.type`
@@ -120,7 +128,7 @@ function displayPlaylists(playlists) {
         playlistCard.innerHTML = `
                 <div class="image-container">
                     <img src="${playlist.image}" alt="${playlist.title}">
-                    <div class="play-button">▶</div>
+                    <div class="play-button"><i class="fas fa-play"></i></div>
                 </div>
                 <h3 class="card-title">${playlist.title}</h3>
                 <p class="card-subtitle">${playlist.subtitle}</p>
@@ -138,19 +146,23 @@ function displayPlaylists(playlists) {
 function loadNewAlbums(albums) {
     const albumsContainer = document.getElementById("albums");
     if (!albumsContainer) return;
-
+    let subtitle;
     albumsContainer.innerHTML = "";
-
     Object.values(albums).forEach(album => {
         const albumsCard = document.createElement("div");
         albumsCard.classList.add("card");
+        if (album.type === "song" || album.type === "playlist") {
+            subtitle = album.subtitle;
+        } else {
+            subtitle = "Album";
+        }
         albumsCard.innerHTML = `
                 <div class="image-container">
                     <img src="${album.image}" alt="${album.title}">
-                    <div class="play-button">▶</div>
+                    <div class="play-button"><i class="fas fa-play"></i></div>
                 </div>
                 <h3 class="card-title">${album.title}</h3>
-                <p class="card-subtitle">${album.subtitle}</p>
+                <p class="card-subtitle">${subtitle}</p>
             `;
 
         if (album.type === "playlist" || album.type === "album") {
@@ -198,7 +210,7 @@ function loadTopCharts(playlists) {
         playlistCard.innerHTML = `
                 <div class="image-container">
                     <img src="${playlist.image}" alt="${playlist.title}">
-                    <div class="play-button">▶</div>
+                    <div class="play-button"><i class="fas fa-play"></i></div>
                 </div>
                 <h3 class="card-title">${playlist.title}</h3>
             `;
@@ -223,7 +235,7 @@ function loadArtists(artists) {
         artistsCard.innerHTML = `
                 <div class="image-container">
                     <img src="${artists.image}" alt="${artists.title}">
-                    <div class="play-button">▶</div>
+                    <div class="play-button"><i class="fas fa-play"></i></div>
                 </div>
                 <h3 class="card-title">${artists.title}</h3>
                 <p class="card-subtitle">${artists.subtitle}</p>

@@ -6,7 +6,7 @@ async function home() {
     if (modules.length === 0) {
         loader("show");
         const apiUrl = "https://home-omega-one.vercel.app/api/jiosaavn";
-        // const apiUrl = "http://192.168.1.5:3000/api/jiosaavn";
+        // const apiUrl = "http://192.168.1.4:3000/api/jiosaavn";
         try {
             const response = await fetch(apiUrl);
             const data = await response.json();

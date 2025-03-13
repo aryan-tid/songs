@@ -1,6 +1,6 @@
 const songListImg = document.querySelector(".song-list");
 // const APIbaseURL = "http://192.168.1.4:3000/api/";
-// const APIbaseURL2 = "http://192.168.1.5:3000/api/";
+// const APIbaseURL2 = "http://192.168.1.4:3000/api/";
 const APIbaseURL2 = "https://home-omega-one.vercel.app/api/";
 // const APIbaseURL = "https://saavn.dev/api/";
 const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
@@ -11,10 +11,6 @@ let currentPageCategory = "default";
 function getSelectedQuality() {
     const selectedOption = document.querySelector(".custom-dropdown .selected");
     return selectedOption ? selectedOption.getAttribute("data-value") : null;
-}
-
-function getq() {
-    console.log(getSelectedQuality());
 }
 
 function hideAll() {
@@ -481,18 +477,14 @@ async function listSongs(category, id, page) {
         currentPageName = "id";
         currentPageCategory = category;
         currentPage = page;
-        console.log("fromUrlParam", currentPage);
     } else if (currentPageName !== "id" && currentPageCategory !== category) {
         page = 1;
         currentPageName = "id";
         currentPageCategory = category;
         currentPage = page;
-        console.log("currentPageName !== id", currentPage);
     } else {
         currentPage = page;
-        console.log("currentPage", currentPage);
     }
-    console.log(page, currentPage);
 
     if (category === "artists") {
         url = `${APIbaseURL}${category}/${id}/songs?page=${page}&limit=10`;
@@ -691,11 +683,10 @@ async function listSongs(category, id, page) {
         if (lang == "english") {
             console.log("english");
         } else {
-            showTrending();
-            showRelated(category, id, lang);
+            showData(category, id, lang);
         }
 
-        async function showRelated(category, id, lang) {
+        async function showData(category, id, lang) {
             if (category === "artists") {
                 return;
             } else if (category === "albums") {
@@ -708,19 +699,36 @@ async function listSongs(category, id, page) {
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
-                console.log(data);
+                function isTrendingSuccess(response) {
+                    return response?.trending !== undefined && response.trending !== null;
+                }
+                
+                function isCategoryDataSuccess(response) {
+                    return response?.categoryData !== undefined && response.categoryData !== null;
+                }
+                
+                if (isTrendingSuccess(data)) {
+                    showTrendingData(data.trending);
+                    show("#trendingSpan");
+                } else {
+                    document.getElementById("trendingSpan").style.display = "none";
+                }
+                if (isCategoryDataSuccess(data)) {
+                    showCategoryData();
+                    show("#relatedSpan");
+                } else {
+                    document.getElementById("relatedSpan").style.display = "none";
+                }
+                async function showCategoryData() {
+                    // Display songs and playlists
+                    const trendingContainer = document.getElementById("related");
 
-                // Display songs and playlists
-                const trendingContainer = document.getElementById("related");
-                if (!trendingContainer) return; // Avoid errors if the element is missing
-                show("#relatedSpan");
+                    trendingContainer.innerHTML = "";
 
-                trendingContainer.innerHTML = "";
-
-                Object.values(data).forEach(song => {
-                    const songCard = document.createElement("div");
-                    songCard.classList.add("card");
-                    songCard.innerHTML = `
+                    Object.values(data.categoryData).forEach(song => {
+                        const songCard = document.createElement("div");
+                        songCard.classList.add("card");
+                        songCard.innerHTML = `
                             <div class="image-container">
                                 <img src="${song.image}" alt="${song.title}">
                                 <div class="play-button"><i class="fas fa-play"></i></div>
@@ -729,95 +737,87 @@ async function listSongs(category, id, page) {
                             <p class="card-subtitle">${song.subtitle}</p>
                         `;
 
-                    // Fix: Access `song.type` instead of `response.type`
-                    // Fix: Access `song.type` instead of `response.type`
-                    if (song.type === "playlist" || song.type === "album") {
-                        const id = song.id;
-                        let category = "";
+                        // Fix: Access `song.type` instead of `response.type`
+                        // Fix: Access `song.type` instead of `response.type`
+                        if (song.type === "playlist" || song.type === "album") {
+                            const id = song.id;
+                            let category = "";
 
-                        if (song.type === "playlist") {
-                            category = "playlists";
-                        } else if (song.type === "album") {
-                            category = "albums";
-                        }
+                            if (song.type === "playlist") {
+                                category = "playlists";
+                            } else if (song.type === "album") {
+                                category = "albums";
+                            }
 
-                        if (category) {
+                            if (category) {
+                                songCard.addEventListener("click", () => {
+                                    listSongs(category, id, "1");
+                                });
+                            }
+                        } else if (song.type === "song") {
                             songCard.addEventListener("click", () => {
-                                listSongs(category, id, "1");
+                                const selectedQuality = getSelectedQuality();
+                                const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
+                                const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
+                                firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
+
                             });
                         }
-                    } else if (song.type === "song") {
-                        songCard.addEventListener("click", () => {
-                            const selectedQuality = getSelectedQuality();
-                            const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
-                            const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
-                            firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
-                            console.log(mediaUrl);
-
-                        });
-                    }
 
 
-                    trendingContainer.appendChild(songCard);
-                });
-
-
-                // loadNewAlbums(data.new_albums);
-                // loadTopCharts(data.charts);
-
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        }
-
-        async function showTrending() {
-            const apiUrl = `${APIbaseURL2}trending?lang=${lang}`;
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                console.log(data);
-
-                // Display songs and playlists
-                const trendingContainer = document.getElementById("trendingData");
-                if (!trendingContainer) return; // Avoid errors if the element is missing
-                show("#trendingDataSpan");
-
-                trendingContainer.innerHTML = "";
-
-                Object.values(data).forEach(song => {
-                    const songCard = document.createElement("div");
-                    songCard.classList.add("card");
-                    songCard.innerHTML = `
-                            <div class="image-container">
-                                <img src="${song.image}" alt="${song.title}">
-                                <div class="play-button"><i class="fas fa-play"></i></div>
-                            </div>
-                            <h3 class="card-title">${song.title}</h3>
-                            <p class="card-subtitle">${song.subtitle}</p>
-                        `;
-
-                    // Fix: Access `song.type` instead of `response.type`
-                    songCard.addEventListener("click", () => {
-                        const selectedQuality = getSelectedQuality();
-                        const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
-                        const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
-                        firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
-                        console.log(mediaUrl);
-
+                        trendingContainer.appendChild(songCard);
                     });
+                }
+
+                async function showTrendingData(data) {
+                    try {
+
+                        // Display songs and playlists
+                        const trendingContainer = document.getElementById("trendingData");
+                        if (!trendingContainer) return; // Avoid errors if the element is missing
+                        show("#trendingDataSpan");
+
+                        trendingContainer.innerHTML = "";
+
+                        Object.values(data).forEach(song => {
+                            const songCard = document.createElement("div");
+                            songCard.classList.add("card");
+                            songCard.innerHTML = `
+                                    <div class="image-container">
+                                        <img src="${song.image}" alt="${song.title}">
+                                        <div class="play-button"><i class="fas fa-play"></i></div>
+                                    </div>
+                                    <h3 class="card-title">${song.title}</h3>
+                                    <p class="card-subtitle">${song.subtitle}</p>
+                                `;
+
+                            // Fix: Access `song.type` instead of `response.type`
+                            songCard.addEventListener("click", () => {
+                                const selectedQuality = getSelectedQuality();
+                                const mediaUrl = getMediaLink(song.more_info.encrypted_media_url, selectedQuality)
+                                const songArtists = song.more_info.artistMap.primary_artists.map(artist => artist.name).join(", ");
+                                firstPlayAudio(song.title, mediaUrl, song.image, songArtists, song.id);
+
+                            });
 
 
-                    trendingContainer.appendChild(songCard);
-                });
+                            trendingContainer.appendChild(songCard);
+                        });
 
 
-                // loadNewAlbums(data.new_albums);
-                // loadTopCharts(data.charts);
+                        // loadNewAlbums(data.new_albums);
+                        // loadTopCharts(data.charts);
+
+                    } catch (error) {
+                        console.error("Error fetching data:", error);
+                    }
+                }
 
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         }
+
 
         // Now clear old content and replace it with the new content
         resultDiv.innerHTML = '';
@@ -959,7 +959,6 @@ async function urlParameterDataLoad(type) {
             } else if (downloadsParam) {
                 if (downloadsParam === "songs") {
                     getAllDownloadedSongs();
-                    console.log("Getting all downloaded songs");
                 } else {
                     home();
                     console.log("Invalid downloads parameter");
