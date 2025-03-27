@@ -5,7 +5,7 @@ async function home() {
     history.pushState({ type: "home" }, "", "?type=home");
     if (modules.length === 0) {
         loader("show");
-        const apiUrl = "https://home-omega-one.vercel.app/api/jiosaavn";
+        const apiUrl = "https://melodify-backend.vercel.app/api/jiosaavn";
         // const apiUrl = "http://192.168.1.4:3000/api/jiosaavn";
         try {
             const response = await fetch(apiUrl);

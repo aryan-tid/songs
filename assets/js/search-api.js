@@ -1,7 +1,7 @@
 const songListImg = document.querySelector(".song-list");
 // const APIbaseURL = "http://192.168.1.4:3000/api/";
 // const APIbaseURL2 = "http://192.168.1.4:3000/api/";
-const APIbaseURL2 = "https://home-omega-one.vercel.app/api/";
+const APIbaseURL2 = "https://melodify-backend.vercel.app/api/";
 const APIbaseURL = "https://saavn.dev/api/";
 // const APIbaseURL = "https://vercel-jiosaavn.vercel.app/api/";
 let page = 1;
